@@ -1,0 +1,27 @@
+#文件名
+filetitle = sample_msg
+
+#命名空间
+namespace  = SAMPLE_SERVER
+
+datatype(Inet_Addr)
+
+typedef array<int8> : INT8_ARRAY
+typedef array<int32> : INT32_ARRAY
+
+#相当于结构体
+datatype(CDesc)
+{
+	int8 n_type		= 0
+	string str_desc = ""
+	INT32_ARRAY arr_fd 
+	INT8_ARRAY arr_status
+}
+
+#消息ID和消息体关联
+var	SAMPLE_MSGID = 0xff000001
+message(CSamplePacket, SAMPLE_MSGID)
+{
+	uint8 msg_type = 0
+	CDesc msg_desc
+}

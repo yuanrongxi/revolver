@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BDA4A7E5-409B-49EC-BACD-55553920D8DB}</ProjectGuid>
+    <RootNamespace>revolver</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>..\..\lib\debug\revolver.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>..\..\lib\release\revolver.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="aes.c" />
+    <ClCompile Include="base64.cpp" />
+    <ClCompile Include="base_epoll_reactor.cpp" />
+    <ClCompile Include="base_event_handler.cpp" />
+    <ClCompile Include="base_file.cpp" />
+    <ClCompile Include="base_hex_string.cpp" />
+    <ClCompile Include="base_inet_addr.cpp" />
+    <ClCompile Include="base_log.cpp" />
+    <ClCompile Include="base_log_thread.cpp" />
+    <ClCompile Include="base_nodes_load.cpp" />
+    <ClCompile Include="base_select_reactor.cpp" />
+    <ClCompile Include="base_sock_acceptor.cpp" />
+    <ClCompile Include="base_sock_connector.cpp" />
+    <ClCompile Include="base_sock_dgram.cpp" />
+    <ClCompile Include="base_sock_stream.cpp" />
+    <ClCompile Include="base_socket.cpp" />
+    <ClCompile Include="base_thread.cpp" />
+    <ClCompile Include="base_timer_value.cpp" />
+    <ClCompile Include="crc_crypt.c" />
+    <ClCompile Include="date_time.cpp" />
+    <ClCompile Include="gettimeofday.cpp" />
+    <ClCompile Include="lzo_object.cpp" />
+    <ClCompile Include="md5c.c" />
+    <ClCompile Include="minilzo.c" />
+    <ClCompile Include="timer_ring.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aes.h" />
+    <ClInclude Include="base64.h" />
+    <ClInclude Include="base_bin_stream.h" />
+    <ClInclude Include="base_block_buffer.h" />
+    <ClInclude Include="base_epoll_reactor.h" />
+    <ClInclude Include="base_event_handler.h" />
+    <ClInclude Include="base_file.h" />
+    <ClInclude Include="base_guard.h" />
+    <ClInclude Include="base_hex_string.h" />
+    <ClInclude Include="base_inet_addr.h" />
+    <ClInclude Include="base_log.h" />
+    <ClInclude Include="base_log_thread.h" />
+    <ClInclude Include="base_namespace.h" />
+    <ClInclude Include="base_nodes_load.h" />
+    <ClInclude Include="base_os.h" />
+    <ClInclude Include="base_packet.h" />
+    <ClInclude Include="base_queue.h" />
+    <ClInclude Include="base_reactor.h" />
+    <ClInclude Include="base_reactor_instance.h" />
+    <ClInclude Include="base_select_reactor.h" />
+    <ClInclude Include="base_singleton.h" />
+    <ClInclude Include="base_sock_acceptor.h" />
+    <ClInclude Include="base_sock_connector.h" />
+    <ClInclude Include="base_sock_dgram.h" />
+    <ClInclude Include="base_sock_stream.h" />
+    <ClInclude Include="base_socket.h" />
+    <ClInclude Include="base_thread.h" />
+    <ClInclude Include="base_thread_mutex.h" />
+    <ClInclude Include="base_timer_value.h" />
+    <ClInclude Include="base_typedef.h" />
+    <ClInclude Include="crc_crypt.h" />
+    <ClInclude Include="date_time.h" />
+    <ClInclude Include="gettimeofday.h" />
+    <ClInclude Include="lzo_object.h" />
+    <ClInclude Include="md5.h" />
+    <ClInclude Include="minilzo.h" />
+    <ClInclude Include="object_pool.h" />
+    <ClInclude Include="timer_node_t.h" />
+    <ClInclude Include="timer_queue_t.h" />
+    <ClInclude Include="timer_ring.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="base_bin_stream.inl" />
+    <None Include="timer_node_t.inl" />
+    <None Include="timer_queue_t.inl" />
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
