@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{493b4646-ad2d-44d4-a547-dd0d37bc126b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\block_handler">
+      <UniqueIdentifier>{9b2e7401-05a1-4312-95a5-24f2f74d9dee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\line_handler">
+      <UniqueIdentifier>{44c1dfc6-3891-4478-99bb-ea60b96c5dc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\error_handler">
+      <UniqueIdentifier>{79d5bafc-9a0a-4e8f-923e-2778d279869a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\translator">
+      <UniqueIdentifier>{5188cb11-6c3c-41b2-b071-2c14609ed1ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\line_handler">
+      <UniqueIdentifier>{6c1ade0d-5fc2-4cf3-a3dd-9254e18053ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\block_handler">
+      <UniqueIdentifier>{1e7f4411-b819-4b6a-a07d-2364ad292378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{34e017f7-6a89-4203-9ec9-1dd5648dca1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\error_handler">
+      <UniqueIdentifier>{1ab5ecca-97e2-4dd6-a353-6f565508151b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\translator">
+      <UniqueIdentifier>{a6b6c95c-60bb-4e1a-a8dd-ca0c3adc7707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="file_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="global.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="basedefine.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="singleton.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="base_block_handler.cpp">
+      <Filter>Source Files\block_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="datatype_handler.cpp">
+      <Filter>Source Files\block_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="filetitle_handler.cpp">
+      <Filter>Source Files\block_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="memdesc_handler.cpp">
+      <Filter>Source Files\block_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="message_handler.cpp">
+      <Filter>Source Files\block_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="namespace_handler.cpp">
+      <Filter>Source Files\block_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="typedef_handler.cpp">
+      <Filter>Source Files\block_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="var_handler.cpp">
+      <Filter>Source Files\block_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="base_line_handler.cpp">
+      <Filter>Source Files\line_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="base_error.cpp">
+      <Filter>Source Files\error_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="as_translator.cpp">
+      <Filter>Source Files\translator</Filter>
+    </ClCompile>
+    <ClCompile Include="base_translator.cpp">
+      <Filter>Source Files\translator</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp_translator.cpp">
+      <Filter>Source Files\translator</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_translator.cpp">
+      <Filter>Source Files\translator</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="file_handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="base_line_handler.h">
+      <Filter>Header Files\line_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="base_block_handler.h">
+      <Filter>Header Files\block_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="datatype_handler.h">
+      <Filter>Header Files\block_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="filetitle_handler.h">
+      <Filter>Header Files\block_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="memdesc_handler.h">
+      <Filter>Header Files\block_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="message_handler.h">
+      <Filter>Header Files\block_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="namespace_handler.h">
+      <Filter>Header Files\block_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="typedef_handler.h">
+      <Filter>Header Files\block_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="var_handler.h">
+      <Filter>Header Files\block_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="basedefine.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="singleton.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="base_error.h">
+      <Filter>Header Files\error_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="as_translator.h">
+      <Filter>Header Files\translator</Filter>
+    </ClInclude>
+    <ClInclude Include="base_translator.h">
+      <Filter>Header Files\translator</Filter>
+    </ClInclude>
+    <ClInclude Include="cpp_translator.h">
+      <Filter>Header Files\translator</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_translator.h">
+      <Filter>Header Files\translator</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
