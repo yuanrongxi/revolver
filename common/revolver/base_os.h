@@ -4,6 +4,7 @@
 #include "base_typedef.h"
 #include <time.h>
 #include <string>
+#include <stdio.h>
 
 #define INVALID_HANDLER		-1
 

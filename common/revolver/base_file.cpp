@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "base_file.h"
 
 BASE_NAMESPACE_BEGIN_DECL
