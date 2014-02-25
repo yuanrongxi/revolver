@@ -22,4 +22,4 @@ FILE(GLOB sources_cpp "../../test/rudp_reciver/rudp_reciver/*.cpp")
 
 # targets
 ADD_EXECUTABLE(rudprecv ${sources_cpp})
-TARGET_LINK_LIBRARIES(rudprecv silencer core rudp revolver pthread tcmalloc)
+TARGET_LINK_LIBRARIES(rudprecv silencer core rudp revolver pthread)

@@ -21,4 +21,4 @@ FILE(GLOB sources_cpp "../../test/test/*.cpp")
 
 # targets
 ADD_EXECUTABLE(test ${sources_cpp})
-TARGET_LINK_LIBRARIES(test silencer core revolver pthread tcmalloc)
+TARGET_LINK_LIBRARIES(test silencer core revolver pthread)
