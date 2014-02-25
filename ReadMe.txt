@@ -7,7 +7,7 @@
 		+rudp		revolver的rudp实现代码目录
 		+silencer	revolver的服务器扩展代码目录
 	daemon			精灵服务器代码目录
-	protocol_analysis	def协议翻译程序代码目录（由金山朱瑞文提供）
+	protocol_analysis	def协议翻译程序代码目录（由金山zhurw提供）
 	test			测试代码目录（所有相关的模块测试例子、服务器框架例子等）
 
 编译说明:
