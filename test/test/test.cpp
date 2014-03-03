@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 	//test_timer_value();
 	//test_pool();
 	//test_time_node();
-	//test_timer_queue();
+	test_timer_queue();
 	//test_packet();
 	//test_block_buffer();
 	//test_singleton();
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
 	//test_base_file();
 	//test_json();
 	//test_conn_hash();
-	test_node_load();
+	//test_node_load();
 
 	LOG_DESTROY(); //·ÀÖ¹LOGÄÚ´æĞ¹Â¶
 	return 0;

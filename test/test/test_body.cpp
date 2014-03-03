@@ -178,17 +178,30 @@ public:
 	TIMEQUEUE* tq_;
 };
 
+int32_t		g_count = 0;
+uint64_t	g_ts = 0;
+
 int32_t CTest_Event_Handler::handle_timeout(const void *act, uint32_t timer_id)
 {
+	uint64_t ts = CBaseTimeValue::get_time_value().msec();
 	STimerParam* param = (STimerParam *)act;
-	std::cout << "timer id = "<< timer_id << " ,timer type = " << param->type << ", value = " << param->value << std::endl;
+	//std::cout << "timer id = "<< timer_id << " ,timer type = " << param->type << ", value = " << param->value << "ts = " << ts << std::endl;
 	delete param;
+
+	++g_count;
+
+	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
+	if(cur_ts > g_ts + 1000)
+	{
+		std::cout << "timer count = " << g_count << endl;
+		g_ts = cur_ts;
+		g_count = 0;
+	}
 
 	if(tq_ != NULL)
 	{
-		insert_timer(this,2000, *tq_);
+		insert_timer(this, 240000, *tq_);
 	}
-
 	return 0;
 }
 
@@ -237,12 +250,13 @@ void test_timer_queue()
 	CBaseTimeValue  begin_timer = CBaseTimeValue::get_time_value();
 	//for(int i = 0; i < 1000000; i ++)
 	{
-		insert_timer(&handler, rand()%4000, timer_queue);
+		insert_timer(&handler, (rand() % 240) * 1000, timer_queue);
 	}
 	CBaseTimeValue stop_timer = CBaseTimeValue::get_time_value();
 	stop_timer = stop_timer - begin_timer;
 	std::cout << "insert 1000000 timer, delay = " << stop_timer.msec() << " MS" << std::endl;
 
+	g_ts = stop_timer.get_time_value().msec();
 #if _DEBUG
 	//timer_queue.set_ring_id();
 #endif
@@ -251,7 +265,7 @@ void test_timer_queue()
 	while(1)
 	{
 		uint32_t ms = timer_queue.expire();
-		usleep(ms * 1000);
+		usleep((1000));
 
 		//if((rand() % 255) < 10)
 		//{

@@ -177,29 +177,28 @@ void test_message_call2()
 	BinStream data_strm;
 	data_strm << test_pack;
 
-	packet.data_.resize(data_strm.data_size());
-	const void * pdata = (const void *)packet.data_.data();
-	memcpy((void *)pdata, data_strm.get_rptr(), data_strm.data_size());
-
 	packet.server_type_ = TEST_SERVER_TYPE;
 	packet.msg_id_ = TEST_MSG;
 	packet.server_id_ = 10;
-	MSG_PROCESSOR()->on_message(packet, NULL);
+	MSG_PROCESSOR()->on_message(packet, data_strm, NULL);
 
+	data_strm.rewind(false);
 	packet.server_type_ = TEST_SERVER_TYPE + 1;
 	packet.msg_id_ = TEST_MSG2;
 	packet.server_id_ = 22;
-	MSG_PROCESSOR()->on_message(packet, NULL);
+	MSG_PROCESSOR()->on_message(packet, data_strm, NULL);
 
+	data_strm.rewind(false);
 	packet.server_type_ = TEST_SERVER_TYPE + 2;
 	packet.msg_id_ = TEST_MSG3;
 	packet.server_id_ = 23;
-	MSG_PROCESSOR()->on_message(packet, NULL);
+	MSG_PROCESSOR()->on_message(packet, data_strm, NULL);
 
+	data_strm.rewind(false);
 	packet.server_type_ = TEST_SERVER_TYPE + 3;
 	packet.msg_id_ = TEST_MSG4;
 	packet.server_id_ = 24;
-	MSG_PROCESSOR()->on_message(packet, NULL);
+	MSG_PROCESSOR()->on_message(packet, data_strm, NULL);
 }
 
 void test_core_udp()
@@ -241,9 +240,7 @@ void test_core_udp()
 	BinStream data_strm, bin_strm;
 	data_strm << test_pack;
 
-	packet.data_.resize(data_strm.data_size());
-	const void * pdata = (const void *)packet.data_.data();
-	memcpy((void *)pdata, data_strm.get_rptr(), data_strm.data_size());
+	packet.set_body(test_pack);
 
 	packet.server_type_ = TEST_SERVER_TYPE;
 	packet.msg_id_ = TEST_MSG5;
