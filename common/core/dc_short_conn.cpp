@@ -305,8 +305,11 @@ int32_t ShortConnection::handle_close(BASE_HANDLER handle, ReactorMask close_mas
 
 int32_t ShortConnection::handle_input(BASE_HANDLER handle)
 {
+	CCorePacket	recv_packet;
+
 	while(true) 
 	{
+		recv_packet.body_ptr_ = NULL;
 		if(rbuffer_.remaining_length() == 0) //扩大TCP接收缓冲区,防止缓冲区太小造成收包异常
 		{
 			if(rbuffer_.length() < MAX_BUFFER_SIZE)
@@ -322,8 +325,6 @@ int32_t ShortConnection::handle_input(BASE_HANDLER handle)
 
 		if(rc > 0)
 		{
-			CCorePacket		recv_packet;
-
 			THROTTLER()->add_tcp_packet(rc, false);
 
 			bool split_flag = true;
@@ -341,7 +342,7 @@ int32_t ShortConnection::handle_input(BASE_HANDLER handle)
 						return -2;
 					}
 
-					if(process(recv_packet) != 0)
+					if(process(recv_packet, istrm_) != 0)
 						return 0;
 				}
 				else if(split_ret < 0)
@@ -433,7 +434,7 @@ void ShortConnection::check_connecting_state()
 	}
 }
 
-int32_t ShortConnection::process(CCorePacket &packet)
+int32_t ShortConnection::process(CCorePacket &packet, BinStream& istrm)
 {
 	uint32_t ret = 0;
 	switch(packet.msg_type_)
@@ -443,7 +444,7 @@ int32_t ShortConnection::process(CCorePacket &packet)
 		timer_count_ = 0;
 
 		if(msg_proc_ != NULL)
-			msg_proc_->on_message(packet, this);
+			msg_proc_->on_message(packet, istrm, this);
 		break;
 
 	case CORE_PING:

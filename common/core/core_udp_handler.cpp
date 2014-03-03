@@ -130,7 +130,7 @@ void CoreUDPHandler::attach(IReciver* reciver)
 {
 	if(reciver != NULL)
 	{
-		for(int32_t i = 0; i < recivers_.size(); ++i)
+		for(size_t i = 0; i < recivers_.size(); ++i)
 		{
 			if(recivers_[i] == reciver)
 			{
@@ -158,7 +158,7 @@ int32_t CoreUDPHandler::handle_input(BASE_HANDLER handle)
 			uint8_t packet_type = 0;
 			bin_strm_ >> packet_type;
 
-			for(int32_t i = 0; i < recivers_.size(); ++i)
+			for(size_t i = 0; i < recivers_.size(); ++i)
 			{
 				if(process(recivers_[i], packet_type, bin_strm_, remote_addr) == 0)
 				{

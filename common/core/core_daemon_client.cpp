@@ -144,7 +144,7 @@ void CDaemonClient::send_daemon_stun()
 
 	Daemon_Stun_Ping ping;
 	ping.optype_ = 0;
-	packet.set_data(ping);
+	packet.set_body(ping);
 
 	daemon_udp_.send(packet, daemon_tel_addr_);
 
@@ -165,7 +165,7 @@ void CDaemonClient::star_daemon_tcp()
 	register_req.net_type_ = SERVER_NET_TYPE;
 	register_req.tel_addr_ = TEL_IPADDR;
 	register_req.cnc_addr_ = CNC_IPADDR;
-	packet.set_data(register_req);
+	packet.set_body(register_req);
 
 	SendDispathByID(packet, daemon_sid_);
 	 
@@ -340,7 +340,7 @@ int32_t CDaemonClient::send_node_state(const string& node_info)
 
 		Daemon_Node_State req;
 		req.node_state_ = node_info;
-		packet.set_data(req);
+		packet.set_body(req);
 
 		SendDispathByID(packet, daemon_sid_);
 

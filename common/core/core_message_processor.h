@@ -33,9 +33,9 @@ public:
 
 	void regist_target(ICmdTarget* target);
 	//所有TCP消息入口
-	int32_t on_message(CCorePacket &packet, CConnection *connection);
+	int32_t on_message(CCorePacket &packet, BinStream& istrm, CConnection *connection);
 	//所有UDP消息入口
-	int32_t on_message(CCorePacket &packet, const Inet_Addr& remote_addr);
+	int32_t on_message(CCorePacket &packet, BinStream& istrm, const Inet_Addr& remote_addr);
 
 	//处理UDP消息
 	int32_t reciver(BinStream& bin_strm, const Inet_Addr& remote_addr);
@@ -50,8 +50,8 @@ public:
 	int32_t on_disconnect(uint32_t server_id, CConnection* conn);
 
 protected:
-	int32_t	on_data(uint32_t msg_id, uint32_t server_id, const string& msg_data,  CConnection *connection);
-	int32_t on_data(uint32_t msg_id, uint32_t server_id, const string& msg_data, const Inet_Addr& remote_addr);
+	int32_t	on_data(uint32_t msg_id, uint32_t server_id, BinStream& istrm,  CConnection *connection);
+	int32_t on_data(uint32_t msg_id, uint32_t server_id, BinStream& istrm, const Inet_Addr& remote_addr);
 
 	//消息引射器数组尽量保持在32个以下
 	Processor_Array	processors_;

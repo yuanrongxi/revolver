@@ -116,9 +116,9 @@ public:
 	int32_t			send(const string& bin_stream);
 
 protected:
-	int32_t			process(CCorePacket &packet);
+	int32_t			process(CCorePacket &packet, BinStream& istrm);
 	void			process_ping(const CCorePacket &packet);
-	int32_t			process_handshake(const CCorePacket &packet);
+	int32_t			process_handshake(const CCorePacket &packet, BinStream& istrm);
 
 	void			send_ping();
 	void			send_handshake();

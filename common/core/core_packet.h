@@ -52,7 +52,7 @@ public:
 		server_type_	= 0;
 		msg_id_			= 0;
 		msg_type_		= CORE_REQUEST;
-		data_			= "";
+		body_ptr_		= NULL;
 	};
 
 	~CCorePacket()
@@ -71,13 +71,12 @@ public:
 		server_type_	= packet.server_type_;
 		msg_id_			= packet.msg_id_;
 		msg_type_		= packet.msg_type_;
-		data_			= packet.data_;
+		body_ptr_		= packet.body_ptr_;
 
 		return *this;
 	}
 
-	void		set_data(CBasePacket& packet, bool zlib = true);
-	void		get_data(CBasePacket& packet);
+	void		set_body(CBasePacket& packet);
 
 protected:
 	//编码解码函数
@@ -97,11 +96,46 @@ protected:
 	}
 	
 public:
-	uint32_t	server_id_;		//服务器ID
-	uint8_t		server_type_;	//服务器类型,0表示客户端
-	uint32_t	msg_id_;		//消息ID
-	uint8_t		msg_type_;		//消息类型，例如独立的PING PONG消息，握手消息，应用层消息等
-	string		data_;			//消息内容
+	uint32_t		server_id_;		//服务器ID
+	uint8_t			server_type_;	//服务器类型,0表示客户端
+	uint32_t		msg_id_;		//消息ID
+	uint8_t			msg_type_;		//消息类型，例如独立的PING PONG消息，握手消息，应用层消息等
+	CBasePacket*	body_ptr_;		//消息内容
+};
+
+class HandShakeBody : public CBasePacket
+{
+public:
+	HandShakeBody()
+	{
+
+	};
+
+	~HandShakeBody()
+	{
+
+	};
+
+	virtual void release_self()
+	{
+		delete this;
+	};
+
+protected:
+	//编码解码函数
+	virtual void	Pack(BinStream& strm) const
+	{
+		strm << digest_data;
+	};
+
+	//解码函数
+	virtual void	UnPack(BinStream& strm)
+	{
+		strm >> digest_data;
+	};
+
+public:
+	string digest_data;	//摘要信息
 };
 
 #define INIT_CORE_REQUEST(p, MSGID)\

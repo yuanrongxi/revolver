@@ -153,7 +153,7 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 void RUDPSendBuffer::on_nack(uint64_t base_seq, const LossIDArray& loss_ids)
 {
 	//增加丢包信息
-	for(int32_t i = 0; i < loss_ids.size(); ++i)
+	for(size_t i = 0; i < loss_ids.size(); ++i)
 	{
 		if(loss_ids[i] + base_seq < cwnd_max_seq_)
 		{
@@ -316,7 +316,7 @@ uint32_t RUDPSendBuffer::get_bandwidth()
 	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
 	if(cur_ts > bandwidth_ts_)
 	{
-		ret = bandwidth_ * 1000 / (cur_ts - bandwidth_ts_);
+		ret = static_cast<uint32_t>(bandwidth_ * 1000 / (cur_ts - bandwidth_ts_));
 	}
 	else
 	{

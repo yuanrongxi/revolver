@@ -71,7 +71,7 @@ Inet_Addr& Inet_Addr::operator =(const std::string &addr_str)
 		return *this;
 	}
 	
-	set_port(strtoul(addr_str.substr(pos + 1).c_str(), NULL, 10));
+	set_port(static_cast<uint16_t>(strtoul(addr_str.substr(pos + 1).c_str(), NULL, 10)));
 	set_ip(addr_str.substr(0, pos));
 
 	return *this;

@@ -6,11 +6,9 @@
 BASE_NAMESPACE_BEGIN_DECL
 
 #define UNINT32_MAX  4294967296
-#ifdef WIN32
-#define SELECT_DELAY 20
-#else
-#define SELECT_DELAY 10
-#endif
+
+#define SELECT_DELAY 5
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<class HANDLER, class FUNCTOR, class LOCK>
@@ -116,13 +114,13 @@ uint32_t CTimerQueue_T<HANDLER, FUNCTOR, LOCK>::schedule(HANDLER handler,
 		
 		CBaseTimeValue cur_timer = CBaseTimeValue::get_time_value();
 
-		uint64_t distance = delay; //直接以当前时间作为坐标，相差一个扫描间隔20MS
+		uint64_t distance = delay / SELECT_DELAY; //直接以当前时间作为坐标，相差一个扫描间隔20MS
 		if(cur_timer > start_time_)
-			distance = cur_timer.msec() - start_time_.msec() + delay;
+			distance = (cur_timer.msec() - start_time_.msec() + delay) / SELECT_DELAY;
 
 		distance = distance % (UNINT32_MAX);
 		
-		timer_obj->set(handler, act, (uint32_t)distance, interval, timer_id);
+		timer_obj->set(handler, act, (uint32_t)(core_max(distance, 1)), interval, timer_id);
 
 		heap_[timer_id] = timer_obj;
 
@@ -173,12 +171,12 @@ uint32_t CTimerQueue_T<HANDLER, FUNCTOR, LOCK>::reset_timer(uint32_t timer_id, u
 		timer_obj->set_internal(interval);
 
 		CBaseTimeValue cur_timer = CBaseTimeValue::get_time_value();
-		uint64_t distance = delay; //直接以当前时间作为坐标，相差一个扫描间隔20MS
+		uint64_t distance = delay / SELECT_DELAY; //直接以当前时间作为坐标，相差一个扫描间隔20MS
 		if(cur_timer > start_time_)
-			distance = cur_timer.msec() - start_time_.msec() + delay;
+			distance = (cur_timer.msec() - start_time_.msec() + delay) / SELECT_DELAY;
 
 		distance = distance % (UNINT32_MAX);
-		timer_obj->set_time_stamp(distance);
+		timer_obj->set_time_stamp(core_max(distance, 1));
 
 		insert_node(timer_obj);
 
@@ -200,11 +198,13 @@ uint32_t CTimerQueue_T<HANDLER, FUNCTOR, LOCK>::expire()
 	
 	if(cur_timer > prev_time_)
 	{
-		uint32_t scale = static_cast<uint32_t>(cur_timer.msec() - prev_time_.msec());
-		ret = revolver(scale);
+		uint32_t scale = static_cast<uint32_t>((cur_timer.msec() - prev_time_.msec()) / SELECT_DELAY);
+		if(scale > 0)
+		{
+			ret = revolver(scale);
+			prev_time_ = cur_timer;
+		}
 	}
-	
-	prev_time_ = cur_timer;
 
 	return ret;
 }

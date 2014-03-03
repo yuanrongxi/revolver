@@ -17,7 +17,7 @@ public:
 
 	virtual int32_t		on_short_connected(ShortConnection *conn) = 0;
 	virtual int32_t		on_short_disconnected(ShortConnection *conn) = 0;
-	virtual int32_t		on_message(CCorePacket &packet, ShortConnection* conn) = 0;
+	virtual int32_t		on_message(CCorePacket &packet, BinStream& istrm, ShortConnection* conn) = 0;
 };
 
 class ShortConnection : public CEventHandler
@@ -71,7 +71,7 @@ private:
 
 	int32_t				heartbeat();
 	void				check_connecting_state();
-	int32_t				process(CCorePacket &packet);
+	int32_t				process(CCorePacket &packet, BinStream& istrm);
 	void				send_ping();
 
 protected:

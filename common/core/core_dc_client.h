@@ -92,7 +92,7 @@ public:
 
 	int32_t			on_short_connected(ShortConnection *conn);
 	int32_t			on_short_disconnected(ShortConnection *conn);
-	int32_t			on_message(CCorePacket &packet, ShortConnection* conn);
+	int32_t			on_message(CCorePacket &packet, BinStream& istrm, ShortConnection* conn);
 	
 protected:
 	uint32_t		set_timer(CoreDCParam* param, PHPExcRequst* req, uint32_t delay = 40000);

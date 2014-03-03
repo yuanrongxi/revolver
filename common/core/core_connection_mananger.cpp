@@ -42,7 +42,7 @@ void Connection_Manager::close_all()
 		}
 	}
 
-	for(int32_t i = 0; i < conn_list.size(); i ++)
+	for(size_t i = 0; i < conn_list.size(); i ++)
 	{
 		conn_list[i]->extern_close();
 	}
@@ -118,10 +118,8 @@ bool Connection_Manager::on_add_connection(CConnection* conn)
 		
 			for(StreamList::iterator list_it = it->second.strms.begin(); list_it != it->second.strms.end(); ++list_it)
 			{
-				if(list_it->stream_type == ePacketData)
-					conn->send(list_it->packet);
-				else
-					conn->send(list_it->data);
+				if(!list_it->empty())
+					conn->send(*list_it);
 			}
 
 			it->second.strms.clear();
@@ -210,7 +208,7 @@ void Connection_Manager::get_address_pair(const Server_Node_t& node, Inet_Addr& 
 	}
 }
 
-void Connection_Manager::connecting_by_id(CoreStreamData& strm_data, uint32_t sid)
+void Connection_Manager::connecting_by_id(const string& data, uint32_t sid)
 {
 	Server_Node_Map::iterator it = nodes_.find(sid);
 	if(it != nodes_.end())
@@ -254,16 +252,9 @@ void Connection_Manager::connecting_by_id(CoreStreamData& strm_data, uint32_t si
 		}
 
 		if(conn->get_state() != CConnection::CONN_CONNECTED) //处于连接状态，缓冲到LIST中
-		{
-			it->second.strms.push_back(strm_data);
-		}
+			it->second.strms.push_back(data);
 		else
-		{
-			if(strm_data.stream_type == ePacketData)
-				conn->send(strm_data.packet);
-			else
-				conn->send(strm_data.data);
-		}
+			conn->send(data);
 	}
 	else
 	{
@@ -290,10 +281,14 @@ void Connection_Manager::send_dispatch_by_id(CCorePacket& packet, uint32_t sid)
 	CConnection* conn = get_connection(sid);
 	if(conn == NULL)
 	{
-		CoreStreamData strm;
-		strm.packet = packet;
-		strm.stream_type = ePacketData;
-		connecting_by_id(strm, sid);
+		GAIN_BINSTREAM(strm);
+
+		string data;
+		*strm << packet;
+		strm->bin_to_string(data);
+		connecting_by_id(data, sid);
+
+		RETURN_BINSTREAM(strm);
 	}
 	else
 	{
@@ -305,17 +300,9 @@ void Connection_Manager::send_dispatch_by_id(const string& data, uint32_t sid)
 {
 	CConnection* conn = get_connection(sid);
 	if(conn == NULL)
-	{
-		CoreStreamData strm;
-		strm.data = data;
-		strm.stream_type = eStringData;
-
-		connecting_by_id(strm, sid);
-	}
+		connecting_by_id(data, sid);
 	else
-	{
 		conn->send(data);
-	}
 }
 
 const Inet_Addr& Connection_Manager::get_udp_remote_addr(const Server_Node_t& node)

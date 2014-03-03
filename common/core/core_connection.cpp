@@ -405,6 +405,8 @@ int32_t CConnection::handle_input(BASE_HANDLER handle)
 
 	while(true) 
 	{
+		recv_packet.body_ptr_ = NULL;
+
 		if(rbuffer_.remaining_length() == 0) //扩大TCP接收缓冲区,防止缓冲区太小造成收包异常
 		{
 			if(rbuffer_.length() < MAX_BUFFER_SIZE)
@@ -437,7 +439,7 @@ int32_t CConnection::handle_input(BASE_HANDLER handle)
 						return -2;
 					}
 
-					if(process(recv_packet) != 0)
+					if(process(recv_packet, istrm_) != 0)
 						return 0;
 				}
 				else if(split_ret < 0)
@@ -529,14 +531,14 @@ void CConnection::check_connecting_state()
 	}
 }
 
-int32_t CConnection::process(CCorePacket &packet)
+int32_t CConnection::process(CCorePacket &packet, BinStream& istrm)
 {
 	uint32_t ret = 0;
 	switch(packet.msg_type_)
 	{
 	case CORE_REQUEST:
 		//消息处理
-		MSG_PROCESSOR()->on_message(packet, this);
+		MSG_PROCESSOR()->on_message(packet, istrm, this);
 		timer_count_ = 0;
 		break;
 
@@ -552,14 +554,14 @@ int32_t CConnection::process(CCorePacket &packet)
 		break;
 
 	case CORE_HANDSHAKE:
-		ret = process_handshake(packet);
+		ret = process_handshake(packet, istrm);
 		break;
 	}
 
 	return ret; 
 }
 
-int32_t CConnection::process_handshake(const CCorePacket &packet)
+int32_t CConnection::process_handshake(const CCorePacket &packet, BinStream& istrm)
 {
 	server_id_ = packet.server_id_;
 	server_type_ = packet.server_type_;
@@ -567,14 +569,24 @@ int32_t CConnection::process_handshake(const CCorePacket &packet)
 	//对服务器进行校验
 	/*if(server_type_ > eClient && SERVER_TYPE > eClient)
 	{
-		string digest_data;
-		generate_digest(server_id_, server_type_, digest_data);
-		//握手非法摘要
-		if( digest_data != packet.data_)
+		HandShakeBody body;
+		try{
+			istrm >> body;
+			string digest_data;
+			generate_digest(server_id_, server_type_, digest_data);
+			//握手非法摘要
+			if( digest_data != body.digest_data)
+			{
+				CORE_WARNING("unsuited server connection!!");
+				this->close();
+				return -1;
+			}
+		}
+		catch(...)
 		{
-			CORE_WARNING("unsuited server connection!!");
+			CORE_FATAL("parse core packet error!!");
 			this->close();
-			return -1;
+			return -2;
 		}
 	}*/
 
@@ -659,11 +671,11 @@ void CConnection::send_handshake()
 {
 	CORE_DEBUG("send TCP HANDSHAKE, conn = " << this);
 	INIT_CORE_HANDSHAKE(packet);
+	HandShakeBody body;
 	if(server_type_ > eClient)
-	{
-		//产生一个握手MD5摘要
-		generate_digest(SERVER_ID, SERVER_TYPE, packet.data_);
-	}
+		generate_digest(SERVER_ID, SERVER_TYPE, body.digest_data);
+
+	packet.set_body(body);
 
 	send(packet);
 

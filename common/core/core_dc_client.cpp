@@ -277,7 +277,7 @@ int32_t CCoreDCClient::on_short_connected(ShortConnection *conn)
 		if(it != timer_ids_.end() && it->second != NULL)
 		{
 			INIT_CORE_REQUEST(packet, PHP_EXC_REQUEST);
-			packet.set_data(*(it->second));
+			packet.set_body(*(it->second));
 
 			conn->send(packet);
 		}
@@ -327,20 +327,15 @@ int32_t CCoreDCClient::on_short_disconnected(ShortConnection *conn)
 	return 0;
 }
 
-int32_t CCoreDCClient::on_message(CCorePacket &packet, ShortConnection* conn)
+int32_t CCoreDCClient::on_message(CCorePacket &packet, BinStream& istrm, ShortConnection* conn)
 {
 	if(packet.msg_id_ == PHP_EXC_RESPONSE)
 	{
-		GAIN_BINSTREAM(strm);
-
-		*strm = packet.data_;
 		PHPExcResponse res;
-		*strm >> res;
+		istrm >> res;
 		
 		//消息处理
 		on_php_response(&res, 0);
-
-		RETURN_BINSTREAM(strm);
 	}
 
 	return 0;

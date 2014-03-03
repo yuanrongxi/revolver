@@ -29,8 +29,8 @@ CBaseTimeValue::~CBaseTimeValue()
 
 void CBaseTimeValue::set(time_t s, time_t us)
 {
-	tv_.tv_sec = s;
-	tv_.tv_usec = us;
+	tv_.tv_sec = static_cast<long>(s);
+	tv_.tv_usec = static_cast<long>(us);
 }
 
 void CBaseTimeValue::set(const struct timeval &tv)
@@ -116,8 +116,8 @@ CBaseTimeValue& CBaseTimeValue::operator -=(const CBaseTimeValue& time_value)
 		uint64_t us2 = time_value.to_usec();
 		us = us - us2;
 
-		tv_.tv_sec = us / ONE_SECOND_IN_USECS;
-		tv_.tv_usec = us % ONE_SECOND_IN_USECS;
+		tv_.tv_sec = static_cast<long>(us / ONE_SECOND_IN_USECS);
+		tv_.tv_usec = static_cast<long>(us % ONE_SECOND_IN_USECS);
 	}
 	return *this;
 }
@@ -140,8 +140,8 @@ CBaseTimeValue& CBaseTimeValue::operator ++()
 {
 	uint64_t us = this->to_usec();
 	us ++;
-	tv_.tv_sec = us / ONE_SECOND_IN_USECS;
-	tv_.tv_usec = us % ONE_SECOND_IN_USECS;
+	tv_.tv_sec = static_cast<long>(us / ONE_SECOND_IN_USECS);
+	tv_.tv_usec = static_cast<long>(us % ONE_SECOND_IN_USECS);
 
 	return *this;
 }
@@ -152,8 +152,8 @@ CBaseTimeValue& CBaseTimeValue::operator --()
 	if(us > 0)
 		us --;
 
-	tv_.tv_sec = us / ONE_SECOND_IN_USECS;
-	tv_.tv_usec = us % ONE_SECOND_IN_USECS;
+	tv_.tv_sec = static_cast<long>(us / ONE_SECOND_IN_USECS);
+	tv_.tv_usec = static_cast<long>(us % ONE_SECOND_IN_USECS);
 
 	return *this;
 }

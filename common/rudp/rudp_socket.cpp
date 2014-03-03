@@ -763,7 +763,7 @@ void RUDPSocket::process_syn2(BinStream& strm, const Inet_Addr& remote_addr)
 
 		//¼ÆËãRTT
 		uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
-		uint32_t rtt = now_ts > syn2.remote_ts_ ? (now_ts - syn2.remote_ts_) : 5;
+		uint32_t rtt = static_cast<uint32_t>(now_ts > syn2.remote_ts_ ? (now_ts - syn2.remote_ts_) : 5);
 		recv_buffer_.set_send_last_ack_ts(now_ts);
 		ccc_.set_rtt(rtt);
 
@@ -804,7 +804,7 @@ void RUDPSocket::process_syn_ack(BinStream& strm, const Inet_Addr& remote_addr)
 	PARSE_RUDP_MESSAGE(strm, RUDPSyn2AckPacket, ack, "parse syn_ack failed!");
 	//¼ÆËãRTT
 	uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
-	uint32_t rtt = now_ts > ack.remote_ts_ ? (now_ts - ack.remote_ts_) : 5;
+	uint32_t rtt = static_cast<uint32_t>(now_ts > ack.remote_ts_ ? (now_ts - ack.remote_ts_) : 5);
 	ccc_.set_rtt(rtt);
 
 	RUDP_INFO("rtt = " << rtt << ", rudp socket id = " << rudp_id_);
@@ -889,7 +889,7 @@ void RUDPSocket::process_keeplive_ack(BinStream& strm, const Inet_Addr& remote_a
 
 	//¼ÆËãRTT
 	uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
-	uint32_t rtt = now_ts > ack.timestamp_ ? (now_ts - ack.timestamp_) : 5;
+	uint32_t rtt = static_cast<uint32_t>(now_ts > ack.timestamp_ ? (now_ts - ack.timestamp_) : 5);
 	ccc_.set_rtt(rtt);
 
 	RUDP_INFO("rtt = " << rtt << ", rudp socket id = " << rudp_id_);

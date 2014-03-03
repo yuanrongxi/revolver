@@ -214,7 +214,7 @@ BaseLogManager::BaseLogManager()
 BaseLogManager::~BaseLogManager()
 {
 	//ÊÍ·ÅÎÄ¼ş
-	for(int32_t i = 0; i < m_log_vector.size(); ++ i)
+	for(size_t i = 0; i < m_log_vector.size(); ++ i)
 	{
 		delete m_log_vector[i];
 	}

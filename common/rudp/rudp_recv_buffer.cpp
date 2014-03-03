@@ -155,7 +155,7 @@ bool RUDPRecvBuffer::check_loss(uint64_t now_timer, uint32_t rtc)
 		}
 		else if(it->second + rtc / 2 < now_timer)//丢失的报文，并且在重发周期内
 		{
-			ids.push_back(it->first - first_seq_);
+			ids.push_back(static_cast<uint32_t>(it->first - first_seq_));
 			loss_map_.erase(it ++);
 
 			ret = true;
@@ -239,7 +239,7 @@ uint32_t RUDPRecvBuffer::get_bandwidth()
 	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
 	if(cur_ts > bandwidth_ts_)
 	{
-		ret = bandwidth_ * 1000 / (cur_ts - bandwidth_ts_);
+		ret = static_cast<uint32_t>(bandwidth_ * 1000 / (cur_ts - bandwidth_ts_));
 	}
 	else
 	{

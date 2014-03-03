@@ -30,20 +30,8 @@ class ICoreServerNotify;
 typedef ObjectMutexPool<CConnection, BaseThreadMutex, CONNECTION_POOL_SIZE>	Connection_Pool;
 extern Connection_Pool	CONNECTION_POOL;
 
-enum CoreStreamType
-{
-	ePacketData,
-	eStringData
-};
-
-typedef struct CoreStreamData
-{
-	int8_t		stream_type;
-	CCorePacket packet;
-	string		data;
-}CoreStreamData;
-
-typedef list<CoreStreamData>		StreamList;
+//报文在连接过程中的缓冲队列
+typedef list<string>		StreamList;
 
 typedef struct Server_Node_t
 {
@@ -108,7 +96,7 @@ public:
 	void get_address_pair(const Server_Node_t& node, Inet_Addr& src_addr, Inet_Addr& dst_addr);
 
 protected:
-	void connecting_by_id(CoreStreamData& strm_data, uint32_t sid);
+	void connecting_by_id(const string& data, uint32_t sid);
 	CConnection* get_connection(uint32_t sid);
 
 	const Inet_Addr& get_udp_remote_addr(const Server_Node_t& node);
