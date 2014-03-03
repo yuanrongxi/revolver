@@ -73,7 +73,7 @@ void CDaemonElement::start_notify(uint32_t server_id, uint8_t server_type, uint1
 	self_add_server.tel_addr_ = tel_addr;
 	self_add_server.cnc_addr_ = cnc_addr;
 
-	self_packet.set_data(self_add_server);
+	self_packet.set_body(self_add_server);
 	SendDispathByID(self_packet, server_id_);
 
 	DAEMON_INFO("send DAEMON_ADD_SERVER, to server id = " << server_id_ << ", server type = " << GetServerName(server_type_)\
@@ -91,7 +91,7 @@ void CDaemonElement::start_notify(uint32_t server_id, uint8_t server_type, uint1
 	peer_add_server.tel_addr_ = tel_addr_;
 	peer_add_server.cnc_addr_ = cnc_addr_;
 
-	peer_packet.set_data(peer_add_server);
+	peer_packet.set_body(peer_add_server);
 	SendDispathByID(peer_packet, server_id);
 
 	DAEMON_INFO("send DAEMON_ADD_SERVER, to server id = " << server_id << ", server type = " << GetServerName(server_type) \
@@ -111,7 +111,7 @@ void CDaemonElement::stop_notify(uint32_t server_id, uint8_t server_type)
 	DAEMON_INFO("send DAEMON_DEL_SERVER, to server id = " << server_id_ << ", server type = " << GetServerName(server_type_) \
 		<< "{packet.sid = " <<server_id << ", packet.stype = " <<  GetServerName(server_type) << "}");
 
-	self_packet.set_data(self_del_server);
+	self_packet.set_body(self_del_server);
 	SendDispathByID(self_packet, server_id_);
 }
 

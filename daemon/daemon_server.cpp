@@ -45,7 +45,7 @@ int32_t CDaemonServer::on_daemon_ping(CBasePacket *packet, uint32_t sid, const I
 
 	Daemon_Stun_Pong pong;
 	pong.wan_addr_ = remote_addr;
-	msg.set_data(pong);
+	msg.set_body(pong);
 
 	CONN_MANAGER()->send_udp(msg, remote_addr);
 
@@ -227,7 +227,7 @@ void CDaemonServer::send_register_res(uint8_t type, uint32_t sid, uint16_t net_t
 	res.tel_addr_ = tel_addr;
 	res.cnc_addr_ = cnc_addr;
 	
-	packet.set_data(res);
+	packet.set_body(res);
 
 	DAEMON_INFO("send register res, sid = " << sid << ", stype = " << GetServerName(type) << ", net_type = "<< net_type << ", tel_addr = " << tel_addr << ", cnc_addr = " << cnc_addr);
 
