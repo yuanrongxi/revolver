@@ -23,7 +23,7 @@ public:
 	//BUFFER报文发送接口
 	virtual void send_ack(uint64_t ack_seq_id) = 0;
 	virtual void send_nack(uint64_t base_seq_id, const LossIDArray& ids) = 0;
-	virtual	void send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8_t* data, uint16_t data_size) = 0;
+	virtual	void send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8_t* data, uint16_t data_size, uint64_t now_ts) = 0;
 
 	//BUFFER状态接口,BUFFER可以进行数据发送通告
 	virtual void on_write() = 0;

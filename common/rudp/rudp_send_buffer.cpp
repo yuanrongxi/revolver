@@ -105,9 +105,10 @@ int32_t RUDPSendBuffer::send(const uint8_t* data, int32_t data_size)
 
 	buffer_data_size_ += copy_pos;
 	
-	//³¢ÊÔ·¢ËÍ
+	//³¢ÊÔ·¢ËÍ,Á¢¼´·¢ËÍ
+	//if(!nagle_)
 	attempt_send(now_timer);
-
+	 
 	return copy_pos;
 }
 
@@ -191,7 +192,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	uint32_t rtt = ccc_->get_rtt();
 	uint32_t ccc_cwnd_size = ccc_->get_send_window_size();
 	RUDPSendSegment* seg = NULL;
-
+	 
 	uint32_t send_packet_number  = 0;
 	if(!loss_set_.empty()) //ÖØ·¢¶ªÊ§µÄÆ¬¶Î
 	{
@@ -208,7 +209,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 			{
 				seg = cwnd_it->second;
 
-				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_);
+				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_, now_timer);
 				if(cwnd_max_seq_ < seg->seq_)
 					cwnd_max_seq_ = seg->seq_;
 
@@ -258,7 +259,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 			if(seg->last_send_ts_ + rtt_threshold < now_timer 
 				|| (seg->push_ts_ + rtt_threshold * 5 < now_timer && seg->seq_ < dest_max_seq_ + 3 && seg->last_send_ts_ + rtt_threshold / 2 < now_timer))
 			{
-				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_);
+				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_, now_timer);
 
 				if(cwnd_max_seq_ < seg->seq_)
 					cwnd_max_seq_ = seg->seq_;
@@ -297,7 +298,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 				seg->last_send_ts_ = now_timer;
 				seg->send_count_ = 1;
 
-				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_);
+				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_, now_timer);
 				if(cwnd_max_seq_ < seg->seq_)
 					cwnd_max_seq_ = seg->seq_;
 

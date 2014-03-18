@@ -114,9 +114,9 @@ uint32_t CTimerQueue_T<HANDLER, FUNCTOR, LOCK>::schedule(HANDLER handler,
 		
 		CBaseTimeValue cur_timer = CBaseTimeValue::get_time_value();
 
-		uint64_t distance = delay / SELECT_DELAY; //直接以当前时间作为坐标，相差一个扫描间隔20MS
+		uint64_t distance = delay; //直接以当前时间作为坐标，相差一个扫描间隔20MS
 		if(cur_timer > start_time_)
-			distance = (cur_timer.msec() - start_time_.msec() + delay) / SELECT_DELAY;
+			distance = (cur_timer.msec() - start_time_.msec() + delay);// SELECT_DELAY;
 
 		distance = distance % (UNINT32_MAX);
 		
@@ -171,9 +171,9 @@ uint32_t CTimerQueue_T<HANDLER, FUNCTOR, LOCK>::reset_timer(uint32_t timer_id, u
 		timer_obj->set_internal(interval);
 
 		CBaseTimeValue cur_timer = CBaseTimeValue::get_time_value();
-		uint64_t distance = delay / SELECT_DELAY; //直接以当前时间作为坐标，相差一个扫描间隔20MS
+		uint64_t distance = delay; // SELECT_DELAY; //直接以当前时间作为坐标，相差一个扫描间隔20MS
 		if(cur_timer > start_time_)
-			distance = (cur_timer.msec() - start_time_.msec() + delay) / SELECT_DELAY;
+			distance = (cur_timer.msec() - start_time_.msec() + delay); // SELECT_DELAY;
 
 		distance = distance % (UNINT32_MAX);
 		timer_obj->set_time_stamp(core_max(distance, 1));
@@ -198,7 +198,7 @@ uint32_t CTimerQueue_T<HANDLER, FUNCTOR, LOCK>::expire()
 	
 	if(cur_timer > prev_time_)
 	{
-		uint32_t scale = static_cast<uint32_t>((cur_timer.msec() - prev_time_.msec()) / SELECT_DELAY);
+		uint32_t scale = static_cast<uint32_t>((cur_timer.msec() - prev_time_.msec()));// SELECT_DELAY);
 		if(scale > 0)
 		{
 			ret = revolver(scale);

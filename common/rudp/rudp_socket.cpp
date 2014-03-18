@@ -398,7 +398,7 @@ void RUDPSocket::send_nack(uint64_t base_seq_id, const LossIDArray& ids)
 	RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
-void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8_t* data, uint16_t data_size)
+void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8_t* data, uint16_t data_size, uint64_t now_ts)
 {
 	if(state_ != RUDP_CONNECTED || remote_rudp_id_ < 0 || data_size <= 0)
 	{
@@ -417,7 +417,7 @@ void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8
 	//body.data_.assign((const char*)data, data_size); //todo:减少一次拷贝
 
 	//设置一个最后发送ACK的时刻
-	recv_buffer_.set_send_last_ack_ts(CBaseTimeValue::get_time_value().msec());
+	recv_buffer_.set_send_last_ack_ts(now_ts);
 
 	strm_.rewind(true);
 	strm_ << local_title_ << head << body;
