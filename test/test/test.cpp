@@ -64,12 +64,12 @@ int main(int argc, char* argv[])
 	//test_timer_value();
 	//test_pool();
 	//test_time_node();
-	test_timer_queue();
+	//test_timer_queue();
 	//test_packet();
 	//test_block_buffer();
 	//test_singleton();
 	//test_ip_addr();
-	//test_udp();
+	test_udp();
 	//test_thread();
 	//test_tcp();
 	//test_queue();

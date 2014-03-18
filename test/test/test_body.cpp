@@ -243,14 +243,10 @@ void test_timer_queue()
 
 	handler.tq_ = &timer_queue;
 
-	/*STimerParam* param = new STimerParam;
-	param->type = 100;
-	param->value = 10;
-	timer_queue.schedule(&handler, (void *)param, 10, 0);*/
 	CBaseTimeValue  begin_timer = CBaseTimeValue::get_time_value();
-	//for(int i = 0; i < 1000000; i ++)
+	for(int i = 0; i < 1000000; i ++)
 	{
-		insert_timer(&handler, (rand() % 240) * 1000, timer_queue);
+		insert_timer(&handler, i%240000, timer_queue);
 	}
 	CBaseTimeValue stop_timer = CBaseTimeValue::get_time_value();
 	stop_timer = stop_timer - begin_timer;
@@ -266,11 +262,6 @@ void test_timer_queue()
 	{
 		uint32_t ms = timer_queue.expire();
 		usleep((1000));
-
-		//if((rand() % 255) < 10)
-		//{
-		//	insert_timer(&handler, rand() % 10000, timer_queue);
-		//}
 	}
 }
 
@@ -453,7 +444,7 @@ public:
 
 	void	execute()
 	{
-		Inet_Addr local_addr("192.168.50.41", 3425);
+		Inet_Addr local_addr("127.0.0.1", 3425);
 		Inet_Addr remote_addr;
 
 		CSockDgram udp_sock;
@@ -470,7 +461,11 @@ public:
 			memset(recv_buf, 0x00, buf_size);
 			if(udp_sock.recv(recv_buf, buf_size, remote_addr) > 0)
 			{
-				cout << "recv data from " << remote_addr << ", data = " << recv_buf << endl;
+				//cout << "recv data from " << remote_addr << ", data = " << recv_buf << endl;
+			}
+			else
+			{
+				usleep(1000);
 			}
 		}
 	}
@@ -490,11 +485,11 @@ int test_udp()
 
 	usleep(1000000);
 
-	Inet_Addr remote_addr("192.168.50.41", 3425);
+	Inet_Addr remote_addr("127.0.0.1", 3425);
 	Inet_Addr local_addr(INADDR_ANY, 8643);
 	CSockDgram udp_sock;
 	
-	string data = "1234567890";
+	string data = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345";
 
 	if(udp_sock.open(local_addr, true) == -1)
 	{
@@ -506,12 +501,19 @@ int test_udp()
 	{
 		if(i % 3 == 0)
 		{
-			usleep(1000000);
+			usleep(100000);
 		}
 
 		i++;
 
-		udp_sock.send(data.c_str(), data.size(), remote_addr);
+		uint64_t begin_ts = CBaseTimeValue::get_time_value().msec();
+
+		for(int k = 0; k < 1000; k ++){
+			udp_sock.send(data.c_str(), data.size(), remote_addr);
+		}
+
+		uint64_t cur_count = CBaseTimeValue::get_time_value().msec();
+		cout << "send delay = " << cur_count - begin_ts << endl;
 	}
 
 	return 0;

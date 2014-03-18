@@ -73,7 +73,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../revolver;../../core;../../rudp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../common/revolver;../../../common/core;../../../common/rudp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -81,7 +81,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../lib/release</AdditionalLibraryDirectories>
       <AdditionalDependencies>core.lib;revolver.lib;rudp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -99,9 +99,6 @@
     <ClInclude Include="rudp_connection.h" />
     <ClInclude Include="rudp_listen_handler.h" />
     <ClInclude Include="udp_handler.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\common\def\sample_msg.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

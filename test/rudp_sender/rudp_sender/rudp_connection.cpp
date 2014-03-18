@@ -1,10 +1,12 @@
 #include "base_reactor_instance.h"
 #include "rudp_connection.h"
 #include "core_packet.h"
+#include "rudp_interface.h"
+#include "rudp_socket.h"
 #include <math.h>
 
-#define PACKET_NUM	10 
-#define SEND_DELAY  10
+#define PACKET_NUM	700 
+#define SEND_DELAY  5
 
 RUDPConnection::RUDPConnection()
 {
@@ -17,6 +19,7 @@ RUDPConnection::RUDPConnection()
 RUDPConnection::~RUDPConnection()
 {
 	reset();
+	clear_timer_events();
 }
 
 void RUDPConnection::reset()
@@ -55,8 +58,6 @@ void RUDPConnection::cancel_timer()
 void RUDPConnection::heartbeat()
 {
 	send_packet();
-
-	
 	uint64_t cur_count = CBaseTimeValue::get_time_value().msec();
 	if(tick_count_ + 1000 < cur_count)
 	{
@@ -74,11 +75,16 @@ void RUDPConnection::send_packet()
 	packet.user_id = count_;
 	packet.ts = CBaseTimeValue::get_time_value().msec();
 	packet.nick = "zerok775";
-	packet.ctx = "testOk12345678901234567890123450123456789k12345656789012345678901234567890Ok12345678901234567890123456789012345678901234567890123456789012345678901234567890Ok1234567890123456789012345678901234567890Ok1234567890123456789012345678901234567890Ok1234567890123456789012345678901234567890Ok12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+	packet.ctx = "testOk12345678901234567890123450123456789k12345656789012345678901234567890Ok12345678901234567890123456789012345678901234567890123456789012345678901234567890Ok1234567890123456789012345678901234567890Ok1234567890123456789012345678901234567890Ok1234567890123456789012345678901234567890Ok12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890testOk12345678901234567890123450123456789k12345656789012345678901234567890Ok12345678901234567890123456789012345678901234567890123456789012345678901234567890Ok123456745678901234567890testOk12345678901234567890123450123456789k12345656789012345678901234567890Ok12345678901234567890123456789012345678901234567890123456789012345678901234567890Ok1234567";
+
+	uint64_t begin_ts = CBaseTimeValue::get_time_value().msec();
 
 	for(int32_t i = 0; i < PACKET_NUM; i ++)
 		this->send(packet);
 
+	uint64_t cur_count = CBaseTimeValue::get_time_value().msec();
+
+	//cout << "send delay = " << cur_count - begin_ts << endl;
 	packet_count_ += PACKET_NUM;
 }
 
@@ -112,6 +118,7 @@ int32_t RUDPConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_
 		return -1;
 	}
 
+	rudp_setoption(rudp_sock_.get_handler(), RUDP_NAGLE, 1);
 	if(rudp_sock_.connect(dst_addr) != 0)
 	{
 		this->close();
@@ -139,20 +146,6 @@ int32_t RUDPConnection::send(RUDPTestPacket& packet)
 	BinStream *bin_strm = STREAMPOOL.pop_obj();
 	bin_strm->rewind(true);
 	*bin_strm << packet;
-
-	if(sbuffer_.remaining_length() < bin_strm->data_size() + sizeof(uint32_t))
-	{
-		if(sbuffer_.length() < MAX_BUFFER_SIZE)//扩大TCP发送缓冲区,防止缓冲区太小造成发送包异常
-		{
-			sbuffer_.realloc_buffer(bin_strm->data_size());
-		}
-		else //发送报文丢弃
-		{
-			bin_strm->rewind(true);
-			STREAMPOOL.push_obj(bin_strm);
-			return -1;
-		}
-	}
 
 	if(sbuffer_.put(*bin_strm))
 	{

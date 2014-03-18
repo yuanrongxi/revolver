@@ -23,7 +23,7 @@ void init()
 	CREATE_RECV_THREAD();
 	CREATE_RECV_UDP();
 
-	Inet_Addr local_addr("127.0.0.1", 2030);
+	Inet_Addr local_addr(INADDR_ANY, 2030);
 	RECV_UDP()->open(local_addr);
 
 	//创建一个监听者
@@ -76,8 +76,8 @@ int main(int agc, char* argv[])
 		}
 		else if(c == 'c')
 		{
-			Inet_Addr local_addr("127.0.0.1", 2030);	//本地绑定的RUDP监听端口
-			Inet_Addr remote_addr("127.0.0.1", 2020);	//远端帮顶的rudp监听端口,rudp_recv的地址!!!!!!
+			Inet_Addr local_addr(INADDR_ANY, 2030);	//本地绑定的RUDP监听端口
+			Inet_Addr remote_addr("10.1.6.240", 2020);	//远端帮顶的rudp监听端口,rudp_recv的地址!!!!!!
 
 			//for(int32_t i = 0; i < 1; i ++)
 			{
