@@ -75,9 +75,9 @@ void RUDPCCCObject::on_ack(uint64_t ack_seq)
 	}
 	else //平衡状态
 	{
-		if(loss_flag_)
+		if(loss_flag_) //出现丢包，不做加速
 			loss_flag_ = false;
-		else //加速
+		else //加速，快速恢复
 		{
 			snd_cwnd_ = (uint32_t)(ceil(snd_cwnd_ * 1.5));
 			snd_cwnd_ = core_min(max_cwnd_, snd_cwnd_);
@@ -104,6 +104,18 @@ void RUDPCCCObject::on_loss(uint64_t base_seq, const LossIDArray& loss_ids)
 	}
 }
 
+void RUDPCCCObject::set_max_cwnd(uint32_t rtt)
+{
+	if(rtt < 10) //吞吐量上限设置
+		max_cwnd_ = 2048;
+	else if(rtt < 50)
+		max_cwnd_ = 6144;
+	else if(rtt < 100)
+		max_cwnd_ = 8192;
+	else
+		max_cwnd_ = 12288;
+}
+
 void RUDPCCCObject::on_timer(uint64_t now_ts)
 {
 	uint32_t delay = 100;
@@ -114,9 +126,12 @@ void RUDPCCCObject::on_timer(uint64_t now_ts)
 	{
 		print_count_ ++;
 		if(print_count_ % 10 == 0)
+		{
 			RUDP_DEBUG("send window size = " << snd_cwnd_ << ",rtt = " << rtt_ << ",rtt_var = " << rtt_var_ << ",resend = " << resend_count_);
+			set_max_cwnd(rtt_);
+		}
 
-		if(slow_start_) //取消慢启动
+		if(slow_start_) //停止慢启动过程
 		{
 			if(print_count_ > 1)
 			{
@@ -126,7 +141,7 @@ void RUDPCCCObject::on_timer(uint64_t now_ts)
 		}
 		else
 		{
-			if(resend_count_ > core_max(snd_cwnd_/8, 8))
+			if(resend_count_ > core_max(snd_cwnd_/8, 8)) //重发次数超过了容忍的次数，降低发送窗口
 			{
 				snd_cwnd_ = (uint32_t)ceil(snd_cwnd_ / 1.25);
 				snd_cwnd_ = core_max(MIN_CWND_SIZE, snd_cwnd_);
@@ -143,24 +158,16 @@ void RUDPCCCObject::set_rtt(uint32_t keep_live_rtt)
 {
 	//提高高延迟网络的吞吐量（BDP）
 	if(max_cwnd_ == DEFAULT_CWND_SIZE)
-	{
-		if(keep_live_rtt < 10)
-			max_cwnd_ = 2048;
-		else if(rtt_ < 50)
-			max_cwnd_ = 6144;
-		else if(rtt_ < 100)
-			max_cwnd_ = 8192;
-		else
-			max_cwnd_ = 12288;
-	}
+		set_max_cwnd(keep_live_rtt);
 
+	//计算rtt和rtt修正
 	if(rtt_first_)
 	{
 		rtt_first_ = false;
 		rtt_ = keep_live_rtt;
 		rtt_var_ = rtt_ / 2;
 	}
-	else
+	else //参考了tcp的rtt计算
 	{
 		rtt_var_ = (rtt_var_ * 3 + core_abs(rtt_, keep_live_rtt)) / 4;
 		rtt_ = (7 * rtt_ + keep_live_rtt) / 8;

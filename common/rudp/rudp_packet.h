@@ -101,11 +101,11 @@ protected:
 	}
 
 public:
-	uint8_t			version_;
-	uint16_t		max_segment_size_;
-	int32_t			local_rudp_id_;
-	uint64_t		start_seq_;
-	uint64_t		local_ts_;
+	uint8_t			version_;				//版本
+	uint16_t		max_segment_size_;		//最大块尺寸
+	int32_t			local_rudp_id_;			//本地RUDP 索引ID,类似socket id
+	uint64_t		start_seq_;				//起始序号
+	uint64_t		local_ts_;				//本地时间戳
 };	
 
 
@@ -139,13 +139,13 @@ protected:
 			<< ", local ts = " << local_ts_ << ", remote ts = " << remote_ts_ << std::endl;
 	}
 public:
-	uint8_t			version_;
-	uint8_t			syn2_result_;
-	uint16_t		max_segment_size_;
-	int32_t			local_rudp_id_;
-	uint64_t		start_seq_;
-	uint64_t		local_ts_;
-	uint64_t		remote_ts_;
+	uint8_t			version_;			//版本
+	uint8_t			syn2_result_;		//握手结果
+	uint16_t		max_segment_size_;	//本地最大块尺寸
+	int32_t			local_rudp_id_;		//本地rudp 索引ID
+	uint64_t		start_seq_;			//本地起始序号
+	uint64_t		local_ts_;			//本地时间戳
+	uint64_t		remote_ts_;			//远端时间戳, RUDPSynPacket.local_ts_
 };
 
 class RUDPSyn2AckPacket : public CBasePacket
@@ -177,7 +177,7 @@ protected:
 
 public:
 	uint8_t			result_;
-	uint64_t		remote_ts_;
+	uint64_t		remote_ts_;	//远端时间戳，RUDPSyn2Packet.local_ts_
 };
 
 class RDUPKeepLive : public CBasePacket
@@ -203,7 +203,7 @@ protected:
 	};
 
 public:
-	uint64_t	timestamp_;
+	uint64_t	timestamp_;		//时间戳，主要用于计算RTT
 };
 
 class RUDPData : public CBasePacket
@@ -308,9 +308,8 @@ protected:
 	};
 
 public:
-	//丢包起始id
-	uint64_t		base_seq_;
-	LossIDArray		loss_ids_;
+	uint64_t		base_seq_;	//丢包起始ID
+	LossIDArray		loss_ids_; //丢包序列，相对base seq的距离。可以通过loss ids[i]和base_seq相加得到丢包的序号
 };
 
 BASE_NAMESPACE_END_DECL

@@ -76,7 +76,7 @@ extern ObjectPool<RUDPRecvSegment, RUDP_SEGMENT_POOL_SIZE>	RECVSEGPOOL;
 
 #define RETURN_SEND_SEG(seg) \
 	if(seg != NULL)\
-		SENDSEGPOOL.push_obj(seg)
+	SENDSEGPOOL.push_obj(seg)
 
 #define GAIN_RECV_SEG(seg) \
 	RUDPRecvSegment* seg = RECVSEGPOOL.pop_obj(); \
@@ -84,7 +84,7 @@ extern ObjectPool<RUDPRecvSegment, RUDP_SEGMENT_POOL_SIZE>	RECVSEGPOOL;
 
 #define RETURN_RECV_SEG(seg) \
 	if(seg != NULL)\
-		RECVSEGPOOL.push_obj(seg)
+	RECVSEGPOOL.push_obj(seg)
 
 BASE_NAMESPACE_END_DECL
 

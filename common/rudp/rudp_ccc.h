@@ -40,6 +40,8 @@ public:
 
 	void				add_resend(){resend_count_ ++;};
 
+protected:
+	void				set_max_cwnd(uint32_t rtt);
 private:
 	//当前发送窗口
 	uint32_t			snd_cwnd_;
