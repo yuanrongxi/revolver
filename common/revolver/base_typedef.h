@@ -6,6 +6,11 @@
 #include <inttypes.h>
 #endif
 
+#if defined(WIN32) && _MSC_VER >= 1700
+#include <stdint.h>
+#include <inttypes.h>
+#endif
+
 #if defined(WIN32) || defined(_WIN32)
 #pragma warning(disable:4996)
 #pragma warning(disable:4005)
