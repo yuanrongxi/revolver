@@ -1,5 +1,6 @@
 #include "base_log_thread.h"
 #include "base_log.h"
+#include <list>
 
 ObjectMutexPool<LogInfoData, BaseThreadMutex, LOG_POOL_SIZE>	LOGPOOL;
 
@@ -50,15 +51,11 @@ void BaseLogThread::execute()
 		if(queue_.get(data))
 		{
 			if(data == NULL)
-			{
 				continue;
-			}
 
 			BaseLog* log = LOG_INSTANCE()->get_log_handler(data->index);
 			if(log != NULL)
-			{
 				log->write_log(data->str_log);
-			}
 
 			data->reset();
 			LOGPOOL.push_obj(data);
@@ -67,6 +64,8 @@ void BaseLogThread::execute()
 		{
 			usleep(1000);
 		}
+
+		LOG_INSTANCE()->flush();
 	}
 }
 

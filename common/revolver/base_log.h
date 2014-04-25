@@ -35,6 +35,7 @@ public:
 	
 	//写入日志
 	void		write_log(const string& str_log);
+	void		flush();
 	void		change_path(const std::string& _str_path);
 	void		change_log_file(const string& filename);
 protected:
@@ -56,6 +57,7 @@ protected:
 	int32_t			m_file_count;
 
 	int32_t			day_;
+	bool			wait_flush_;
 };
 
 //日志管理和索引
@@ -69,9 +71,11 @@ public:
 
 	int32_t			create_base_log(const char* _pfile_name);
 	BaseLog*		get_log_handler(int32_t log_index);
+	void			flush();
 
 private:
 	BaseLogVector	m_log_vector;
+	uint64_t		flush_ts_;
 };	
 
 #define LOG_CREATE		CSingleton<BaseLogManager>::instance

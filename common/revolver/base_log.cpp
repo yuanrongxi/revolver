@@ -14,6 +14,7 @@
 #include "base_log_thread.h"
 #include "base_log.h"
 #include "date_time.h"
+#include "base_timer_value.h"
 
 #define _MAX_LOGLINE    250000
 #define MAX_PATH 1024
@@ -45,7 +46,7 @@ const char* get_time_str(char *date_str)
 	return date_str;
 }
 
-BaseLog::BaseLog(const char *_pfile_name) :m_line_count(0) ,m_file_count(0)
+BaseLog::BaseLog(const char *_pfile_name) :m_line_count(0), m_file_count(0), wait_flush_(false) 
 {
 	string str_exepath;
 
@@ -83,7 +84,10 @@ BaseLog::BaseLog(const char *_pfile_name) :m_line_count(0) ,m_file_count(0)
 BaseLog::~BaseLog()
 {
 	if (m_of_file.is_open())
+	{
+		m_of_file.flush();
 		m_of_file.close();
+	}
 }
 string BaseLog::get_log_name(bool cur_flag)
 {
@@ -108,16 +112,25 @@ void BaseLog::write_log(const string& str_log)
 		m_line_count ++;
 		if (m_line_count > _MAX_LOGLINE || day_ != DateTime::GetNow().GetDay()) //过了晚上12点，换文件
 		{
+			this->flush();
 			init_trace_file();
 			day_ = DateTime::GetNow().GetDay();
 		}
 
 		char info[64] = {0};
 		m_of_file << get_time_str(info); 
-
 		m_of_file << str_log;
 
+		wait_flush_ = true;
+	}
+}
+
+void BaseLog::flush()
+{
+	if(m_of_file.is_open() && wait_flush_)
+	{
 		m_of_file.flush();
+		wait_flush_ = false;
 	}
 }
 
@@ -208,7 +221,7 @@ void BaseLog::change_log_file(const string& filename)
 ////////////////////////////////////////////////////////////////////////////////////////
 BaseLogManager::BaseLogManager()
 {
-
+	flush_ts_ = CBaseTimeValue::get_time_value().msec();
 }
 
 BaseLogManager::~BaseLogManager()
@@ -234,11 +247,21 @@ int32_t BaseLogManager::create_base_log(const char *pfile_name)
 BaseLog* BaseLogManager::get_log_handler(int32_t index)
 {	
 	if(index < 0 || index > m_log_vector.size())
-	{
 		return NULL;
-	}
+	else
+		return m_log_vector[index];
+}
 
-	return m_log_vector[index];
+void BaseLogManager::flush()
+{
+	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
+	if(cur_ts > flush_ts_ + 200)
+	{
+		for(int32_t i = 0; i < m_log_vector.size(); ++i)
+			m_log_vector[i]->flush();
+
+		flush_ts_ = cur_ts;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -255,10 +278,7 @@ BaseLogStream::~BaseLogStream()
 }
 
 ostream& BaseLogStream::dump_trace(int32_t _level)
-{	
-	//为了日志的确切时间，必须在此处记录时间
-	//char info[500];
-	//m_strm << get_time_str(info); 
+{	 
 	if(_level > 0 && _level < 5)
 	{
 		m_strm << title_str[_level] << "\t";
@@ -319,6 +339,7 @@ std::ostream& SingleLogStream::get_ostream()
 
 void SingleLogStream::put_log(int32_t level)
 {
+	flush();
 }
 
 
