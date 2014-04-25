@@ -909,7 +909,7 @@ void test_log()
 
 	CBaseTimeValue stop_timer = CBaseTimeValue::get_time_value();
 	stop_timer = stop_timer - begin_timer;
-	cout << "write 100000 count, delay = " << stop_timer.msec() << endl;
+	cout << "write 100000 count, delay = " << stop_timer.msec() << "ms" << endl;
 
 	LOG_THREAD_INSTANCE()->terminate();
 	LOG_DESTROY();
