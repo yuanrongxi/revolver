@@ -145,7 +145,7 @@ public:
 	void					put_log(int32_t level);
 };
 
-//日志宏
+//日志宏, 
 #define BASE_TRACE(ofTrace, level, arg)	\
 	if (ofTrace.is_enable_trace(level))	\
 	{\
