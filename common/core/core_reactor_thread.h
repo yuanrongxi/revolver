@@ -9,10 +9,10 @@
 #ifndef __CORE_REACTOR_THREAD_H
 #define __CORE_REACTOR_THREAD_H
 
-#include "base_namespace.h"
-#include "base_typedef.h"
-#include "base_thread.h"
-#include "base_singleton.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_typedef.h"
+#include "revolver/base_thread.h"
+#include "revolver/base_singleton.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

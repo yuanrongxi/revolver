@@ -1,5 +1,5 @@
-#include "base_os.h"
-#include "core_main.h"
+#include "revolver/base_os.h"
+#include "core/core_main.h"
 
 #include <iostream>
 using namespace std;

@@ -9,8 +9,8 @@
 #ifndef __BASE_BLOCK_BUFFER_H
 #define __BASE_BLOCK_BUFFER_H
 
-#include "base_namespace.h"
-#include "base_typedef.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_typedef.h"
 #include <string>
 #include <ostream>
 

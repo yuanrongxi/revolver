@@ -9,8 +9,8 @@
 #ifndef __RUDP_CHANNEL_INTERFACE_H_
 #define __RUDP_CHANNEL_INTERFACE_H_
 
-#include "base_typedef.h"
-#include "rudp_packet.h"
+#include "revolver/base_typedef.h"
+#include "rudp/rudp_packet.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

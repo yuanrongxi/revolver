@@ -10,8 +10,8 @@
 #ifndef __CORE_EVENT_MESSAGE_H
 #define __CORE_EVENT_MESSAGE_H
 
-#include "base_packet.h"
-#include "core_message_map_decl.h"
+#include "revolver/base_packet.h"
+#include "core/core_message_map_decl.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

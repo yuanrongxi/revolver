@@ -10,9 +10,9 @@
 #define __BASE_TIMER_VALUE_H
 
 #include <time.h>
-#include "base_namespace.h"
-#include "base_typedef.h"
-#include "base_os.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_typedef.h"
+#include "revolver/base_os.h"
 
 #ifdef WIN32
 #include <windows.h>

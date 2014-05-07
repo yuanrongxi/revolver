@@ -9,9 +9,9 @@
 #ifndef __BASE_PACKET_H
 #define __BASE_PACKET_H
 
-#include "base_namespace.h"
-#include "base_typedef.h"
-#include "base_bin_stream.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_typedef.h"
+#include "revolver/base_bin_stream.h"
 
 #include <iostream>
 

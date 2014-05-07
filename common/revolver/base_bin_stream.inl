@@ -1,4 +1,4 @@
-#include "base_bin_stream.h"
+#include "revolver/base_bin_stream.h"
 #include <stdlib.h>
 
 BASE_NAMESPACE_BEGIN_DECL

@@ -11,7 +11,7 @@
 #ifndef __DAEMON_CONFIG_H
 #define __DAEMON_CONFIG_H
 
-#include "core_daemon_event.h"
+#include "core/core_daemon_event.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

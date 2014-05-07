@@ -10,9 +10,9 @@
 #ifndef __RUDP_PACKET_H_
 #define __RUDP_PACKET_H_
 
-#include "base_packet.h"
-#include "base_bin_stream.h"
-#include "object_pool.h"
+#include "revolver/base_packet.h"
+#include "revolver/base_bin_stream.h"
+#include "revolver/object_pool.h"
 
 #include <vector>
 
