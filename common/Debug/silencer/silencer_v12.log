@@ -1,0 +1,24 @@
+﻿Build started 2014/7/25 23:32:31.
+     1>Project "C:\projects\open_source\revolver\common\vsproj\silencer_v12.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(356,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+         Creating directory "C:\projects\open_source\revolver\common\Debug\silencer\silencer.tlog\".
+     1>InitializeBuildStatus:
+         Creating "C:\projects\open_source\revolver\common\Debug\silencer\silencer.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../ /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"C:\projects\open_source\revolver\common\Debug\silencer\\" /Fd"C:\projects\open_source\revolver\common\Debug\silencer\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\silencer\daemon_config.cpp ..\silencer\dc_tcp_listener.cpp
+         dc_tcp_listener.cpp
+         daemon_config.cpp
+         Generating Code...
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1354,5): warning MSB8012: TargetPath(C:\projects\open_source\revolver\common\Debug\silencer.lib) does not match the Library's OutputFile property value (C:\projects\open_source\revolver\common\lib\debug\silencer.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"..\lib\debug\silencer.lib" /NOLOGO C:\projects\open_source\revolver\common\Debug\silencer\daemon_config.obj
+         C:\projects\open_source\revolver\common\Debug\silencer\dc_tcp_listener.obj
+         silencer_v12.vcxproj -> C:\projects\open_source\revolver\common\Debug\silencer.lib
+       FinalizeBuildStatus:
+         Deleting file "C:\projects\open_source\revolver\common\Debug\silencer\silencer.tlog\unsuccessfulbuild".
+         Touching "C:\projects\open_source\revolver\common\Debug\silencer\silencer.tlog\silencer.lastbuildstate".
+     1>Done Building Project "C:\projects\open_source\revolver\common\vsproj\silencer_v12.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.64
