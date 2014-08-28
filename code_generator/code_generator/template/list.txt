@@ -1,0 +1,7 @@
+##file_prefix#_server.h
+##file_prefix#_frame.h
+##file_prefix#_server.cpp
+##file_prefix#_frame.cpp
+##file_prefix#_log.h
+##file_prefix#_log.cpp
+##file_prefix#.cpp
