@@ -2,9 +2,9 @@
 #define __BASE_FILE_H
 
 #include <string>
-#include "base_typedef.h"
-#include "base_namespace.h"
-#include "base_os.h"
+#include "revolver/base_typedef.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_os.h"
 
 using namespace std;
 

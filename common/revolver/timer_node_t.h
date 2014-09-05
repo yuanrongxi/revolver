@@ -9,8 +9,8 @@
 #ifndef __TIMER_NODE_T_H
 #define __TIMER_NODE_T_H
 
-#include "base_namespace.h"
-#include "base_typedef.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_typedef.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

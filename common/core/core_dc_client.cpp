@@ -1,10 +1,10 @@
-#include "base_reactor_instance.h"
-#include "core_connection_manager.h"
-#include "core_packet.h"
-#include "core_dc_client.h"
-#include "core_local_info.h"
-#include "lzo_object.h"
-#include "base64.h"
+#include "revolver/base_reactor_instance.h"
+#include "core/core_connection_manager.h"
+#include "core/core_packet.h"
+#include "core/core_dc_client.h"
+#include "core/core_local_info.h"
+#include "revolver/lzo_object.h"
+#include "revolver/base64.h"
 
 #define DCENTERDELAY	40000
 #define PHP_DELAY		30

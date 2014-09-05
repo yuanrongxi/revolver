@@ -9,8 +9,8 @@
 #ifndef __BASE_SOCKET_H
 #define __BASE_SOCKET_H
 
-#include "base_namespace.h"
-#include "base_inet_addr.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_inet_addr.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

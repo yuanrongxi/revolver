@@ -10,11 +10,11 @@
 #ifndef __RUDP_SOCKET_H_
 #define __RUDP_SOCKET_H_
 
-#include "rudp_ccc.h"
-#include "rudp_recv_buffer.h"
-#include "rudp_send_buffer.h"
-#include "base_inet_addr.h"
-#include "base_event_handler.h"
+#include "rudp/rudp_ccc.h"
+#include "rudp/rudp_recv_buffer.h"
+#include "rudp/rudp_send_buffer.h"
+#include "revolver/base_inet_addr.h"
+#include "revolver/base_event_handler.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 class RUDPEventHandler;

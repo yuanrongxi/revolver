@@ -1,8 +1,8 @@
 #ifndef __RDUP_LOG_MACRO_H_
 #define __RDUP_LOG_MACRO_H_
 
-#include "base_log.h"
-#include "base_hex_string.h"
+#include "revolver/base_log.h"
+#include "revolver/base_hex_string.h"
 
 extern SingleLogStream rdup_log;
 extern SingleLogStream rdup_recv_log;

@@ -11,7 +11,7 @@
 #ifndef __CORE_DAEMON_EVENT_H
 #define __CORE_DAEMON_EVENT_H
 
-#include "base_inet_addr.h"
+#include "revolver/base_inet_addr.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

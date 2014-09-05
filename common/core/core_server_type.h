@@ -9,7 +9,7 @@
 #ifndef __CORE_SERVER_TYPE_H
 #define __CORE_SERVER_TYPE_H
 
-#include "base_typedef.h"
+#include "revolver/base_typedef.h"
 const char* GetServerName(uint8_t stype);
 typedef enum EServerType
 {

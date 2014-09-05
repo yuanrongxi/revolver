@@ -9,7 +9,7 @@
 #ifndef __BASE_LOG_H
 #define __BASE_LOG_H
 
-#include "base_typedef.h"
+#include "revolver/base_typedef.h"
 
 #include <iostream>
 #include <fstream>
@@ -18,10 +18,10 @@
 #include <string>
 #include <vector>
 
-#include "base_os.h"
-#include "base_singleton.h"
-#include "base_thread_mutex.h"
-#include "base_guard.h"
+#include "revolver/base_os.h"
+#include "revolver/base_singleton.h"
+#include "revolver/base_thread_mutex.h"
+#include "revolver/base_guard.h"
 
 using namespace std;
 using namespace BASE_NAMEPSACE_DECL;

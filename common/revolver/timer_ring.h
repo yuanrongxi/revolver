@@ -9,8 +9,8 @@
 #ifndef __TIMER_RING_H
 #define __TIMER_RING_H
 
-#include "base_namespace.h"
-#include "base_typedef.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_typedef.h"
 
 #include <set>
 #include <vector>

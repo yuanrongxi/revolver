@@ -1,10 +1,10 @@
-#include "base_reactor_instance.h"
-#include "core_packet.h"
-#include "dc_short_conn.h"
-#include "core_log_macro.h"
-#include "core_local_info.h"
-#include "base_sock_connector.h"
-#include "core_bandwidth_throttler.h"
+#include "revolver/base_reactor_instance.h"
+#include "core/core_packet.h"
+#include "core/dc_short_conn.h"
+#include "core/core_log_macro.h"
+#include "core/core_local_info.h"
+#include "revolver/base_sock_connector.h"
+#include "core/core_bandwidth_throttler.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

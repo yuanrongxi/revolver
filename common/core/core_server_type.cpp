@@ -1,4 +1,4 @@
-#include "core_server_type.h"
+#include "core/core_server_type.h"
 
 #define MAX_SERVER_SIZE	eMax_Server_Type
 

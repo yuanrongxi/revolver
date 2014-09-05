@@ -9,13 +9,13 @@
 #ifndef __CORE_DC_CLIENT_H
 #define __CORE_DC_CLIENT_H
 
-#include "base_namespace.h"
-#include "dc_short_conn.h"
-#include "base_typedef.h"
-#include "core_cmd_target.h"
-#include "base_inet_addr.h"
-#include "core_msg_.h"
-#include "data_center_msg.h"
+#include "revolver/base_namespace.h"
+#include "core/dc_short_conn.h"
+#include "revolver/base_typedef.h"
+#include "core/core_cmd_target.h"
+#include "revolver/base_inet_addr.h"
+#include "core/core_msg_.h"
+#include "core/data_center_msg.h"
 
 #include <set>
 

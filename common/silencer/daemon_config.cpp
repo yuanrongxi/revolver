@@ -1,8 +1,8 @@
 /**********************************************************************************/
 #include "daemon_config.h"
-#include "json_stream.h"
-#include "core_local_info.h"
-#include "core_log_macro.h"
+#include "json/json_stream.h"
+#include "core/core_local_info.h"
+#include "core/core_log_macro.h"
 
 #include <iostream>
 #include <fstream>

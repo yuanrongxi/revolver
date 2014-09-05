@@ -10,9 +10,9 @@
 #ifndef __RUDP_HALF_CONNECTION_H_
 #define __RUDP_HALF_CONNECTION_H_
 
-#include "base_typedef.h"
-#include "base_namespace.h"
-#include "base_inet_addr.h"
+#include "revolver/base_typedef.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_inet_addr.h"
 
 #include <map>
 

@@ -10,8 +10,8 @@
 #ifndef __RUDP_SEGMENT_H_
 #define __RUDP_SEGMENT_H_
 
-#include "base_typedef.h"
-#include "object_pool.h"
+#include "revolver/base_typedef.h"
+#include "revolver/object_pool.h"
 
 #include <string>
 #include <set>

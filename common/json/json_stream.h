@@ -7,7 +7,7 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
-#include "base_typedef.h"
+#include "revolver/base_typedef.h"
 
 #define BEGIN_JSON_NS namespace	JSON_NS{
 #define END_JSON_NS	  }	

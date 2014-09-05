@@ -1,9 +1,9 @@
 #ifndef __DC_SHORT_CONN_H_
 #define __DC_SHORT_CONN_H_
 
-#include "base_thread_mutex.h"
-#include "core_connection.h"
-#include "object_pool.h"
+#include "revolver/base_thread_mutex.h"
+#include "core/core_connection.h"
+#include "revolver/object_pool.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

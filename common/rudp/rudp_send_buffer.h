@@ -10,8 +10,8 @@
 #ifndef __RUDP_SEND_BUFFER_H_
 #define __RUDP_SEND_BUFFER_H_
 
-#include "rudp_channel_interface.h"
-#include "rudp_segment.h"
+#include "rudp/rudp_channel_interface.h"
+#include "rudp/rudp_segment.h"
 
 #include <map>
 #include <list>

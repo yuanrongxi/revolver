@@ -1,13 +1,13 @@
-#include "core_packet.h"
-#include "core_connection.h"
-#include "base_reactor_instance.h"
-#include "core_log_macro.h"
-#include "core_message_processor.h"
-#include "base_sock_connector.h"
-#include "core_connection_manager.h"
-#include "core_local_info.h"
-#include "core_bandwidth_throttler.h"
-#include "md5.h"
+#include "core/core_packet.h"
+#include "core/core_connection.h"
+#include "revolver/base_reactor_instance.h"
+#include "core/core_log_macro.h"
+#include "core/core_message_processor.h"
+#include "revolver/base_sock_connector.h"
+#include "core/core_connection_manager.h"
+#include "core/core_local_info.h"
+#include "core/core_bandwidth_throttler.h"
+#include "revolver/md5.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

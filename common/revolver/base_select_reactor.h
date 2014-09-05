@@ -9,10 +9,10 @@
 #ifndef __BASE_SELECT_REACTOR_H
 #define __BASE_SELECT_REACTOR_H
 
-#include "base_os.h"
-#include "base_thread_mutex.h"
-#include "base_reactor.h"
-#include "base_singleton.h"
+#include "revolver/base_os.h"
+#include "revolver/base_thread_mutex.h"
+#include "revolver/base_reactor.h"
+#include "revolver/base_singleton.h"
 
 #include <map>
 using namespace std;

@@ -9,9 +9,9 @@
 #ifndef __BASE_EVENT_HANDLER_H
 #define __BASE_EVENT_HANDLER_H
 
-#include "base_namespace.h"
-#include "base_typedef.h"
-#include "base_os.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_typedef.h"
+#include "revolver/base_os.h"
 
 #include <set>
 

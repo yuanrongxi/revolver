@@ -1,10 +1,10 @@
-#include "core_packet.h"
-#include "base_guard.h"
-#include "core_log_macro.h"
-#include "core_connection_manager.h"
-#include "core_udp_handler.h"
-#include "core_local_info.h"
-#include "core_tcp_disconnect_notify.h"
+#include "core/core_packet.h"
+#include "revolver/base_guard.h"
+#include "core/core_log_macro.h"
+#include "core/core_connection_manager.h"
+#include "core/core_udp_handler.h"
+#include "core/core_local_info.h"
+#include "core/core_tcp_disconnect_notify.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

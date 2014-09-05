@@ -1,8 +1,8 @@
 #ifndef CORE_MESSAGE_TEMPLATE_H
 #define CORE_MESSAGE_TEMPLATE_H
 
-#include "base_typedef.h"
-#include "base_inet_addr.h"
+#include "revolver/base_typedef.h"
+#include "revolver/base_inet_addr.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

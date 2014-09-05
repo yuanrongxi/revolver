@@ -9,9 +9,9 @@
 #ifndef __RUDP_CCC_H_
 #define __RUDP_CCC_H_
 
-#include "base_typedef.h"
-#include "base_namespace.h"
-#include "rudp_packet.h"
+#include "revolver/base_typedef.h"
+#include "revolver/base_namespace.h"
+#include "rudp/rudp_packet.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

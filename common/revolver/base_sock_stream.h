@@ -10,7 +10,7 @@
 #ifndef __BASE_SOCK_STREAM_H
 #define __BASE_SOCK_STREAM_H
 
-#include "base_socket.h"
+#include "revolver/base_socket.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 class CSockStream : public CBaseSocket

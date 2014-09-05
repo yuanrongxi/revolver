@@ -9,8 +9,8 @@
 #ifndef __RUDP_STREAM_H_
 #define __RUDP_STREAM_H_
 
-#include "base_namespace.h"
-#include "base_inet_addr.h"
+#include "revolver/base_namespace.h"
+#include "revolver/base_inet_addr.h"
 
 #define RUDP_SEND_BUFFER (64 * 1280)
 
