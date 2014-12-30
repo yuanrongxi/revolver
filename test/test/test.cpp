@@ -1,12 +1,12 @@
 // Revolver.cpp : Defines the entry point for the console application.
 //
-#include "base_os.h"
+#include "revolver/base_os.h"
 #include "test_body.h"
 #include "test_select.h"
 #include "core_test.h"
 #include <time.h>
-#include "gettimeofday.h"
-#include "base_log.h"
+#include "revolver/gettimeofday.h"
+#include "revolver/base_log.h"
 
 #include <iostream>
 using namespace std;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 	//test_block_buffer();
 	//test_singleton();
 	//test_ip_addr();
-	test_udp();
+	//test_udp();
 	//test_thread();
 	//test_tcp();
 	//test_queue();
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
 	//test_message_call();
 	//test_message_call2();
 	//test_hex_string();
-	//test_core_udp();
+	test_core_udp();
 	//test_core_tcp_server();
 	//test_fork();
 	//test_as_socket();

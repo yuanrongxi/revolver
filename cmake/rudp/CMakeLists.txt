@@ -6,7 +6,7 @@ PROJECT(rudp)
 
 # includes
 SET(includes
-    "../../common/revolver"
+    "../../common"
     "./"
     )
 INCLUDE_DIRECTORIES(${includes})

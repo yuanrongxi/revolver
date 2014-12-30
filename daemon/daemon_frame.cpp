@@ -1,8 +1,8 @@
 #include "daemon_frame.h"
-#include "core_daemon_msg.h"
-#include "core_local_info.h"
-#include "core_server_type.h"
-#include "core_message_processor.h"
+#include "core/core_daemon_msg.h"
+#include "core/core_local_info.h"
+#include "core/core_server_type.h"
+#include "core/core_message_processor.h"
 
 #define DAEMON_SERVER_CNC_IP	"daemon.5211game.com"
 #define DAEMON_SERVER_TEL_IP	"daemon.5211game.com"

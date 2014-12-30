@@ -1,6 +1,6 @@
-#include "base_reactor_instance.h"
+#include "revolver/base_reactor_instance.h"
 #include "rudp_connection.h"
-#include "core_packet.h"
+#include "core/core_packet.h"
 
 RUDPConnection::RUDPConnection()
 {

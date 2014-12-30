@@ -1,11 +1,11 @@
-#include "core_local_info.h"
+#include "core/core_local_info.h"
 #include "sample_server.h"
-#include "core_event_message.h"
+#include "core/core_event_message.h"
 #include "sample_frame.h"
-#include "base_reactor_instance.h"
-#include "core_server_type.h"
+#include "revolver/base_reactor_instance.h"
+#include "core/core_server_type.h"
 #include "sample_log_macro.h"
-#include "sample_msg.h"
+#include "def/sample_msg.h"
 
 using namespace SAMPLE_SERVER;
 //30√Î–ƒÃ¯“ª¥Œ

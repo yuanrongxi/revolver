@@ -1,7 +1,7 @@
 #ifndef __DAEMON_LOG_H
 #define __DAEMON_LOG_H
 
-#include "base_log.h"
+#include "revolver/base_log.h"
 
 extern BaseLogStream daemon_log;
 

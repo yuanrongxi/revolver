@@ -1,9 +1,9 @@
-#include "core_server_type.h"
+#include "core/core_server_type.h"
 #include "sample_frame.h"
-#include "core_local_info.h"
-#include "core_message_processor.h"
-#include "core_message_map_decl.h"
-#include "sample_msg.h"
+#include "core/core_local_info.h"
+#include "core/core_message_processor.h"
+#include "core/core_message_map_decl.h"
+#include "def/sample_msg.h"
 
 using namespace SAMPLE_SERVER;
 

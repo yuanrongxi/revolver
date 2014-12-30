@@ -6,7 +6,7 @@ PROJECT(core)
 
 # includes
 SET(includes
-    "../../common/revolver"
+    "../../common"
     "../../common/zlib"
     "./"
     )

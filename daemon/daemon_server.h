@@ -1,12 +1,12 @@
 #ifndef __DAEMON_SERVER_H
 #define __DAEMON_SERVER_H
 
-#include "core_msg_.h"
-#include "core_cmd_target.h"
+#include "core/core_msg_.h"
+#include "core/core_cmd_target.h"
 #include "daemon_element.h"
-#include "base_event_handler.h"
+#include "revolver/base_event_handler.h"
 #include "daemon_json.h"
-#include "core_dc_client.h"
+#include "core/core_dc_client.h"
 #include "daemon_physical.h"
 
 #include <map>

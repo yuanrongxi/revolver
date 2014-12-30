@@ -6,11 +6,8 @@ PROJECT(daemon)
 
 # includes
 SET(includes
-    "../../common/revolver"
-    "../../common/core"
-    "../../common/def"
-    "../../common/json"
-    "../../common/silencer"
+    "../../common"
+    "../common"
     )
 INCLUDE_DIRECTORIES(${includes})
 

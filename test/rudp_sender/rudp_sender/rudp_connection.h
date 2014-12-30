@@ -1,12 +1,12 @@
 #ifndef __RUDP_CONNECTION_H_
 #define __RUDP_CONNECTION_H_
 
-#include "base_event_handler.h"
-#include "rudp_stream.h"
-#include "rudp_interface.h"
-#include "base_block_buffer.h"
-#include "base_bin_stream.h"
-#include "base_packet.h"
+#include "revolver/base_event_handler.h"
+#include "rudp/rudp_stream.h"
+#include "rudp/rudp_interface.h"
+#include "revolver/base_block_buffer.h"
+#include "revolver/base_bin_stream.h"
+#include "revolver/base_packet.h"
 #include "stat_packet.h"
 
 using namespace BASE;

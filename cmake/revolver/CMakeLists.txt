@@ -7,6 +7,7 @@ PROJECT(revolver)
 # includes
 SET(includes
     "./"
+    "../../common/"
     )
 INCLUDE_DIRECTORIES(${includes})
 

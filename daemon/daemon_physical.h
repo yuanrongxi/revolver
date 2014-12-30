@@ -1,9 +1,9 @@
 #ifndef __DAEMON_PHYSICAL_H
 #define __DAEMON_PHYSICAL_H
 
-#include "base_typedef.h"
-#include "base_namespace.h"
-#include "core_connection.h"
+#include "revolver/base_typedef.h"
+#include "revolver/base_namespace.h"
+#include "core/core_connection.h"
 
 using namespace BASE;
 

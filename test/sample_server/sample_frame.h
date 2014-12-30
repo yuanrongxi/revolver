@@ -9,9 +9,9 @@
 #ifndef __SAMPLE_FRAME_H
 #define __SAMPLE_FRAME_H
 
-#include "core_frame.h"
-#include "base_singleton.h"
-#include "daemon_config.h"
+#include "core/core_frame.h"
+#include "revolver/base_singleton.h"
+#include "silencer/daemon_config.h"
 #include "sample_server.h"
 
 //使用revolver的命名空间

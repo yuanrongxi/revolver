@@ -1,7 +1,7 @@
 #ifndef __DAEMON_JSON_H_
 #define __DAEMON_JSON_H_
 
-#include "json_stream.h"
+#include "json/json_stream.h"
 
 #include <vector>
 

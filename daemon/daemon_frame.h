@@ -1,8 +1,8 @@
 #ifndef __DAEMON_FRAME_H
 #define __DAEMON_FRAME_H
 
-#include "core_frame.h"
-#include "base_singleton.h"
+#include "core/core_frame.h"
+#include "revolver/base_singleton.h"
 #include "daemon_server.h"
 #include "daemon_simple_physical.h"
 

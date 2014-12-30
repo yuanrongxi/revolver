@@ -2,7 +2,7 @@
 //
 
 #include "daemon_frame.h"
-#include "core_main.h"
+#include "core/core_main.h"
 
 int main(int argc, char* argv[])
 {

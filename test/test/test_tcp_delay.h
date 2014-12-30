@@ -1,12 +1,12 @@
 #ifndef __TEST_TCP_DELAY_H_
 #define __TEST_TCP_DELAY_H_
 
-#include "base_reactor_instance.h"
-#include "base_event_handler.h"
-#include "base_sock_connector.h"
+#include "revolver/base_reactor_instance.h"
+#include "revolver/base_event_handler.h"
+#include "revolver/base_sock_connector.h"
 #include "stat_packet.h"
-#include "base_packet.h"
-#include "base_block_buffer.h"
+#include "revolver/base_packet.h"
+#include "revolver/base_block_buffer.h"
 #include <iostream>
 #include <string>
 

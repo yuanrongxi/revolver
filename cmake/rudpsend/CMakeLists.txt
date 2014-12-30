@@ -6,12 +6,7 @@ PROJECT(rudpsend)
 
 # includes
 SET(includes
-    "../../common/revolver"
-    "../../common/core"
-    "../../common/def"
-    "../../common/json"
-    "../../common/silencer"
-    "../../common/rudp"
+    "../../common"
     )
 INCLUDE_DIRECTORIES(${includes})
 

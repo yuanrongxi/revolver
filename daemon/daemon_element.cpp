@@ -1,9 +1,9 @@
-#include "core_packet.h"
+#include "core/core_packet.h"
 #include "daemon_log.h"
-#include "core_daemon_msg.h"
+#include "core/core_daemon_msg.h"
 #include "daemon_element.h"
-#include "core_local_info.h"
-#include "core_connection_manager.h"
+#include "core/core_local_info.h"
+#include "core/core_connection_manager.h"
 
 CDaemonElement::CDaemonElement()
 {

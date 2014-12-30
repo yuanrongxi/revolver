@@ -1,7 +1,7 @@
 #ifndef __RECIVER_ADAPTER_H_
 #define __RECIVER_ADAPTER_H_
 
-#include "rudp_adapter.h"
+#include "rudp/rudp_adapter.h"
 
 using namespace BASE;
 

@@ -6,10 +6,7 @@ PROJECT(silencer)
 
 # includes
 SET(includes
-    "../../common/revolver"
-    "../../common/core"
-    "../../common/json"
-    "./"
+    "../../common"
     )
 INCLUDE_DIRECTORIES(${includes})
 

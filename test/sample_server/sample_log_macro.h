@@ -9,8 +9,8 @@
 #ifndef __SAMPLE_LOG_MACRO_H
 #define __SAMPLE_LOG_MACRO_H
 
-#include "base_log.h"
-#include "base_hex_string.h"
+#include "revolver/base_log.h"
+#include "revolver/base_hex_string.h"
 
 extern BaseLogStream sample_log;
 

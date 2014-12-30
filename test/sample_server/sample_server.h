@@ -1,11 +1,11 @@
 #ifndef __SAMPLE_SERVER_H
 #define __SAMPLE_SERVER_H
 
-#include "core_msg_.h"
-#include "core_cmd_target.h"
-#include "core_daemon_event.h"
-#include "base_event_handler.h"
-#include "core_tcp_disconnect_notify.h"
+#include "core/core_msg_.h"
+#include "core/core_cmd_target.h"
+#include "core/core_daemon_event.h"
+#include "revolver/base_event_handler.h"
+#include "core/core_tcp_disconnect_notify.h"
 
 using namespace BASE;
 
