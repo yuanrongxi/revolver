@@ -1,21 +1,21 @@
-+ÏîÄ¿Ä¿Â¼½éÉÜ£º
-	cmake			linux ÏÂcmake±àÒë½Å±¾£¬ÒªÊ×ÏÈ°²×°cmake±àÒë¹¤¾ß
-	common			revolverºËĞÄ¿ò¼Ü´úÂëÄ¿Â¼
-		+revolver	revolver»ù´¡·â×°´úÂëÄ¿Â¼
-		+core		revolverµÄ¿ò¼Ü´úÂëÄ¿Â¼
-		+json		Ò»¸öJSONµÄ·â×°´úÂëÄ¿Â¼
-		+rudp		revolverµÄrudpÊµÏÖ´úÂëÄ¿Â¼
-		+silencer	revolverµÄ·şÎñÆ÷À©Õ¹´úÂëÄ¿Â¼
-	daemon			¾«Áé·şÎñÆ÷´úÂëÄ¿Â¼
-	protocol_analysis	defĞ­Òé·­Òë³ÌĞò´úÂëÄ¿Â¼£¨ÓÉ½ğÉ½zhurwÌá¹©£©
-	test			²âÊÔ´úÂëÄ¿Â¼£¨ËùÓĞÏà¹ØµÄÄ£¿é²âÊÔÀı×Ó¡¢·şÎñÆ÷¿ò¼ÜÀı×ÓµÈ£©
++é¡¹ç›®ç›®å½•ä»‹ç»ï¼š
+	cmake			linux ä¸‹cmakeç¼–è¯‘è„šæœ¬ï¼Œè¦é¦–å…ˆå®‰è£…cmakeç¼–è¯‘å·¥å…·
+	common			revolveræ ¸å¿ƒæ¡†æ¶ä»£ç ç›®å½•
+		+revolver	revolveråŸºç¡€å°è£…ä»£ç ç›®å½•
+		+core		revolverçš„æ¡†æ¶ä»£ç ç›®å½•
+		+json		ä¸€ä¸ªJSONçš„å°è£…ä»£ç ç›®å½•
+		+rudp		revolverçš„rudpå®ç°ä»£ç ç›®å½•
+		+silencer	revolverçš„æœåŠ¡å™¨æ‰©å±•ä»£ç ç›®å½•
+	daemon			ç²¾çµæœåŠ¡å™¨ä»£ç ç›®å½•
+	protocol_analysis	defåè®®ç¿»è¯‘ç¨‹åºä»£ç ç›®å½•ï¼ˆç”±é‡‘å±±zhurwæä¾›ï¼‰
+	test			æµ‹è¯•ä»£ç ç›®å½•ï¼ˆæ‰€æœ‰ç›¸å…³çš„æ¨¡å—æµ‹è¯•ä¾‹å­ã€æœåŠ¡å™¨æ¡†æ¶ä¾‹å­ç­‰ï¼‰
 
-±àÒëËµÃ÷:
-1.windowsÏÂ
-	ÓÃVS 2010 ´ò¿ªcommonµÄ¹¤³Ì£¬±àÒërevolverµÄºËĞÄ´úÂë£¬ÈÃºó¿ÉÒÔÔÚ¸÷¸öÄ¿Â¼ÏÂ´ò¿ªÏà¶ÔÓ¦µÄ¹¤³Ì½øĞĞ±àÒë£¬Èç¹ûÒªÊ¹ÓÃµ½Ğ­Òé·­ÒëÆ÷£¬Çë´ò¿ªprotocol_analysisÄ¿Â¼ÏÂµÄ¹¤³Ì½øĞĞ±àÒë£¬Ö´ĞĞ³ÌĞò»áÉú³ÉÔÚcommon/defÄ¿Â¼ÏÂ
-2.linuxÏÂ
-	ÏÈ°²×°cmake±àÒëÆ÷£¬ÔÚcentosÏÂÓÃyum install cmake,ÔÚubuntuÏÂapt-get install cmake
-	ÇĞ»»µ½revolver/cmakeÄ¿Â¼£¬ÊäÈëcmake .
-	Íê³Éºó£¬make¾Í¿ÉÒÔÉú³É¸÷¸öÖ´ĞĞÎÄ¼ş£¬Ö´ĞĞÎÄ¼şÔÚrevolver/cmake/binÏÂ
+ç¼–è¯‘è¯´æ˜:
+1.windowsä¸‹
+	ç”¨VS 2010 æ‰“å¼€commonçš„å·¥ç¨‹ï¼Œç¼–è¯‘revolverçš„æ ¸å¿ƒä»£ç ï¼Œè®©åå¯ä»¥åœ¨å„ä¸ªç›®å½•ä¸‹æ‰“å¼€ç›¸å¯¹åº”çš„å·¥ç¨‹è¿›è¡Œç¼–è¯‘ï¼Œå¦‚æœè¦ä½¿ç”¨åˆ°åè®®ç¿»è¯‘å™¨ï¼Œè¯·æ‰“å¼€protocol_analysisç›®å½•ä¸‹çš„å·¥ç¨‹è¿›è¡Œç¼–è¯‘ï¼Œæ‰§è¡Œç¨‹åºä¼šç”Ÿæˆåœ¨common/defç›®å½•ä¸‹
+2.linuxä¸‹
+	å…ˆå®‰è£…cmakeç¼–è¯‘å™¨ï¼Œåœ¨centosä¸‹ç”¨yum install cmake,åœ¨ubuntuä¸‹apt-get install cmake
+	åˆ‡æ¢åˆ°revolver/cmakeç›®å½•ï¼Œè¾“å…¥cmake .
+	å®Œæˆåï¼Œmakeå°±å¯ä»¥ç”Ÿæˆå„ä¸ªæ‰§è¡Œæ–‡ä»¶ï¼Œæ‰§è¡Œæ–‡ä»¶åœ¨revolver/cmake/binä¸‹
 
-ĞèÒªÁË½â¹ØÓÚrevolverÏ¸½Ú£¬Çë·ÃÎÊ²©¿Íhttp://blog.csdn.net/u012935160
+éœ€è¦äº†è§£å…³äºrevolverç»†èŠ‚ï¼Œè¯·è®¿é—®åšå®¢http://blog.csdn.net/column/details/zerok-revolver.html
