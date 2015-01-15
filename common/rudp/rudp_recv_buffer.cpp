@@ -111,6 +111,7 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 	}
 	else
 	{
+		recv_new_packet_ = true;
 	}
 
 	if(max_seq_ < seq)
