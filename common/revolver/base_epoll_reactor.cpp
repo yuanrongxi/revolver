@@ -6,7 +6,6 @@
 BASE_NAMESPACE_BEGIN_DECL
 
 #ifndef WIN32
-
 #define MAX_NEVENT 8192
 
 CEpollReactor::CEpollReactor() : max_handler_num_(EPOLL_MAX_HANDLER)

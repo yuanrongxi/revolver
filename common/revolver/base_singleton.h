@@ -2,6 +2,7 @@
 #define __BASE_SIGNLETON_H
 
 #include <stdlib.h>
+#include "base_os.h"
 
 template<class T>
 class CSingleton
@@ -9,10 +10,12 @@ class CSingleton
 public:
 	static T* instance()
 	{
-		if(obj_ == NULL)
-		{
+#ifndef WIN32
+		pthread_once(&ponce_, &CSingleton::init);
+#else
+		if(obj_ == NULL)		/*WINDOWS下不支持多线程单例*/
 			obj_ = new T();
-		}
+#endif
 
 		return obj_;
 	};
@@ -36,6 +39,10 @@ protected:
 	};
 
 protected:
+#ifndef WIN32
+	static pthread_once_t ponce_;
+#endif
+
 	static T*	obj_;
 
 private:
@@ -46,11 +53,18 @@ private:
 	CSingleton& operator=(const CSingleton&)
 	{
 	};
+
+	static void init()
+	{
+		obj_ = new T();
+	};
 };
 
+#ifndef WIN32
+template <class T> pthread_once_t CSingleton<T>::ponce_ = PTHREAD_ONCE_INIT;
+#endif
 
-template <class T>
-T* CSingleton<T>::obj_ = NULL;
+template <class T> T* CSingleton<T>::obj_ = NULL;
 
 #endif
 

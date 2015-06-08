@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 	//test_timer_queue();
 	//test_packet();
 	//test_block_buffer();
-	//test_singleton();
+	test_singleton();
 	//test_ip_addr();
 	//test_udp();
 	//test_thread();
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
 	//test_message_call();
 	//test_message_call2();
 	//test_hex_string();
-	test_core_udp();
+	//test_core_udp();
 	//test_core_tcp_server();
 	//test_fork();
 	//test_as_socket();

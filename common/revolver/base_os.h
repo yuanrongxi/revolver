@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <mswsock.h>
 #include <direct.h>
+#include <winbase.h>
 
 #pragma comment(lib, "ws2_32.lib")
 
