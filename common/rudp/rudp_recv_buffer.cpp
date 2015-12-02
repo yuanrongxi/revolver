@@ -190,7 +190,7 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc)
 		recv_new_packet_ = false;
 	}
 
-	uint32_t rtc_threshold = core_min(20, rtc / 2);
+	uint32_t rtc_threshold = core_max(20, rtc / 2);
 	if(last_ack_ts_ + rtc_threshold <= now_timer && recv_new_packet_)
 	{
 		net_channel_->send_ack(first_seq_);
