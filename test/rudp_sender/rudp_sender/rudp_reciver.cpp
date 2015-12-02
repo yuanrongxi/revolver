@@ -1,8 +1,8 @@
-#include "revolver/base_reactor_instance.h"
+#include "base_reactor_instance.h"
 #include "reciver_thread.h"
 #include "udp_handler.h"
 #include "rudp_listen_handler.h"
-#include "rudp/rudp_interface.h"
+#include "rudp_interface.h"
 #include "rudp_connection.h"
 #include "stat_packet.h"
 
@@ -77,7 +77,7 @@ int main(int agc, char* argv[])
 		else if(c == 'c')
 		{
 			Inet_Addr local_addr(INADDR_ANY, 2030);	//本地绑定的RUDP监听端口
-			Inet_Addr remote_addr("10.1.6.240", 2020);	//远端帮顶的rudp监听端口,rudp_recv的地址!!!!!!
+			Inet_Addr remote_addr("192.168.90.52", 2020);	//远端帮顶的rudp监听端口,rudp_recv的地址!!!!!!
 
 			//for(int32_t i = 0; i < 1; i ++)
 			{
