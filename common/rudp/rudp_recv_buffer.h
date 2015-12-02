@@ -72,6 +72,7 @@ protected:
 	uint64_t			last_ack_ts_;
 	//在上次发送ACK到现在，受到新的连续报文的标志	
 	bool				recv_new_packet_;
+	int					ok_count_;
 
 	uint32_t			bandwidth_;
 	uint64_t			bandwidth_ts_;

@@ -302,7 +302,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 				if(cwnd_max_seq_ < seg->seq_)
 					cwnd_max_seq_ = seg->seq_;
 
-				RUDP_SEND_DEBUG("send seq = " << seg->seq_);
+				/*RUDP_SEND_DEBUG("send seq = " << seg->seq_);*/
 			}
 			else 
 				break;

@@ -12,6 +12,7 @@ RUDPRecvBuffer::RUDPRecvBuffer()
 , max_seq_(0)
 , last_ack_ts_(0)
 , recv_new_packet_(false)
+, ok_count_(0)
 {
 	reset();
 }
@@ -27,6 +28,7 @@ void RUDPRecvBuffer::reset()
 	max_seq_ = 0;
 	last_ack_ts_ = 0;
 	recv_new_packet_ = false;
+	ok_count_ = 0;
 
 	for(RecvWindowMap::iterator it = recv_window_.begin(); it != recv_window_.end(); ++it)
 	{
@@ -71,8 +73,8 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 		memcpy(seg->data_, data, data_size);
 
 		recv_data_.push_back(seg);
-
 		first_seq_ = seq;
+		ok_count_++;
 
 		check_recv_window();
 		//报告可读
@@ -80,6 +82,12 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 
 		//删除丢包
 		loss_map_.erase(seq);
+
+		if (ok_count_ > 50){
+			net_channel_->send_ack(first_seq_);
+			set_send_last_ack_ts(CBaseTimeValue::get_time_value().msec());
+			ok_count_ = 0;
+		}
 	}
 	else if(seq > first_seq_ + 1)
 	{
@@ -135,6 +143,8 @@ void RUDPRecvBuffer::check_recv_window()
 		recv_data_.push_back(it->second);
 
 		recv_window_.erase(it ++);
+
+		ok_count_++;
 	}
 }
 
@@ -176,6 +186,7 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc)
 {
 	if(check_loss(now_timer, rtc))
 	{
+		ok_count_ = 0;
 		recv_new_packet_ = false;
 	}
 
@@ -184,6 +195,7 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc)
 	{
 		net_channel_->send_ack(first_seq_);
 		set_send_last_ack_ts(now_timer);
+		ok_count_ = 0;
 	}
 
 	//判断是否可以读
