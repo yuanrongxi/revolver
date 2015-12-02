@@ -49,6 +49,8 @@ void RUDPRecvBuffer::reset()
 
 int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_size)
 {
+	recv_new_packet_ = true;
+
 	if(seq > first_seq_ + MAX_SEQ_INTNAL || data_size > MAX_SEGMENT_SIZE)
 	{
 		//报告异常
@@ -57,12 +59,11 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 		return -1;
 	}
 
-	//RUDP_RECV_DEBUG("on data, seq = " << seq);
+	/*RUDP_RECV_DEBUG("on data, seq = " << seq);*/
 
 	RUDPRecvSegment* seg = NULL;
 	if(first_seq_ + 1 == seq)
 	{
-		recv_new_packet_= true;
 		//将数据缓冲到队列中
 		GAIN_RECV_SEG(seg);
 		seg->seq_ = seq;
@@ -108,10 +109,6 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 			//删除丢包
 			loss_map_.erase(seq);
 		}
-	}
-	else
-	{
-		recv_new_packet_ = true;
 	}
 
 	if(max_seq_ < seq)
