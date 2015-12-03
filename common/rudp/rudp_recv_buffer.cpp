@@ -61,7 +61,7 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 		return -1;
 	}
 
-	/*RUDP_RECV_DEBUG("on data, seq = " << seq);*/
+	//RUDP_RECV_DEBUG("on data, seq = " << seq);
 
 	RUDPRecvSegment* seg = NULL;
 	if(first_seq_ + 1 == seq)

@@ -114,7 +114,7 @@ int32_t RUDPSendBuffer::send(const uint8_t* data, int32_t data_size)
 
 void RUDPSendBuffer::on_ack(uint64_t seq)
 {
-	//RUDP_SEND_DEBUG("on ack, seq = " << seq);
+	RUDP_SEND_DEBUG("on ack, seq = " << seq);
 	//ID错误
 	if(cwnd_max_seq_ < seq)
 		return ;
@@ -188,7 +188,7 @@ void RUDPSendBuffer::clear_loss()
 
 void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 {
-	uint32_t cwnd_size = send_window_.size();
+	uint32_t cwnd_size;
 	uint32_t rtt = ccc_->get_rtt();
 	uint32_t ccc_cwnd_size = ccc_->get_send_window_size();
 	RUDPSendSegment* seg = NULL;
@@ -203,6 +203,11 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 		{
 			if(send_packet_number >= ccc_cwnd_size)
 				break;
+
+			if (send_window_.size() > 0 && *it < send_window_.begin()->first){
+				loss_set_.erase(it++);
+				continue;
+			}
 
 			SendWindowMap::iterator cwnd_it = send_window_.find(*it);
 			if(cwnd_it != send_window_.end() && cwnd_it->second->last_send_ts_ + rtt < now_timer)
@@ -269,9 +274,9 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 
 				send_packet_number ++;
 
-				ccc_->add_resend();
+				ccc_->add_resend(); 
 
-				//RUDP_SEND_DEBUG("resend seq = " << seg->seq_);
+				RUDP_SEND_DEBUG("resend seq = " << seg->seq_);
 			}
 		}
 	}
@@ -279,6 +284,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	//判断是否可以发送新的报文
 	if(ccc_cwnd_size > send_packet_number)
 	{
+		cwnd_size = send_window_.size();
 		while(!send_data_.empty())
 		{
 			RUDPSendSegment* seg = send_data_.front();
