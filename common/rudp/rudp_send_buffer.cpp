@@ -210,7 +210,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 			}
 
 			SendWindowMap::iterator cwnd_it = send_window_.find(*it);
-			if(cwnd_it != send_window_.end() && cwnd_it->second->last_send_ts_ + rtt < now_timer)
+			if(cwnd_it != send_window_.end() && cwnd_it->second->last_send_ts_ + rtt / 2 < now_timer)
 			{
 				seg = cwnd_it->second;
 
@@ -276,7 +276,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 
 				ccc_->add_resend(); 
 
-				RUDP_SEND_DEBUG("resend seq = " << seg->seq_);
+				//RUDP_SEND_DEBUG("resend seq = " << seg->seq_);
 			}
 		}
 	}

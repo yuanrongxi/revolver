@@ -189,13 +189,15 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc)
 		ok_count_ = 0;
 		recv_new_packet_ = false;
 	}
+	else{
 
-	uint32_t rtc_threshold = core_max(20, rtc / 2);
-	if(last_ack_ts_ + rtc_threshold <= now_timer && recv_new_packet_)
-	{
-		net_channel_->send_ack(first_seq_);
-		set_send_last_ack_ts(now_timer);
-		ok_count_ = 0;
+		uint32_t rtc_threshold = core_min(100, rtc / 2);
+		if (last_ack_ts_ + rtc_threshold <= now_timer)
+		{
+			net_channel_->send_ack(first_seq_);
+			set_send_last_ack_ts(now_timer);
+			ok_count_ = 0;
+		}
 	}
 
 	//≈–∂œ «∑Òø…“‘∂¡
