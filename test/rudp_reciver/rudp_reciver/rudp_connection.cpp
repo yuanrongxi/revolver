@@ -91,6 +91,8 @@ int32_t RUDPConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_
 		return -1;
 	}
 
+	rudp_sock_.set_option(4, RUDP_SEND_BUFFER);
+
 	//绑定一个事件器
 	RUDP()->bind_event_handle(rudp_sock_.get_handler(), this);
 
@@ -207,14 +209,13 @@ int32_t RUDPConnection::rudp_output_event(int32_t rudp_id)
 		cancel_timer();
 
 		state_ = RUDP_CONN_CONNECTED;
+		set_timer(1000);
 	}
-
-	set_timer(1000);
 
 	if(sbuffer_.data_length() > 0)
 		return sbuffer_.send(rudp_sock_);
-	else
-		return 0;
+
+	return 0;
 }
 
 int32_t RUDPConnection::rudp_close_event(int32_t rudp_id)

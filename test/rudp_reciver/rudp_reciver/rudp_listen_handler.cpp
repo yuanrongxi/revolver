@@ -25,6 +25,7 @@ int32_t RUDPListenHandler::rudp_accept_event(int32_t rudp_id)
 	RUDP()->bind_event_handle(sock.get_handler(), conn);
 
 	conn->set_state(RUDP_CONN_CONNECTED);
+	conn->set_timer(1000);
 	return 0;
 }
 
