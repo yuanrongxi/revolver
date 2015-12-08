@@ -243,6 +243,9 @@ public:
 	//将数据递交到发送对象进行发送
 	int32_t send(S& sender)
 	{
+		if (this->data_length() <= 0)
+			return 0;
+
 		int32_t sender_size = sender.send(this->get_rptr(), this->data_length());
 		if(sender_size > 0)
 		{
