@@ -1,8 +1,8 @@
-#include "base_reactor_instance.h"
+#include "revolver/base_reactor_instance.h"
 #include "reciver_thread.h"
 #include "udp_handler.h"
 #include "rudp_listen_handler.h"
-#include "rudp_interface.h"
+#include "rudp/rudp_interface.h"
 #include "rudp_connection.h"
 #include "stat_packet.h"
 
@@ -69,7 +69,7 @@ int main(int agc, char* argv[])
 
 		if(c == 'e')
 		{
-			if(conn != NULL && conn->get_state() != RUDP_CONN_IDLE)
+			if (conn != NULL && (conn->get_state() == RUDP_CONN_CONNECTING || conn->get_state() == RUDP_CONN_CONNECTED))
 				conn->close();
 
 			break;

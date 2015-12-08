@@ -121,6 +121,7 @@ protected:
 	BinStream		istrm_;
 
 	uint32_t		packet_count_;
+	uint32_t		byte_count_;
 	uint64_t		ts_;
 
 	uint32_t		count_;

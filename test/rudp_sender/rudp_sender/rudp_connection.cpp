@@ -4,15 +4,16 @@
 #include "rudp/rudp_interface.h"
 #include "rudp/rudp_socket.h"
 #include <math.h>
-
-#define PACKET_NUM	1000 
-#define SEND_DELAY  5
+ 
+#define PACKET_NUM	10 
+#define SEND_DELAY  100
 
 RUDPConnection::RUDPConnection()
 {
 	packet_count_ = 0;
 	timer_id_ = 0;
 	count_ = 0;
+	byte_count_ = 0;
 	stat_ = NULL;
 }
 
@@ -57,13 +58,14 @@ void RUDPConnection::cancel_timer()
 
 void RUDPConnection::heartbeat()
 {
-	send_packet();
 	uint64_t cur_count = CBaseTimeValue::get_time_value().msec();
 	if(tick_count_ + 1000 < cur_count)
 	{
-		cout << "send packet number = " << ceil(packet_count_ * 1000.0 /(cur_count - tick_count_)) << endl;
+		cout << "push packet number = " << (packet_count_ * 1000 / (cur_count - tick_count_)) 
+			<< ", bandwidth = " << (byte_count_ / 1024) << "kb/s" << endl;
 		packet_count_ = 0;
 		tick_count_ = cur_count;
+		byte_count_ = 0;
 	}
 }
 
@@ -75,17 +77,15 @@ void RUDPConnection::send_packet()
 	packet.user_id = count_;
 	packet.ts = CBaseTimeValue::get_time_value().msec();
 	packet.nick = "zerok775";
-	packet.ctx = "abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890";
+	packet.ctx = "abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890";
 
 	uint64_t begin_ts = CBaseTimeValue::get_time_value().msec();
 
-	for(int32_t i = 0; i < PACKET_NUM; i ++)
-		this->send(packet);
-
-	uint64_t cur_count = CBaseTimeValue::get_time_value().msec();
-
-	//cout << "send delay = " << cur_count - begin_ts << endl;
-	packet_count_ += PACKET_NUM;
+	for (int32_t i = 0; i < PACKET_NUM; i++){
+		if(this->send(packet) != 0)
+			return ;
+		packet_count_++;
+	}
 }
 
 int32_t RUDPConnection::handle_timeout(const void *act, uint32_t timer_id)
@@ -125,6 +125,8 @@ int32_t RUDPConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_
 		return -1;
 	}
 
+	rudp_sock_.set_option(4, RUDP_SEND_BUFFER);
+
 	//绑定一个事件器
 	RUDP()->bind_event_handle(rudp_sock_.get_handler(), this);
 
@@ -147,7 +149,7 @@ int32_t RUDPConnection::send(RUDPTestPacket& packet)
 	bin_strm->rewind(true);
 	*bin_strm << packet;
 
-	if(sbuffer_.put(*bin_strm))
+	if (sbuffer_.put(*bin_strm))
 	{
 		RUDP()->register_event(rudp_sock_.get_handler(), MASK_WRITE);
 		ret = 0;
@@ -232,17 +234,16 @@ int32_t RUDPConnection::rudp_output_event(int32_t rudp_id)
 		state_ = RUDP_CONN_CONNECTED;
 		ts_ = CBaseTimeValue::get_time_value().msec();
 
-		heartbeat();
 		set_timer(SEND_DELAY);
 
 		tick_count_ = CBaseTimeValue::get_time_value().msec();
 	}
 
-	//send_packet();
-
-	if(sbuffer_.data_length() > 0)
-		sbuffer_.send(rudp_sock_);
+	if (sbuffer_.data_length() == 0)
+		send_packet();
 	
+	byte_count_ += sbuffer_.send(rudp_sock_);
+
 	return 0;
 }
 
