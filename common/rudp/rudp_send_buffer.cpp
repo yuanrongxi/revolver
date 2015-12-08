@@ -10,7 +10,7 @@ BASE_NAMESPACE_BEGIN_DECL
 #define DEFAULT_RUDP_SEND_BUFFSIZE	4096
 #define NAGLE_DELAY					100
 
-RUDPSendBuffer::RUDPSendBuffer() 
+RUDPSendBuffer::RUDPSendBuffer()
 : net_channel_(NULL)
 , buffer_seq_(0)
 , dest_max_seq_(0)
@@ -101,6 +101,8 @@ int32_t RUDPSendBuffer::send(const uint8_t* data, int32_t data_size)
 		last_seg->data_size_ = copy_size;
 
 		send_data_.push_back(last_seg);
+		if (buffer_data_size_ + copy_pos > buffer_size_)
+			break;
 	}
 
 	buffer_data_size_ += copy_pos;
@@ -114,7 +116,6 @@ int32_t RUDPSendBuffer::send(const uint8_t* data, int32_t data_size)
 
 void RUDPSendBuffer::on_ack(uint64_t seq)
 {
-	RUDP_SEND_DEBUG("on ack, seq = " << seq);
 	//ID错误
 	if(cwnd_max_seq_ < seq)
 		return ;
@@ -153,13 +154,20 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 
 void RUDPSendBuffer::on_nack(uint64_t base_seq, const LossIDArray& loss_ids)
 {
+	uint64_t seq = base_seq;
 	//增加丢包信息
-	for(size_t i = 0; i < loss_ids.size(); ++i)
+	uint32_t sz = loss_ids.size();
+	for (size_t i = 0; i < sz; ++i)
 	{
 		if(loss_ids[i] + base_seq < cwnd_max_seq_)
-		{
 			loss_set_.insert(loss_ids[i] + base_seq);
+
+		for (uint32_t si = seq + 1; i != sz - 1 && si < loss_ids[i] + base_seq; si++){
+			SendWindowMap::iterator it = send_window_.find(si);
+			if (it != send_window_.end())
+				it->second->last_send_ts_ = (uint64_t)(-1);
 		}
+		seq = loss_ids[i] + base_seq;
 	}
 
 	on_ack(base_seq);
@@ -173,17 +181,33 @@ void RUDPSendBuffer::on_timer(uint64_t now_timer)
 
 void RUDPSendBuffer::check_buffer()
 {
+	buffer_size_ = core_max(buffer_size_, (ccc_->get_send_window_size() * MAX_SEGMENT_SIZE));
 	//检查是否可以写
 	if(buffer_data_size_ < buffer_size_ && net_channel_ != NULL)
 	{
-		net_channel_->on_write();
+		net_channel_->on_write(); 
 	}
 }
 
 //CCC控制清除接口
-void RUDPSendBuffer::clear_loss()
+void RUDPSendBuffer::clear_loss() 
 {
 	loss_set_.clear();
+}
+
+uint32_t RUDPSendBuffer::get_threshold(uint32_t rtt)
+{
+	uint32_t rtt_threshold = 10;
+	if(rtt < 30)
+		rtt_threshold = 30;
+	else if (rtt < 100)
+		rtt_threshold = (uint32_t)(rtt * 1.125);
+	else if (rtt < 300)
+		rtt_threshold = (uint32_t)(rtt * 1.35);
+	else 
+		rtt_threshold = (uint32_t)(rtt + 100);
+
+	return rtt_threshold;
 }
 
 void RUDPSendBuffer::attempt_send(uint64_t now_timer)
@@ -192,7 +216,8 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	uint32_t rtt = ccc_->get_rtt();
 	uint32_t ccc_cwnd_size = ccc_->get_send_window_size();
 	RUDPSendSegment* seg = NULL;
-	 
+	SendWindowMap::iterator map_it = send_window_.begin();
+
 	uint32_t send_packet_number  = 0;
 	if(!loss_set_.empty()) //重发丢失的片段
 	{
@@ -201,7 +226,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 		uint64_t loss_last_seq = 0;
 		for(LossIDSet::iterator it = loss_set_.begin(); it != loss_set_.end();)
 		{
-			if(send_packet_number >= ccc_cwnd_size)
+			if (send_packet_number >= ccc_cwnd_size || send_window_.size() == 0)
 				break;
 
 			if (send_window_.size() > 0 && *it < send_window_.begin()->first){
@@ -209,8 +234,11 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 				continue;
 			}
 
+			uint32_t min_seq = send_window_.begin()->first;
+
 			SendWindowMap::iterator cwnd_it = send_window_.find(*it);
-			if(cwnd_it != send_window_.end() && cwnd_it->second->last_send_ts_ + rtt / 2 < now_timer)
+			if (cwnd_it != send_window_.end() && (cwnd_it->second->last_send_ts_ + rtt < now_timer 
+				|| min_seq + 10 > cwnd_it->second->seq_ && cwnd_it->second->last_send_ts_ + rtt/2 < now_timer))
 			{
 				seg = cwnd_it->second;
 
@@ -229,45 +257,44 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 				seg->last_send_ts_ = now_timer;
 				seg->send_count_ ++;
 
-				send_packet_number ++;
+				send_packet_number++;
 
 				loss_set_.erase(it ++);
 
 				ccc_->add_resend();
-				//RUDP_SEND_DEBUG("resend seq = " << seg->seq_);
+				/*RUDP_SEND_DEBUG("resend seq = " << seg->seq_);*/
 			}
-			else
+			else 
 				++ it;
 		}
 		//更新重发包范围内未重发报文的时刻，防止下一次定时器到来时重复发送
-		for(SendWindowMap::iterator it = send_window_.begin(); it != send_window_.end(); ++it)
+		for (map_it = send_window_.begin(); map_it != send_window_.end(); ++map_it)
 		{
-			if(it->second->push_ts_ < loss_last_ts && loss_last_seq >= it->first)
-				it->second->last_send_ts_ = now_timer;
-			else if(loss_last_seq < it->first)
+			seg = map_it->second;
+			if (seg->push_ts_ < loss_last_ts && loss_last_seq >= map_it->first && seg->last_send_ts_ != (uint64_t)(-1))
+				seg->last_send_ts_ = now_timer;
+			else if (loss_last_seq < map_it->first)
 				break;
-		}
+		} 
 	}
-	else if(send_window_.size() > 0)//丢包队列为空，重发所有窗口中超时的分片
-	{
-		uint32_t rtt_threshold = (uint32_t)ceil(rtt * 1.25);
-		rtt_threshold = (core_max(rtt_threshold, 30));
-
+	else if (send_window_.size() > 0 && send_packet_number < ccc_cwnd_size)//丢包队列为空，重发所有窗口中超时的分片
+	{ 
+		uint32_t rtt_threshold = get_threshold(rtt);
 		SendWindowMap::iterator end_it = send_window_.end();
-		for(SendWindowMap::iterator it = send_window_.begin(); it != end_it; ++it)
+		for (map_it = send_window_.begin(); map_it != end_it; ++map_it)
 		{
-			if(send_packet_number >= ccc_cwnd_size || (it->second->push_ts_ + rtt_threshold > now_timer))
+			seg = map_it->second;
+			if (send_packet_number >= ccc_cwnd_size || (seg->push_ts_ + rtt_threshold > now_timer))
 				break;
-
-			seg = it->second;
-
-			if(seg->last_send_ts_ + rtt_threshold < now_timer 
-				|| (seg->push_ts_ + rtt_threshold * 5 < now_timer && seg->seq_ < dest_max_seq_ + 3 && seg->last_send_ts_ + rtt_threshold / 2 < now_timer))
+			 
+			if (seg->last_send_ts_ + rtt_threshold < now_timer
+				|| (seg->push_ts_ + rtt_threshold * 2 < now_timer && seg->seq_ < dest_max_seq_ + 3 
+				&& seg->last_send_ts_ + rtt_threshold / 2 < now_timer))
 			{
 				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_, now_timer);
 
 				if(cwnd_max_seq_ < seg->seq_)
-					cwnd_max_seq_ = seg->seq_;
+					cwnd_max_seq_ = seg->seq_; 
 
 				seg->last_send_ts_ = now_timer;
 				seg->send_count_ ++;
@@ -276,13 +303,13 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 
 				ccc_->add_resend(); 
 
-				//RUDP_SEND_DEBUG("resend seq = " << seg->seq_);
+				/*RUDP_SEND_DEBUG("resend seq = " << seg->seq_);*/
 			}
 		}
 	}
 
 	//判断是否可以发送新的报文
-	if(ccc_cwnd_size > send_packet_number)
+	if (ccc_cwnd_size > send_packet_number || send_window_.size() < send_packet_number)
 	{
 		cwnd_size = send_window_.size();
 		while(!send_data_.empty())

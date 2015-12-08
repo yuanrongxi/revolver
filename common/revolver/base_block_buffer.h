@@ -17,7 +17,7 @@
 BASE_NAMESPACE_BEGIN_DECL
 
 //最大缓冲大小:30M
-#define MAX_BUFFER_SIZE 31457280
+#define MAX_BUFFER_SIZE 314572800
 
 template<uint32_t CAPACITY>
 class CBlockBuffer_T

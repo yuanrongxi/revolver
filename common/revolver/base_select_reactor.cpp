@@ -37,6 +37,15 @@ int32_t CSelectReator::close_reactor()
 int32_t CSelectReator::event_loop()
 {
 	BASE_HANDLER max_fd = 0;
+
+	//扫描定时器
+	select_delay_ = timer_queue_.expire();
+	//扫描内部队列
+	if (msg_proc_ != NULL)
+	{
+		msg_proc_->processor();
+	}
+
 	if(handler_map_.empty())
 	{
 		usleep(select_delay_ * 1000);
@@ -148,14 +157,6 @@ int32_t CSelectReator::event_loop()
 				++ it;
 			}
 		}
-	}
-
-	//扫描定时器
-	select_delay_ = timer_queue_.expire();
-	//扫描内部队列
-	if(msg_proc_ != NULL)
-	{
-		msg_proc_->processor();
 	}
 
 	return 0;

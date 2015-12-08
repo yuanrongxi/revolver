@@ -630,6 +630,8 @@ void RUDPSocket::process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, co
 		process_keeplive_ack(strm, remote_addr);
 		break;
 	}
+
+	heartbeat();
 }
 
 void RUDPSocket::process_data(BinStream& strm, const Inet_Addr& remote_addr)

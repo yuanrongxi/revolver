@@ -60,7 +60,7 @@ public:
 protected:
 	//ÊÔÍ¼·¢ËÍ
 	void				attempt_send(uint64_t now_timer);
-
+	uint32_t			get_threshold(uint32_t rtt);
 protected:
 	IRUDPNetChannel*	net_channel_;
 

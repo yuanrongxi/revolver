@@ -38,7 +38,7 @@ public:
 
 	uint32_t			get_rtt_var() const {return rtt_var_;};
 
-	void				add_resend(){resend_count_ ++;};
+	void				add_resend();
 
 protected:
 	void				set_max_cwnd(uint32_t rtt);
@@ -50,6 +50,8 @@ private:
 	uint32_t			rtt_var_;
 
 	uint64_t			last_ack_id_;
+	uint64_t			prev_ack_id_;
+
 	uint64_t			prev_on_ts_;
 
 	bool				slow_start_;

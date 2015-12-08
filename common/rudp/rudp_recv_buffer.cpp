@@ -74,7 +74,6 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 
 		recv_data_.push_back(seg);
 		first_seq_ = seq;
-		ok_count_++;
 
 		check_recv_window();
 		//报告可读
@@ -82,12 +81,6 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 
 		//删除丢包
 		loss_map_.erase(seq);
-
-		if (ok_count_ > 50){
-			net_channel_->send_ack(first_seq_);
-			set_send_last_ack_ts(CBaseTimeValue::get_time_value().msec());
-			ok_count_ = 0;
-		}
 	}
 	else if(seq > first_seq_ + 1)
 	{
@@ -117,6 +110,13 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 			//删除丢包
 			loss_map_.erase(seq);
 		}
+	}
+
+	ok_count_++;
+	if (ok_count_ > 30){
+		net_channel_->send_ack(first_seq_);
+		set_send_last_ack_ts(CBaseTimeValue::get_time_value().msec());
+		ok_count_ = 0;
 	}
 
 	if(max_seq_ < seq)
@@ -180,7 +180,7 @@ bool RUDPRecvBuffer::check_loss(uint64_t now_timer, uint32_t rtc)
 	}
 
 	return ret;
-}
+} 
 
 void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc)
 {
@@ -191,7 +191,7 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc)
 	}
 	else{
 
-		uint32_t rtc_threshold = core_min(100, rtc / 2);
+		uint32_t rtc_threshold = core_min(100, rtc);
 		if (last_ack_ts_ + rtc_threshold <= now_timer)
 		{
 			net_channel_->send_ack(first_seq_);
