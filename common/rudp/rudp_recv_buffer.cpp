@@ -4,7 +4,7 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 
-#define MAX_SEQ_INTNAL		20480
+#define MAX_SEQ_INTNAL		204800
 
 RUDPRecvBuffer::RUDPRecvBuffer() 
 : net_channel_(NULL)
@@ -81,6 +81,7 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 
 		//删除丢包
 		loss_map_.erase(seq);
+		ok_count_++;
 	}
 	else if(seq > first_seq_ + 1)
 	{
@@ -94,29 +95,16 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 			memcpy(seg->data_, data, data_size);
 
 			recv_window_[seq] = seg;
+			loss_map_[seq] = seq;
 		}
 
-		//判断丢包
-		if(seq > max_seq_ + 1)
-		{
-			uint64_t ts = CBaseTimeValue::get_time_value().msec();
-			for(uint64_t i = max_seq_ + 1; i < seq;  ++ i)
-			{
-				loss_map_[i] = ts;
-			}
-		}
-		else
-		{
-			//删除丢包
-			loss_map_.erase(seq);
-		}
+		ok_count_++;
 	}
 
-	ok_count_++;
-	if (ok_count_ > 30){
+	if (ok_count_ > 64){
 		net_channel_->send_ack(first_seq_);
-		set_send_last_ack_ts(CBaseTimeValue::get_time_value().msec());
 		ok_count_ = 0;
+		//set_send_last_ack_ts(CBaseTimeValue::get_time_value().msec());
 	}
 
 	if(max_seq_ < seq)
@@ -153,31 +141,19 @@ bool RUDPRecvBuffer::check_loss(uint64_t now_timer, uint32_t rtc)
 	bool ret = false;
 
 	LossIDArray ids;
-
-	for(LossIDTSMap::iterator it = loss_map_.begin(); it != loss_map_.end();)
+	for (LossIDTSMap::iterator it = loss_map_.begin(); it != loss_map_.end();)
 	{
-		//过期的丢包
-		if(it->first <= first_seq_)
-		{
-			loss_map_.erase(it ++);
-		}
-		else if(it->second + rtc / 2 < now_timer)//丢失的报文，并且在重发周期内
-		{
+		if (it->first < first_seq_ + 2048){
 			ids.push_back(static_cast<uint32_t>(it->first - first_seq_));
-			loss_map_.erase(it ++);
-
 			ret = true;
+			loss_map_.erase(it++);
 		}
 		else
-		{
-			++ it;
-		}
+			break;
 	}
 
 	if(ret && net_channel_ != NULL)
-	{
 		net_channel_->send_nack(first_seq_, ids);
-	}
 
 	return ret;
 } 
@@ -191,7 +167,7 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc)
 	}
 	else{
 
-		uint32_t rtc_threshold = core_min(100, rtc);
+		uint32_t rtc_threshold = core_min(30, rtc);
 		if (last_ack_ts_ + rtc_threshold <= now_timer)
 		{
 			net_channel_->send_ack(first_seq_);
@@ -250,13 +226,9 @@ uint32_t RUDPRecvBuffer::get_bandwidth()
 
 	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
 	if(cur_ts > bandwidth_ts_)
-	{
 		ret = static_cast<uint32_t>(bandwidth_ * 1000 / (cur_ts - bandwidth_ts_));
-	}
 	else
-	{
 		ret = bandwidth_ * 1000;
-	}
 
 	bandwidth_ts_ = cur_ts;
 	bandwidth_ = 0;
@@ -269,14 +241,10 @@ int32_t RUDPRecvBuffer::get_buffer_data_size()
 	int32_t ret = 0;
 
 	for(RecvDataList::iterator list_it = recv_data_.begin(); list_it != recv_data_.end(); ++ list_it)
-	{
 		ret += (*list_it)->data_size_;
-	}
 
 	for(RecvWindowMap::iterator map_it = recv_window_.begin(); map_it != recv_window_.end(); ++ map_it)
-	{
 		ret += map_it->second->data_size_;
-	}
 
 	return ret;
 }

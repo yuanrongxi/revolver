@@ -15,9 +15,11 @@ RUDPSendBuffer::RUDPSendBuffer()
 , buffer_seq_(0)
 , dest_max_seq_(0)
 , cwnd_max_seq_(0)
+, max_loss_seq_(0)
 , buffer_size_(DEFAULT_RUDP_SEND_BUFFSIZE)
 , buffer_data_size_(0)
 , nagle_(false)
+, send_ts_(0)
 , ccc_(NULL)
 {
 	reset();
@@ -33,9 +35,11 @@ void RUDPSendBuffer::reset()
 	buffer_seq_ = rand() + 1;
 	dest_max_seq_ = buffer_seq_ - 1;
 	cwnd_max_seq_ = buffer_seq_;
+	max_loss_seq_ = buffer_seq_;
 	buffer_data_size_ = 0;
 	buffer_size_ = DEFAULT_RUDP_SEND_BUFFSIZE;
 	nagle_ = false;
+	send_ts_ = CBaseTimeValue::get_time_value().msec();
 
 	loss_set_.clear();
 
@@ -127,8 +131,7 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 		while(it != send_window_.end() && it->first <= seq)
 		{
 			//删除丢包信息
-			if(!loss_set_.empty())
-				loss_set_.erase(it->first);
+			loss_set_.erase(it->first);
 
 			//更新数据缓冲的大小
 			if(buffer_data_size_ >  it->second->data_size_)
@@ -140,11 +143,13 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 
 			RETURN_SEND_SEG(it->second);
 			send_window_.erase(it ++);
-		}
 
-		if(dest_max_seq_ < seq)
-			dest_max_seq_ = seq;
+			ccc_->add_recv(1);
+		}
 	}
+
+	if (dest_max_seq_ < seq)
+		dest_max_seq_ = seq;
 
 	//尝试发送
 	attempt_send(CBaseTimeValue::get_time_value().msec());
@@ -156,18 +161,25 @@ void RUDPSendBuffer::on_nack(uint64_t base_seq, const LossIDArray& loss_ids)
 {
 	uint64_t seq = base_seq;
 	//增加丢包信息
-	uint32_t sz = loss_ids.size();
-	for (size_t i = 0; i < sz; ++i)
-	{
-		if(loss_ids[i] + base_seq < cwnd_max_seq_)
-			loss_set_.insert(loss_ids[i] + base_seq);
+	if (ccc_->get_rtt() > 20){
+		uint32_t sz = loss_ids.size();
+		for (size_t i = 0; i < sz; ++i)
+		{
+			SendWindowMap::iterator it = send_window_.find(loss_ids[i] + base_seq);
+			if (it != send_window_.end()){
+				if (buffer_data_size_ >  it->second->data_size_)
+					buffer_data_size_ = buffer_data_size_ - it->second->data_size_;
+				else
+					buffer_data_size_ = 0;
 
-		for (uint32_t si = seq + 1; i != sz - 1 && si < loss_ids[i] + base_seq; si++){
-			SendWindowMap::iterator it = send_window_.find(si);
-			if (it != send_window_.end())
-				it->second->last_send_ts_ = (uint64_t)(-1);
+				bandwidth_ += it->second->data_size_;
+
+				RETURN_SEND_SEG(it->second);
+				send_window_.erase(it++);
+
+				ccc_->add_recv(1);
+			}
 		}
-		seq = loss_ids[i] + base_seq;
 	}
 
 	on_ack(base_seq);
@@ -184,9 +196,7 @@ void RUDPSendBuffer::check_buffer()
 	buffer_size_ = core_max(buffer_size_, (ccc_->get_send_window_size() * MAX_SEGMENT_SIZE));
 	//检查是否可以写
 	if(buffer_data_size_ < buffer_size_ && net_channel_ != NULL)
-	{
 		net_channel_->on_write(); 
-	}
 }
 
 //CCC控制清除接口
@@ -198,99 +208,69 @@ void RUDPSendBuffer::clear_loss()
 uint32_t RUDPSendBuffer::get_threshold(uint32_t rtt)
 {
 	uint32_t rtt_threshold = 10;
+	if (rtt < 10)
+		rtt_threshold = 3;
 	if(rtt < 30)
-		rtt_threshold = 30;
+		rtt_threshold = rtt + ccc_->get_rtt_var() + 3;
 	else if (rtt < 100)
-		rtt_threshold = (uint32_t)(rtt * 1.125);
+		rtt_threshold = rtt + ccc_->get_rtt_var() + 10;
 	else if (rtt < 300)
-		rtt_threshold = (uint32_t)(rtt * 1.35);
+		rtt_threshold = rtt + ccc_->get_rtt_var();
 	else 
-		rtt_threshold = (uint32_t)(rtt + 100);
+		rtt_threshold = (uint32_t)(rtt + ccc_->get_rtt_var() - rtt / 8);
+
+	if (ccc_->get_rtt_var() > 50)
+		rtt_threshold += ccc_->get_rtt_var();
 
 	return rtt_threshold;
+}
+
+uint32_t RUDPSendBuffer::calculate_snd_size(uint64_t now_timer)
+{
+	uint32_t ret;
+	uint32_t timer;
+	if (now_timer < send_ts_ + 10)
+		ret = 0;
+
+	timer = now_timer - send_ts_;
+	ret = ccc_->get_send_window_size() * timer / get_threshold(ccc_->get_rtt());
+
+	send_ts_ = now_timer;
+
+	return core_min(ret, ccc_->get_send_window_size());
 }
 
 void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 {
 	uint32_t cwnd_size;
-	uint32_t rtt = ccc_->get_rtt();
+	uint32_t rtt_threshold = get_threshold(ccc_->get_rtt());
 	uint32_t ccc_cwnd_size = ccc_->get_send_window_size();
 	RUDPSendSegment* seg = NULL;
-	SendWindowMap::iterator map_it = send_window_.begin();
-
+	SendWindowMap::iterator map_it;
+	uint32_t lead_ts = core_min(100, rtt_threshold / 4);
 	uint32_t send_packet_number  = 0;
-	if(!loss_set_.empty()) //重发丢失的片段
-	{
-		//发送丢包队列中的报文
-		uint64_t loss_last_ts = 0;
-		uint64_t loss_last_seq = 0;
-		for(LossIDSet::iterator it = loss_set_.begin(); it != loss_set_.end();)
-		{
-			if (send_packet_number >= ccc_cwnd_size || send_window_.size() == 0)
-				break;
 
-			if (send_window_.size() > 0 && *it < send_window_.begin()->first){
-				loss_set_.erase(it++);
-				continue;
-			}
+	cwnd_size = send_window_.size();
 
-			uint32_t min_seq = send_window_.begin()->first;
+	if (calculate_snd_size(now_timer) == 0)
+		return;
 
-			SendWindowMap::iterator cwnd_it = send_window_.find(*it);
-			if (cwnd_it != send_window_.end() && (cwnd_it->second->last_send_ts_ + rtt < now_timer 
-				|| min_seq + 10 > cwnd_it->second->seq_ && cwnd_it->second->last_send_ts_ + rtt/2 < now_timer))
-			{
-				seg = cwnd_it->second;
-
-				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_, now_timer);
-				if(cwnd_max_seq_ < seg->seq_)
-					cwnd_max_seq_ = seg->seq_;
-
-				//判断是否可以更改TS
-				if(loss_last_ts < seg->last_send_ts_)
-				{
-					loss_last_ts = seg->last_send_ts_;
-					if(loss_last_seq < *it) 
-						loss_last_seq = *it;
-				}
-
-				seg->last_send_ts_ = now_timer;
-				seg->send_count_ ++;
-
-				send_packet_number++;
-
-				loss_set_.erase(it ++);
-
-				ccc_->add_resend();
-				/*RUDP_SEND_DEBUG("resend seq = " << seg->seq_);*/
-			}
-			else 
-				++ it;
-		}
-		//更新重发包范围内未重发报文的时刻，防止下一次定时器到来时重复发送
-		for (map_it = send_window_.begin(); map_it != send_window_.end(); ++map_it)
-		{
-			seg = map_it->second;
-			if (seg->push_ts_ < loss_last_ts && loss_last_seq >= map_it->first && seg->last_send_ts_ != (uint64_t)(-1))
-				seg->last_send_ts_ = now_timer;
-			else if (loss_last_seq < map_it->first)
-				break;
-		} 
-	}
-	else if (send_window_.size() > 0 && send_packet_number < ccc_cwnd_size)//丢包队列为空，重发所有窗口中超时的分片
+	if (cwnd_size > 0 && send_packet_number < ccc_cwnd_size)//丢包队列为空，重发所有窗口中超时的分片
 	{ 
-		uint32_t rtt_threshold = get_threshold(rtt);
+		uint32_t min_seq = send_window_.begin()->first;
+
 		SendWindowMap::iterator end_it = send_window_.end();
 		for (map_it = send_window_.begin(); map_it != end_it; ++map_it)
 		{
 			seg = map_it->second;
-			if (send_packet_number >= ccc_cwnd_size || (seg->push_ts_ + rtt_threshold > now_timer))
+			if (send_packet_number >= ccc_cwnd_size || seg->push_ts_ + rtt_threshold/3 > now_timer)
 				break;
 			 
-			if (seg->last_send_ts_ + rtt_threshold < now_timer
-				|| (seg->push_ts_ + rtt_threshold * 2 < now_timer && seg->seq_ < dest_max_seq_ + 3 
-				&& seg->last_send_ts_ + rtt_threshold / 2 < now_timer))
+			if (ccc_->get_rtt() > 30 && min_seq + ccc_cwnd_size / 3 > seg->seq_ && seg->last_send_ts_ + lead_ts < now_timer
+				|| seg->last_send_ts_ + rtt_threshold < now_timer)
 			{
+				now_timer = CBaseTimeValue::get_time_value().msec();
+
 				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_, now_timer);
 
 				if(cwnd_max_seq_ < seg->seq_)
@@ -298,10 +278,10 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 
 				seg->last_send_ts_ = now_timer;
 				seg->send_count_ ++;
+				send_packet_number++;
 
-				send_packet_number ++;
-
-				ccc_->add_resend(); 
+				if (min_seq + ccc_cwnd_size / 3 > seg->seq_)
+					ccc_->add_resend(); 
 
 				/*RUDP_SEND_DEBUG("resend seq = " << seg->seq_);*/
 			}
@@ -309,9 +289,8 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	}
 
 	//判断是否可以发送新的报文
-	if (ccc_cwnd_size > send_packet_number || send_window_.size() < send_packet_number)
+	if (ccc_cwnd_size > send_packet_number && cwnd_size < ccc_cwnd_size)
 	{
-		cwnd_size = send_window_.size();
 		while(!send_data_.empty())
 		{
 			RUDPSendSegment* seg = send_data_.front();
@@ -327,6 +306,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 				//send_window_[seg->seq_] = seg;
 				cwnd_size ++;
 
+				now_timer = CBaseTimeValue::get_time_value().msec();
 				seg->push_ts_ = now_timer;
 				seg->last_send_ts_ = now_timer;
 				seg->send_count_ = 1;
@@ -349,13 +329,10 @@ uint32_t RUDPSendBuffer::get_bandwidth()
 
 	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
 	if(cur_ts > bandwidth_ts_)
-	{
 		ret = static_cast<uint32_t>(bandwidth_ * 1000 / (cur_ts - bandwidth_ts_));
-	}
 	else
-	{
 		ret = bandwidth_ * 1000;
-	}
+
 
 	bandwidth_ts_ = cur_ts;
 	bandwidth_ = 0;

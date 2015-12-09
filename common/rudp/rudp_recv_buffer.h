@@ -76,6 +76,7 @@ protected:
 
 	uint32_t			bandwidth_;
 	uint64_t			bandwidth_ts_;
+	uint32_t			rtc_;
 };
 
 BASE_NAMESPACE_END_DECL

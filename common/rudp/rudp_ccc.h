@@ -39,6 +39,7 @@ public:
 	uint32_t			get_rtt_var() const {return rtt_var_;};
 
 	void				add_resend();
+	void				add_recv(uint32_t count);
 
 protected:
 	void				set_max_cwnd(uint32_t rtt);
@@ -50,7 +51,6 @@ private:
 	uint32_t			rtt_var_;
 
 	uint64_t			last_ack_id_;
-	uint64_t			prev_ack_id_;
 
 	uint64_t			prev_on_ts_;
 
@@ -60,8 +60,10 @@ private:
 	//第一次设置RTT
 	bool				rtt_first_;
 	uint32_t			resend_count_;
+	uint32_t			recv_count_;
 
 	uint16_t			max_cwnd_;
+	uint16_t			min_cwnd_;
 
 	uint32_t			print_count_;
 };

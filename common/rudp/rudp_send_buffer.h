@@ -60,6 +60,7 @@ public:
 protected:
 	//试图发送
 	void				attempt_send(uint64_t now_timer);
+	uint32_t			calculate_snd_size(uint64_t now_timer);
 	uint32_t			get_threshold(uint32_t rtt);
 protected:
 	IRUDPNetChannel*	net_channel_;
@@ -81,6 +82,9 @@ protected:
 	uint64_t			cwnd_max_seq_;
 	//接收端最大的SEQ
 	uint64_t			dest_max_seq_;
+	//接收端最大丢失的报文SEQ
+	uint64_t			max_loss_seq_;
+	uint64_t			send_ts_;
 	//速度控制器
 	RUDPCCCObject*		ccc_;
 	//是否启动NAGLE算法
