@@ -24,3 +24,28 @@ ADD_SUBDIRECTORY(test)
 ADD_SUBDIRECTORY(rudprecv)
 ADD_SUBDIRECTORY(rudpsend)
 ADD_SUBDIRECTORY(sample)
+
+
+
+if(UNIX)
+    add_custom_target (distclean @echo cleaning for source distribution)
+    
+    add_custom_command(
+        COMMENT "distribution clean"
+        COMMAND make
+        ARGS -C ${CMAKE_CURRENT_BINARY_DIR} clean
+        COMMAND find
+        ARGS ${CMAKE_CURRENT_BINARY_DIR} -name "CMakeCache.txt" | xargs rm -rf
+        COMMAND find
+        ARGS ${CMAKE_CURRENT_BINARY_DIR} -name "CMakeFiles" | xargs rm -rf
+        COMMAND find
+        ARGS ${CMAKE_CURRENT_BINARY_DIR} -name "Makefile" | xargs rm -rf
+        COMMAND find
+        ARGS ${CMAKE_CURRENT_BINARY_DIR} -name "*.cmake" | xargs rm -rf
+        COMMAND find
+        ARGS ${CMAKE_CURRENT_SOURCE_DIR} -name "*.qm" | xargs rm -rf
+        COMMAND rm
+        ARGS -rf ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt
+        TARGET  distclean
+    )
+endif(UNIX) 

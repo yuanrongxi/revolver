@@ -1,10 +1,10 @@
 #ifndef SAMPLE_MSG_H__
 #define SAMPLE_MSG_H__
 
-#include "base_packet.h"
-#include "core_server_type.h"
-#include "core_message_map_decl.h"
-#include "base_inet_addr.h"
+#include "revolver/base_packet.h"
+#include "core/core_server_type.h"
+#include "core/core_message_map_decl.h"
+#include "revolver/base_inet_addr.h"
 #include <string>
 using namespace std;
 using namespace BASEOBJECT;
