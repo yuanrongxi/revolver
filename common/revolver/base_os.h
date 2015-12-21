@@ -63,8 +63,8 @@ inline int access(const char *path, int mode)
 #define	W_OK	2
 #define	R_OK	4
 
-#define XEAGAIN			WSAEWOULDBLOCK		//ÎÞÊý¾Ý¶ÁÐ´
-#define XEINPROGRESS	WSAEWOULDBLOCK		//ÕýÔÚ½øÐÐÁ¬½Ó
+#define XEAGAIN			WSAEWOULDBLOCK		//ï¿½ï¿½ï¿½ï¿½ï¿½Ý¶ï¿½Ð´
+#define XEINPROGRESS	WSAEWOULDBLOCK		//ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define XECONNABORTED	WSAECONNABORTED
 #define XEINTR			WSAEWOULDBLOCK
 
@@ -82,11 +82,12 @@ inline int access(const char *path, int mode)
 #include <netdb.h>
 #include <signal.h>
 #include <string.h>
+#include <pthread.h>
 
 typedef int		BASE_HANDLER;
 
-#define XEAGAIN			EAGAIN		//ÎÞÊý¾Ý¶ÁÐ´
-#define XEINPROGRESS	EINPROGRESS		//ÕýÔÚ½øÐÐÁ¬½Ó
+#define XEAGAIN			EAGAIN		//ï¿½ï¿½ï¿½ï¿½ï¿½Ý¶ï¿½Ð´
+#define XEINPROGRESS	EINPROGRESS		//ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define XECONNABORTED	ECONNABORTED
 #define XEINTR			EINTR
 

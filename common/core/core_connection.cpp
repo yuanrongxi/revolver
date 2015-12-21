@@ -35,7 +35,7 @@ CConnection::CConnection() : state_(CONN_IDLE), timer_id_(0)
 
 	conn_ptr_ = NULL;
 
-	//±»¶¯·½
+	//è¢«åŠ¨æ–¹
 	conn_name_ = "accept connection";
 
 	send_flag_ = false;
@@ -87,14 +87,14 @@ int32_t CConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_add
 {
 	CORE_DEBUG("TCP connect " << dst_addr);
 
-	//´ò¿ªÒ»¸öSOCKET
+	//æ‰“å¼€ä¸€ä¸ªSOCKET
 	if(sock_stream_.open(src_addr, true, false, true) != 0)
 	{
 		CORE_FATAL("open tcp failed! conn = " << this);
 		return -1;
 	}
 	
-	//Ö÷¶¯·½
+	//ä¸»åŠ¨æ–¹
 	conn_name_ = "connect connection";
 
 	CSockConnector connector;
@@ -111,7 +111,7 @@ int32_t CConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_add
 	//CORE_DEBUG("CConnection, register MASK_WRITE");
 	REACTOR_INSTANCE()->register_handler(this, MASK_WRITE);
 
-	//ÉèÖÃÒ»¸öÁ¬½Ó¶¨Ê±Æ÷
+	//è®¾ç½®ä¸€ä¸ªè¿æ¥å®šæ—¶å™¨
 	CORE_DEBUG("set connect timer");
 	timer_id_ = set_timer(eConnect_Timer, 10 * 1000);
 
@@ -120,22 +120,22 @@ int32_t CConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_add
 
 void CConnection::close()
 {
-	//É¾³ı¼àÌıÊÂ¼ş
+	//åˆ é™¤ç›‘å¬äº‹ä»¶
 	REACTOR_INSTANCE()->delete_handler(this);
-	//¹Ø±ÕSOCKET
+	//å…³é—­SOCKET
 	//sock_stream_.close();
-	//Í¨ÖªÁ¬½Ó¶Ï¿ª
+	//é€šçŸ¥è¿æ¥æ–­å¼€
 	CORE_DEBUG("connection close, conn = " << this);
 	handle_close(get_handle(), MASK_TIMEOUT);
 }
 
 void CConnection::extern_close()
 {
-	//É¾³ı¼àÌıÊÂ¼ş
+	//åˆ é™¤ç›‘å¬äº‹ä»¶
 	REACTOR_INSTANCE()->delete_handler(this);
 
 	reset();
-	//½«Á¬½Ó¶ÔÏó·µ»Ø¸øÁ¬½Ó³Ø
+	//å°†è¿æ¥å¯¹è±¡è¿”å›ç»™è¿æ¥æ± 
 	CONNECTION_POOL.push_obj(this);
 	CORE_DEBUG("push conn = " << this);
 }
@@ -150,12 +150,12 @@ int32_t CConnection::send(CCorePacket& packet, bool no_delay)
 
 	if(sbuffer_.remaining_length() < strm->data_size() + sizeof(uint32_t))
 	{
-		if(sbuffer_.length() < MAX_BUFFER_SIZE)//À©´óTCP·¢ËÍ»º³åÇø,·ÀÖ¹»º³åÇøÌ«Ğ¡Ôì³É·¢ËÍ°üÒì³£
+		if(sbuffer_.length() < MAX_BUFFER_SIZE)//æ‰©å¤§TCPå‘é€ç¼“å†²åŒº,é˜²æ­¢ç¼“å†²åŒºå¤ªå°é€ æˆå‘é€åŒ…å¼‚å¸¸
 		{
 			sbuffer_.realloc_buffer(strm->data_size() + sizeof(uint32_t));
 			CORE_WARNING("sbuffer realloc buffer, size = " << sbuffer_.length());
 		}
-		else //·¢ËÍ±¨ÎÄ¶ªÆú
+		else //å‘é€æŠ¥æ–‡ä¸¢å¼ƒ
 		{
 			CORE_ERROR("sbuffer is full, sbuffer.size = " << sbuffer_.length());
 			RETURN_BINSTREAM(strm);
@@ -202,12 +202,12 @@ int32_t CConnection::send(const string& bin_stream)
 
 	if(sbuffer_.remaining_length() < data_size + sizeof(uint32_t))
 	{
-		if(sbuffer_.length() < MAX_BUFFER_SIZE)//À©´óTCP·¢ËÍ»º³åÇø,·ÀÖ¹»º³åÇøÌ«Ğ¡Ôì³É·¢ËÍ°üÒì³£
+		if(sbuffer_.length() < MAX_BUFFER_SIZE)//æ‰©å¤§TCPå‘é€ç¼“å†²åŒº,é˜²æ­¢ç¼“å†²åŒºå¤ªå°é€ æˆå‘é€åŒ…å¼‚å¸¸
 		{
 			sbuffer_.realloc_buffer(data_size + sizeof(uint32_t));
 			CORE_WARNING("sbuffer realloc buffer, size = " << sbuffer_.length());
 		}
-		else //·¢ËÍ±¨ÎÄ¶ªÆú
+		else //å‘é€æŠ¥æ–‡ä¸¢å¼ƒ
 		{
 			CORE_ERROR("sbuffer is full, sbuffer.size = " << sbuffer_.length());
 			return -1;
@@ -235,7 +235,7 @@ int32_t CConnection::send(const string& bin_stream)
 
 void CConnection::reset()
 {
-	//Çå¿Õµ½³õÊ¼»¯×´Ì¬
+	//æ¸…ç©ºåˆ°åˆå§‹åŒ–çŠ¶æ€
 	sock_stream_.close();
 
 	reactor_index_ = 0;
@@ -243,7 +243,7 @@ void CConnection::reset()
 	state_ = CONN_IDLE;
 	CORE_DEBUG("CConnection, state = CONN_IDLE, this = " << this);
 
-	//È¡Ïû¶¨Ê±Æ÷
+	//å–æ¶ˆå®šæ—¶å™¨
 	cancel_timer();
 
 	timer_id_ = 0;
@@ -261,7 +261,7 @@ void CConnection::reset()
 
 	send_flag_ = false;
 
-	//ÊÍ·ÅÌ«¶àµÄÄÚ´æÕ¼ÓÃ
+	//é‡Šæ”¾å¤ªå¤šçš„å†…å­˜å ç”¨
 	istrm_.rewind(true);
 	istrm_.reduce();
 
@@ -320,7 +320,7 @@ int32_t CConnection::handle_timeout(const void *act, uint32_t timer_id)
 			{				
 				CONN_MANAGER()->on_del_connection(this);
 
-				//Í¨ÖªÉÏ²ãÁ¬½Ó¶Ï¿ª
+				//é€šçŸ¥ä¸Šå±‚è¿æ¥æ–­å¼€
 				MSG_PROCESSOR()->on_disconnect(server_id_, this);
 
 				state_ = CONN_IDLE;
@@ -330,7 +330,7 @@ int32_t CConnection::handle_timeout(const void *act, uint32_t timer_id)
 		}
 		break;
 
-	case eTCP_Hearbeat: //ĞÄÌø£¬PING±£³Ö
+	case eTCP_Hearbeat: //å¿ƒè·³ï¼ŒPINGä¿æŒ
 		{
 			if(heartbeat() == 0)
 			{
@@ -352,16 +352,16 @@ int32_t CConnection::handle_exception(BASE_HANDLER handle)
 	CORE_DEBUG("handle_exception, error = " << error_no());
 	if(state_ != CONN_IDLE)
 	{
-		//Í¨Öª·şÎñÆ÷½Úµã¹ÜÀíÄ£¿é
+		//é€šçŸ¥æœåŠ¡å™¨èŠ‚ç‚¹ç®¡ç†æ¨¡å—
 		CONN_MANAGER()->on_del_connection(this);
 
-		//Í¨ÖªÉÏ²ãÁ¬½Ó¶Ï¿ª
+		//é€šçŸ¥ä¸Šå±‚è¿æ¥æ–­å¼€
 		MSG_PROCESSOR()->on_disconnect(server_id_, this);
 		
 		sock_stream_.close();
 
 		reset();
-		//½«Á¬½Ó¶ÔÏó·µ»Ø¸øÁ¬½Ó³Ø
+		//å°†è¿æ¥å¯¹è±¡è¿”å›ç»™è¿æ¥æ± 
 		CONNECTION_POOL.push_obj(this);
 		CORE_DEBUG("push conn = " << this);
 	}
@@ -378,16 +378,16 @@ int32_t CConnection::handle_close(BASE_HANDLER handle, ReactorMask close_mask)
 	CORE_DEBUG("handle_close");
 	if(state_ != CONN_IDLE)
 	{
-		//Í¨Öª·şÎñÆ÷½Úµã¹ÜÀíÄ£¿é
+		//é€šçŸ¥æœåŠ¡å™¨èŠ‚ç‚¹ç®¡ç†æ¨¡å—
 		CONN_MANAGER()->on_del_connection(this);
 
-		//Í¨ÖªÉÏ²ãÁ¬½Ó¶Ï¿ª
+		//é€šçŸ¥ä¸Šå±‚è¿æ¥æ–­å¼€
 		MSG_PROCESSOR()->on_disconnect(server_id_, this);
 		
 		sock_stream_.close();
 
 		reset();
-		//½«Á¬½Ó¶ÔÏó·µ»Ø¸øÁ¬½Ó³Ø
+		//å°†è¿æ¥å¯¹è±¡è¿”å›ç»™è¿æ¥æ± 
 		CONNECTION_POOL.push_obj(this);
 		CORE_DEBUG("push conn = " << this);
 	}
@@ -407,7 +407,7 @@ int32_t CConnection::handle_input(BASE_HANDLER handle)
 	{
 		recv_packet.body_ptr_ = NULL;
 
-		if(rbuffer_.remaining_length() == 0) //À©´óTCP½ÓÊÕ»º³åÇø,·ÀÖ¹»º³åÇøÌ«Ğ¡Ôì³ÉÊÕ°üÒì³£
+		if(rbuffer_.remaining_length() == 0) //æ‰©å¤§TCPæ¥æ”¶ç¼“å†²åŒº,é˜²æ­¢ç¼“å†²åŒºå¤ªå°é€ æˆæ”¶åŒ…å¼‚å¸¸
 		{
 			if(rbuffer_.length() < MAX_BUFFER_SIZE)
 				rbuffer_.realloc_buffer(rbuffer_.length() - 1);
@@ -425,7 +425,7 @@ int32_t CConnection::handle_input(BASE_HANDLER handle)
 			THROTTLER()->add_tcp_packet(rc, false);
 			
 			bool split_flag = true;
-			while(split_flag) //ÏûÏ¢×é×°
+			while(split_flag) //æ¶ˆæ¯ç»„è£…
 			{
 				int32_t split_ret = rbuffer_.split(istrm_);
 				if(split_ret == 0)
@@ -444,7 +444,7 @@ int32_t CConnection::handle_input(BASE_HANDLER handle)
 				}
 				else if(split_ret < 0)
 					return -1;
-				else //±íÊ¾°üºÏ·¨£¬¼ÌĞøÊÕ£¡
+				else //è¡¨ç¤ºåŒ…åˆæ³•ï¼Œç»§ç»­æ”¶ï¼
 				{
 #ifndef WIN32
 					split_flag = false;
@@ -480,7 +480,7 @@ int32_t CConnection::handle_output(BASE_HANDLER handle)
 {
 	check_connecting_state();
 
-	//·¢ËÍÊı¾İ
+	//å‘é€æ•°æ®
 	int32_t rc = sbuffer_.send(sock_stream_);
 	if(rc < 0)
 	{
@@ -495,7 +495,7 @@ int32_t CConnection::handle_output(BASE_HANDLER handle)
 		}
 	}
 
-	//ÅĞ¶ÏÑ­»·BUFFERÖĞÊÇ·ñ»¹ÓĞÊı¾İ£¬Èç¹ûÃ»ÓĞ£¬É¾³ıĞ´ÈëÊÂ¼ş¡£
+	//åˆ¤æ–­å¾ªç¯BUFFERä¸­æ˜¯å¦è¿˜æœ‰æ•°æ®ï¼Œå¦‚æœæ²¡æœ‰ï¼Œåˆ é™¤å†™å…¥äº‹ä»¶ã€‚
 	if(sbuffer_.data_length() == 0)
 	{
 		REACTOR_INSTANCE()->remove_handler(this, MASK_WRITE);
@@ -513,7 +513,7 @@ void CConnection::check_connecting_state()
 		CORE_DEBUG("set heartbeat timer, conn = " << this);
 		if(timer_id_ == 0)
 		{
-			timer_id_ = set_timer(eTCP_Hearbeat, 60000); //ÉèÖÃÒ»¸öĞÄÌø
+			timer_id_ = set_timer(eTCP_Hearbeat, 60000); //è®¾ç½®ä¸€ä¸ªå¿ƒè·³
 		}
 
 		REACTOR_INSTANCE()->register_handler(this, MASK_READ);
@@ -523,7 +523,7 @@ void CConnection::check_connecting_state()
 
 		timer_count_ = 0;
 
-		//Ö÷¶¯Á¬½Ó·½£¬·¢ËÍÎÕÊÖÏûÏ¢
+		//ä¸»åŠ¨è¿æ¥æ–¹ï¼Œå‘é€æ¡æ‰‹æ¶ˆæ¯
 		send_handshake();
 
 		if(remote_addr_.get_ip() == AF_INET)
@@ -537,7 +537,7 @@ int32_t CConnection::process(CCorePacket &packet, BinStream& istrm)
 	switch(packet.msg_type_)
 	{
 	case CORE_REQUEST:
-		//ÏûÏ¢´¦Àí
+		//æ¶ˆæ¯å¤„ç†
 		MSG_PROCESSOR()->on_message(packet, istrm, this);
 		timer_count_ = 0;
 		break;
@@ -566,7 +566,7 @@ int32_t CConnection::process_handshake(const CCorePacket &packet, BinStream& ist
 	server_id_ = packet.server_id_;
 	server_type_ = packet.server_type_;
 
-	//¶Ô·şÎñÆ÷½øĞĞĞ£Ñé
+	//å¯¹æœåŠ¡å™¨è¿›è¡Œæ ¡éªŒ
 	/*if(server_type_ > eClient && SERVER_TYPE > eClient)
 	{
 		HandShakeBody body;
@@ -574,7 +574,7 @@ int32_t CConnection::process_handshake(const CCorePacket &packet, BinStream& ist
 			istrm >> body;
 			string digest_data;
 			generate_digest(server_id_, server_type_, digest_data);
-			//ÎÕÊÖ·Ç·¨ÕªÒª
+			//æ¡æ‰‹éæ³•æ‘˜è¦
 			if( digest_data != body.digest_data)
 			{
 				CORE_WARNING("unsuited server connection!!");
@@ -590,15 +590,15 @@ int32_t CConnection::process_handshake(const CCorePacket &packet, BinStream& ist
 		}
 	}*/
 
-	//¿ÉÄÜÎ´´¥·¢µÚÒ»¸öMASK_WRITE
+	//å¯èƒ½æœªè§¦å‘ç¬¬ä¸€ä¸ªMASK_WRITE
 	check_connecting_state();
 
-	//Í¨Öª·şÎñÆ÷½Úµã¹ÜÀíÄ£¿é
+	//é€šçŸ¥æœåŠ¡å™¨èŠ‚ç‚¹ç®¡ç†æ¨¡å—
 	CONN_MANAGER()->on_add_connection(this);
 
 	CORE_DEBUG("process TCP HANDSHAKE, conn = " << this);
 
-	//Í¨ÖªÉÏ²ãÓĞĞÂµÄÁ¬½Ó½øÈë£¬±»¶¯Á¬½Ó·½
+	//é€šçŸ¥ä¸Šå±‚æœ‰æ–°çš„è¿æ¥è¿›å…¥ï¼Œè¢«åŠ¨è¿æ¥æ–¹
 	MSG_PROCESSOR()->on_connect(server_id_, this);
 
 	timer_count_ = 0;
@@ -621,7 +621,7 @@ int32_t CConnection::heartbeat()
 {
 	timer_count_ ++;
 	//CORE_INFO("heartbeat, timer_count_ = " << timer_count_ << ", conn = " << this);
-	if(timer_count_ > 4) //4·ÖÖÓÄÚÎŞÈÎºÎ±¨ÎÄ£¬¹Ø±ÕÁ¬½Ó
+	if(timer_count_ > 4) //4åˆ†é’Ÿå†…æ— ä»»ä½•æŠ¥æ–‡ï¼Œå…³é—­è¿æ¥
 	{
 		CORE_WARNING("tcp connection timeout!! conn = " << this);
 		this->close();
@@ -630,7 +630,7 @@ int32_t CConnection::heartbeat()
 	}
 	else
 	{
-		//µ÷Õû·ÖÅäµÄÄÚ´æ£¬·ÀÖ¹¿Í»§¶ËÁ¬½ÓÄÚ´æ¹ı´ó
+		//è°ƒæ•´åˆ†é…çš„å†…å­˜ï¼Œé˜²æ­¢å®¢æˆ·ç«¯è¿æ¥å†…å­˜è¿‡å¤§
 		buffer_reduce();
 		send_ping();
 
@@ -642,11 +642,11 @@ int32_t CConnection::heartbeat()
 
 void CConnection::buffer_reduce()
 {
-	//Èç¹ûÊı¾İ³¤¶ÈÎª0£¬¶øÇÒÊÇ¶Ô¿Í»§¶ËµÄÁ¬½Ó
+	//å¦‚æœæ•°æ®é•¿åº¦ä¸º0ï¼Œè€Œä¸”æ˜¯å¯¹å®¢æˆ·ç«¯çš„è¿æ¥
 	if(server_type_ == eClient && sbuffer_.length() > CLIENT_BUFFER_SIZE && sbuffer_.data_length() == 0)
 		sbuffer_.reset();
 
-	//Èç¹û±¾µØÊÇ¿Í»§¶Ë£¬½øĞĞ½ÓÊÕBUFFERµÄµ÷Õû
+	//å¦‚æœæœ¬åœ°æ˜¯å®¢æˆ·ç«¯ï¼Œè¿›è¡Œæ¥æ”¶BUFFERçš„è°ƒæ•´
 	if(SERVER_TYPE == eClient)
 	{
 		if(rbuffer_.length() > CLIENT_BUFFER_SIZE && rbuffer_.data_length() == 0)
@@ -686,7 +686,7 @@ void CConnection::generate_digest(uint32_t server_id, uint8_t server_type, strin
 {
 	digest_data.clear();
 
-	//²úÉúÒ»¸öÎÕÊÖMD5ÕªÒª
+	//äº§ç”Ÿä¸€ä¸ªæ¡æ‰‹MD5æ‘˜è¦
 	uint8_t digest[MD5_DIGEST_LENGTH] = {0};
 
 	MD5Context md5_ctx;
