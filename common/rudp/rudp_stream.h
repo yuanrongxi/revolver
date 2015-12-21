@@ -18,32 +18,33 @@ BASE_NAMESPACE_BEGIN_DECL
 class RUDPStream 
 {
 public:
-	RUDPStream();
-	virtual ~RUDPStream();
+    RUDPStream();
+    virtual ~RUDPStream();
 
-	int32_t			get_handler() const;
-	void			set_handler(int32_t handle);
+    int32_t			get_handler() const;
+    void			set_handler(int32_t handle);
 
-	int32_t			open(const Inet_Addr& local_addr);
-	int32_t			close();
-	int32_t			force_close();
+    int32_t			open(const Inet_Addr& local_addr);
+    int32_t			close();
+    int32_t			force_close();
 
-	int32_t			connect(const Inet_Addr& remote_addr);
+    int32_t			connect(const Inet_Addr& remote_addr);
 
-	bool			isopen() const;
+    bool			isopen() const;
+    void            set_userdata(void* data) { user_data_ = data; }
+    //属性设置
+    int32_t			set_option(int32_t op_type, int32_t op_value) const;
 
-	//属性设置
-	int32_t			set_option(int32_t op_type, int32_t op_value) const;
+    //获取SOCKET绑定的地址
+    int32_t			get_local_addr (Inet_Addr& local_addr) const;
+    int32_t			get_peer_addr(Inet_Addr& remote_addr) const;
 
-	//获取SOCKET绑定的地址
-	int32_t			get_local_addr (Inet_Addr& local_addr) const;
-	int32_t			get_peer_addr(Inet_Addr& remote_addr) const;
-
-	int32_t			recv(uint8_t* buf, uint32_t buf_size);
-	int32_t			send(const uint8_t* buf, uint32_t buf_size);
+    int32_t			recv(uint8_t* buf, uint32_t buf_size);
+    int32_t			send(const uint8_t* buf, uint32_t buf_size);
 
 protected:
-	int32_t			handler_;
+    int32_t			handler_;
+    void*           user_data_;
 };
 
 BASE_NAMESPACE_END_DECL
