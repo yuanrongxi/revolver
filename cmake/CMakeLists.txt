@@ -20,14 +20,14 @@ ADD_SUBDIRECTORY(rudp)
 ADD_SUBDIRECTORY(core)
 ADD_SUBDIRECTORY(silencer)
 ADD_SUBDIRECTORY(daemon)
-ADD_SUBDIRECTORY(test) 
+#ADD_SUBDIRECTORY(test) 
 ADD_SUBDIRECTORY(rudprecv)
 ADD_SUBDIRECTORY(rudpsend)
 ADD_SUBDIRECTORY(sample)
 
 
 
-if(UNIX)
+if(UNIX OR APPLE)
     add_custom_target (distclean @echo cleaning for source distribution)
     
     add_custom_command(

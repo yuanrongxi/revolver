@@ -4,7 +4,7 @@ extern "C" {
 
 #include "crc_crypt.h"
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #define CRC_FIRST		0x3b
 #define CRC_SECOND		0xe6
@@ -80,11 +80,11 @@ int encrypt(aes_context* handler, unsigned char* src, int src_size, unsigned cha
 
 	if(src_size < AES_SIZE)
 	{
-		//²»½øÐÐ¼ÓÃÜ£¬ÌáÊ¾Ê§°Ü£¬×îÐ¡±¨ÎÄ±ØÐëÊÇ16×Ö½Ú
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½Ü£ï¿½ï¿½ï¿½Ê¾Ê§ï¿½Ü£ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½16ï¿½Ö½ï¿½
 		return 0;
 	}
 
-	//¼ÆËãCRC
+	//ï¿½ï¿½ï¿½ï¿½CRC
 	head_crc(src, AES_SIZE, &first, &second);
 	if (src_size > AES_SIZE)
 	{
@@ -95,10 +95,10 @@ int encrypt(aes_context* handler, unsigned char* src, int src_size, unsigned cha
 		src_size = AES_SIZE;
 	}
 
-	//½«Í·²¿16¸ö×Ö½Ú½øÐÐaes¼ÓÃÜ.
+	//ï¿½ï¿½Í·ï¿½ï¿½16ï¿½ï¿½ï¿½Ö½Ú½ï¿½ï¿½ï¿½aesï¿½ï¿½ï¿½ï¿½.
 	aes_encrypt(handler, src, dst);
 
-	//Ìí¼ÓCRCµ½±¨ÎÄµ±ÖÐ
+	//ï¿½ï¿½ï¿½CRCï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½
 	*(dst + src_size) = first;
 	*(dst + src_size + 1) = second;
 
@@ -112,7 +112,7 @@ int decrypt(aes_context* handler, unsigned char* src, int src_size, unsigned cha
 	if(src_size < AES_SIZE + 2)
 		return 0;
 
-	//aes½âÃÜ
+	//aesï¿½ï¿½ï¿½ï¿½
 	aes_decrypt(handler, src, dst);
 	head_crc(dst, AES_SIZE, &first, &second);
 	if(src_size > AES_SIZE + 2)
@@ -120,7 +120,7 @@ int decrypt(aes_context* handler, unsigned char* src, int src_size, unsigned cha
 		decode_xor(dst, AES_SIZE, src + AES_SIZE, src_size - AES_SIZE - 2, dst + AES_SIZE, &first, &second);
 	}
 
-	if(first == *(src + src_size - 2) && second == *(src + src_size - 1)) //Ð£ÑéºÍÕýÈ·
+	if(first == *(src + src_size - 2) && second == *(src + src_size - 1)) //Ð£ï¿½ï¿½ï¿½ï¿½ï¿½È·
 	{
 		return src_size - 2;
 	}

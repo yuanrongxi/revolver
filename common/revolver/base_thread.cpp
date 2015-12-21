@@ -144,10 +144,10 @@ const string& CThread::get_thread_name() const
 
 std::ostream&	operator<< (std::ostream& os, const CThread& thr)
 {
-	os << "thread info, handler = " << (uint32_t)thr.thr_handle_ \
-		<< ", terminated = " << (thr.terminated_ ? "true" : "false") \
-		<< ", thr_index = " << thr.thr_index_ \
-		<< ", thr_name = " << thr.thr_name_ << "\n";
+//	os << "thread info, handler = " << (uint32_t)thr.thr_handle_ \
+//		<< ", terminated = " << (thr.terminated_ ? "true" : "false") \
+//		<< ", thr_index = " << thr.thr_index_ \
+//		<< ", thr_name = " << thr.thr_name_ << "\n";
 
 	return os;
 }

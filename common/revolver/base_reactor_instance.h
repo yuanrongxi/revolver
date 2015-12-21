@@ -4,7 +4,7 @@
 #include "revolver/base_select_reactor.h"
 #include "revolver/base_epoll_reactor.h"
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 #define REACTOR_CREATE	 CSingleton<CSelectReator>::instance
 #define REACTOR_INSTANCE CSingleton<CSelectReator>::instance
 #define REACTOR_DESTROY  CSingleton<CSelectReator>::destroy

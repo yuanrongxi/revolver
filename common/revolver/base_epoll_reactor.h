@@ -1,11 +1,11 @@
 /*************************************************************************************
 *filename:	base_epoll_reactor.h
 *
-*to do:		¶¨ÒåLINUXÏµÍ³ÏÂµÄEPOLL·´Ó¦Æ÷
+*to do:		ï¿½ï¿½ï¿½ï¿½LINUXÏµÍ³ï¿½Âµï¿½EPOLLï¿½ï¿½Ó¦ï¿½ï¿½
 *Create on: 2012-05
 *Author:	zerok
-*check list: EPOLL REACTOR²»×öËø±£»¤£¬ËùÓÐHANDLERµÄ²åÈëºÍÉ¾³ý±ØÐëÍ¨¹ýÄÚ²¿µÄÏûÏ¢¶ÓÁÐÀ´¿ØÖÆ
-			 ¾ø¶Ô½ûÖ¹¶àÏß³Ì²Ù×÷EPOLL ·´Ó¦Æ÷µÄÌí¼ÓÉ¾³ý²Ù×÷¡£	
+*check list: EPOLL REACTORï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HANDLERï¿½Ä²ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			 ï¿½ï¿½ï¿½Ô½ï¿½Ö¹ï¿½ï¿½ï¿½ß³Ì²ï¿½ï¿½ï¿½EPOLL ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	
 *************************************************************************************/
 #ifndef __BASE_EPOLL_REACTOR_H
 #define __BASE_EPOLL_REACTOR_H
@@ -16,13 +16,13 @@
 
 #include <set>
 
-#ifndef WIN32
+#ifdef __linux__
 #include <sys/epoll.h>
 #endif
 
 BASE_NAMESPACE_BEGIN_DECL
 
-#ifndef WIN32
+#ifdef __linux__
 #define EPOLL_MAX_HANDLER		32768
 #define EPOLL_HEAP_SIZE			65536	//64K 
 
@@ -69,7 +69,7 @@ private:
 
 	BASE_HANDLER				epfd_;
 	epoll_event*				events_;
-	int32_t						nevent_;		//´¥·¢µÄEVENT¸öÊý
+	int32_t						nevent_;		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½EVENTï¿½ï¿½ï¿½ï¿½
 
 	uint64_t					prev_ts_;
 };

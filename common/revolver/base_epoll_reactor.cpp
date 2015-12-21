@@ -5,7 +5,7 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 
-#ifndef WIN32
+#ifdef __linux__
 #define MAX_NEVENT 8192
 
 CEpollReactor::CEpollReactor() : max_handler_num_(EPOLL_MAX_HANDLER)
@@ -81,7 +81,7 @@ ReactorEventHandlerInfo* CEpollReactor::find_handler_info(CEventHandler* handler
 	return info;
 }
 
-//¼ì²é¶ÁÐ´ºóµÄÁ¬½ÓÊÇ·ñÕý³£
+//ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
 void CEpollReactor::check_connection(int32_t rc, CEventHandler* handler)
 {
 	if(rc < 0)
@@ -123,7 +123,7 @@ int32_t CEpollReactor::event_loop()
 
 		handler_id = handler->get_handle();
 		
-		if(events_[i].events & EPOLLIN) //¶ÁÊÂ¼þ
+		if(events_[i].events & EPOLLIN) //ï¿½ï¿½ï¿½Â¼ï¿½
 		{
 			int32_t rc = handler->handle_input(handler_id);
 
@@ -134,7 +134,7 @@ int32_t CEpollReactor::event_loop()
 			}
 		}
 		
-		if(events_[i].events & EPOLLOUT) //Ð´ÊÂ¼þ
+		if(events_[i].events & EPOLLOUT) //Ð´ï¿½Â¼ï¿½
 		{
 			int32_t rc = handler->handle_output(handler_id);
 
@@ -145,7 +145,7 @@ int32_t CEpollReactor::event_loop()
 			}
 		}
 
-		if((events_[i].events & EPOLLHUP) /*| (events_[i].events & EPOLLRDHUP)*/) //¹Ø±ÕÊÂ¼þ
+		if((events_[i].events & EPOLLHUP) /*| (events_[i].events & EPOLLRDHUP)*/) //ï¿½Ø±ï¿½ï¿½Â¼ï¿½
 		{
 			delete_handler(handler);
 
@@ -153,7 +153,7 @@ int32_t CEpollReactor::event_loop()
 			continue;
 		}
 
-		if(events_[i].events & EPOLLERR)//Òì³£ÊÂ¼þ
+		if(events_[i].events & EPOLLERR)//ï¿½ì³£ï¿½Â¼ï¿½
 		{
 			delete_handler(handler);
 
@@ -161,19 +161,19 @@ int32_t CEpollReactor::event_loop()
 		}
 	}
 
-	//µ÷Õû×î´óÊÂ¼þÊý
-	if(count >= nevent_ && nevent_ < MAX_NEVENT) //8192ÊÇLIB EVENTÖÐµÄ×î´óÊÂ¼þÊý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½
+	if(count >= nevent_ && nevent_ < MAX_NEVENT) //8192ï¿½ï¿½LIB EVENTï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½
 	{
 		nevent_ = 2 * nevent_;
 	}
 
-	//É¨Ãè¶¨Ê±Æ÷
+	//É¨ï¿½è¶¨Ê±ï¿½ï¿½
 	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
 	if(cur_ts > prev_ts_ + 5)
 	{
 		epoll_delay_ = timer_queue_.expire();
 
-		//É¨ÃèÄÚ²¿¶ÓÁÐ
+		//É¨ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(msg_proc_ != 0)
 		{
 			msg_proc_->processor();
@@ -187,7 +187,7 @@ int32_t CEpollReactor::event_loop()
 	return 0;
 }
 
-//±ØÐëÊÇÄÚ²¿ÏûÏ¢¶ÓÁÐ´¥·¢±¾º¯Êý»òÕßÔÚREACTOR THREAD½áÊøevent_loopÑ­»·ºóµ÷ÓÃ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½REACTOR THREADï¿½ï¿½ï¿½ï¿½event_loopÑ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int32_t CEpollReactor::stop_event_loop()
 {
 	for(uint32_t i = 1; i < EPOLL_HEAP_SIZE; i ++)
