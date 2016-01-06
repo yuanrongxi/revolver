@@ -60,9 +60,11 @@ public:
 class TestRudpProcessor : public ICmdTarget {
 public:
     int32_t  on_connect_event(CBasePacket* packet, uint32_t sid, CConnection* connection) {
+        std::cout << "rudp connected" << std::endl;
         return 0;
     }
     int32_t  on_disconnect_event(CBasePacket* packet, uint32_t sid, CConnection* connection) {
+        std::cout << "rudp disconnected" << std::endl;
         return 0;
     }
 protected:

@@ -6,9 +6,9 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 
-//Ã¿6Ãë·¢ËÍÒ»´ÎKEEPLIVE
+//æ¯6ç§’å‘é€ä¸€æ¬¡KEEPLIVE
 #define DEFAULT_KEEPLIVE			200
-//Ä¬ÈÏ2·ÖÖÓĞÄÌøÎ´ÊÕµ½¾Í¶Ï¿ª
+//é»˜è®¤2åˆ†é’Ÿå¿ƒè·³æœªæ”¶åˆ°å°±æ–­å¼€
 #define DEFAULT_TIMEOUT_COUNT		40
 #define CONNECT_DELAY				1000
 
@@ -25,7 +25,7 @@ RUDPSocket::RUDPSocket()
     timer_id_ = 0;
     rudp_id_ = -1;
     local_index_ = INVALID_ADAPTER_INDEX;
-    local_title_ = 0; //ÓÃÓÚÇø·ÖUDP»¹ÊÇRUDP
+    local_title_ = 0; //ç”¨äºåŒºåˆ†UDPè¿˜æ˜¯RUDP
 
     remote_rudp_id_ = INVALID_RUDP_HANDLE;
 
@@ -101,7 +101,7 @@ void RUDPSocket::set_state(uint16_t state)
 
     cancel_timer();
 
-    //ÊÍ·ÅSOCKET¶ÔÏó
+    //é‡Šæ”¾SOCKETå¯¹è±¡
     if(state == RUDP_CLOSE)
     {
         RUDP()->free_sockets(rudp_id_);
@@ -131,7 +131,7 @@ int32_t RUDPSocket::handle_timeout(const void *act, uint32_t timer_id)
 
     timer_id_= 0;
 
-    //½â¾ö×´Ì¬¶¨Ê±µÄÎÊÌâ£¬ÓÈÆäÊÇ±¨ÎÄ·¢ËÍ
+    //è§£å†³çŠ¶æ€å®šæ—¶çš„é—®é¢˜ï¼Œå°¤å…¶æ˜¯æŠ¥æ–‡å‘é€
     switch(state_)
     {
     case RUDP_CONNECTING:
@@ -142,7 +142,7 @@ int32_t RUDPSocket::handle_timeout(const void *act, uint32_t timer_id)
             RUDP_DEBUG("resend syn, rudp socket id = " << rudp_id_);
             send_count_ ++;
         }
-        else //Á¬½Ó³¬Ê±
+        else //è¿æ¥è¶…æ—¶
         {
             RUDP_INFO("connecting timeout! state = RUDP_FIN2_STATE, rudp id = " << rudp_id_);
             set_state(RUDP_FIN2_STATE);
@@ -184,7 +184,7 @@ int32_t RUDPSocket::open(int32_t rudp_id)
 
     return 0;
 }
-//Õı³£¹Ø±ÕRUDP SOCKET
+//æ­£å¸¸å…³é—­RUDP SOCKET
 void RUDPSocket::close()
 {
     switch(state_)
@@ -196,7 +196,7 @@ void RUDPSocket::close()
             event_handler_->rudp_close_event(rudp_id_);
         }
 
-        //·¢ËÍSYN
+        //å‘é€SYN
         RUDP_INFO("close rudp socket, state = RUDP_FIN_STATE, rudp id = " << rudp_id_);
         set_state(RUDP_FIN_STATE);
         
@@ -212,7 +212,7 @@ void RUDPSocket::close()
         break;
     }
 }
-//Ç¿ÖÆ¹Ø±ÕRUDP SOCKET
+//å¼ºåˆ¶å…³é—­RUDP SOCKET
 void RUDPSocket::force_close()
 {
     switch(state_)
@@ -220,7 +220,7 @@ void RUDPSocket::force_close()
     case RUDP_CONNECTING:
     case RUDP_CONNECTED:
         RUDP_DEBUG("send fin, rudp socket id = " << rudp_id_);
-        for(uint8_t i = 0; i < 6; i ++) //Ö±½Ó·¢ËÍ3¸öfin
+        for(uint8_t i = 0; i < 6; i ++) //ç›´æ¥å‘é€3ä¸ªfin
             send_fin();
 
     case RUDP_FIN2_STATE:
@@ -256,7 +256,7 @@ int32_t RUDPSocket::connect(const Inet_Addr& remote_addr)
     }
 
     remote_addr_ = remote_addr;
-    check_sum_ = rand() % 65536; //²úÉúÒ»¸ö»á»°µÄCHECK SUM
+    check_sum_ = rand() % 65536; //äº§ç”Ÿä¸€ä¸ªä¼šè¯çš„CHECK SUM
 
     RUDP_INFO("state = RUDP_CONNECTING, rudp id = " << rudp_id_ << ", remote addr = " << remote_addr_);
     set_state(RUDP_CONNECTING);
@@ -415,14 +415,14 @@ void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8
     RUDPData body;
     body.ack_seq_id_ = recv_buffer_.get_ack_id();
     body.cur_seq_id_ = cur_seq_id;
-    //body.data_.assign((const char*)data, data_size); //todo:¼õÉÙÒ»´Î¿½±´
+    //body.data_.assign((const char*)data, data_size); //todo:å‡å°‘ä¸€æ¬¡æ‹·è´
 
-    //ÉèÖÃÒ»¸ö×îºó·¢ËÍACKµÄÊ±¿Ì
+    //è®¾ç½®ä¸€ä¸ªæœ€åå‘é€ACKçš„æ—¶åˆ»
     recv_buffer_.set_send_last_ack_ts(now_ts);
 
     strm_.rewind(true);
     strm_ << local_title_ << head << body;
-    //¼ÓÈëÊı¾İ
+    //åŠ å…¥æ•°æ®
     strm_.push_data(data, data_size);
 
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
@@ -586,7 +586,7 @@ void RUDPSocket::process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, co
 
     keeplive_count_ = 0;
 
-    //µØÖ·Ñ§Ï°
+    //åœ°å€å­¦ä¹ 
     if(remote_addr_ != remote_addr)
     {
         RUDP()->delete_peer_index(remote_rudp_id_, remote_addr_);
@@ -696,12 +696,12 @@ void RUDPSocket::process_syn(RUDPSynPacket& syn, const Inet_Addr& remote_addr)
     if(state_ == RUDP_IDLE && rudp_id_ != INVALID_RUDP_HANDLE)
     {
         uint64_t now_timer = CBaseTimeValue::get_time_value().msec();
-        //³õÊ¼»¯½ÓÊÕSEQ
+        //åˆå§‹åŒ–æ¥æ”¶SEQ
         recv_buffer_.set_first_seq(syn.start_seq_);
         recv_buffer_.set_send_last_ack_ts(now_timer);
 
         ccc_.init(send_buffer_.get_buffer_seq() - 1);
-        //ÉèÖÃÁ¬½ÓĞÅÏ¢
+        //è®¾ç½®è¿æ¥ä¿¡æ¯
         remote_addr_ = remote_addr;
         remote_rudp_id_ = syn.local_rudp_id_;
 
@@ -713,7 +713,7 @@ void RUDPSocket::process_syn(RUDPSynPacket& syn, const Inet_Addr& remote_addr)
         RUDP_INFO("state = RUDP_CONNECTED, rudp id = " << rudp_id_);
         set_state(RUDP_CONNECTED);
 
-        //·¢ËÍÒ»¸öKEEPLIVE
+        //å‘é€ä¸€ä¸ªKEEPLIVE
         RUDP_DEBUG("send keeplive, rudp socket id =" << rudp_id_);
         send_keeplive(now_timer);
     }
@@ -739,7 +739,7 @@ void RUDPSocket::process_syn2(BinStream& strm, const Inet_Addr& remote_addr)
     PARSE_RUDP_MESSAGE(strm, RUDPSyn2Packet, syn2, "parse syn2 failed!");
     if(state_ == RUDP_CONNECTING)
     {
-        if(syn2.syn2_result_ != 0x00) //Á¬½ÓÒì³£
+        if(syn2.syn2_result_ != 0x00) //è¿æ¥å¼‚å¸¸
         {
             RUDP_INFO("syn failed! syn2.syn2_result_ = " << (uint16_t)syn2.syn2_result_);
 
@@ -757,14 +757,14 @@ void RUDPSocket::process_syn2(BinStream& strm, const Inet_Addr& remote_addr)
 
             return ;
         }
-        //ÉèÖÃ½ÓÊÕBUFFµÄ³õÊ¼»¯
+        //è®¾ç½®æ¥æ”¶BUFFçš„åˆå§‹åŒ–
         //ccc_.init(syn2.start_seq_ - 1);
         recv_buffer_.set_first_seq(syn2.start_seq_);
-        //ÉèÖÃÁ¬½ÓĞÅÏ¢
+        //è®¾ç½®è¿æ¥ä¿¡æ¯
         remote_addr_ = remote_addr;
         remote_rudp_id_ = syn2.local_rudp_id_;
 
-        //¼ÆËãRTT
+        //è®¡ç®—RTT
         uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
         uint32_t rtt = static_cast<uint32_t>(now_ts > syn2.remote_ts_ ? (now_ts - syn2.remote_ts_) : 5);
         recv_buffer_.set_send_last_ack_ts(now_ts);
@@ -778,7 +778,7 @@ void RUDPSocket::process_syn2(BinStream& strm, const Inet_Addr& remote_addr)
         RUDP_DEBUG("send syn ack, rudp socket id = " << rudp_id_);
         send_syn_ack(0, syn2.local_ts_);
 
-        //´¥·¢Ò»¸öĞ´ÊÂ¼ş
+        //è§¦å‘ä¸€ä¸ªå†™äº‹ä»¶
         if(event_handler_ != NULL)
             event_handler_->rudp_output_event(rudp_id_);
 
@@ -805,14 +805,14 @@ void RUDPSocket::process_syn_ack(BinStream& strm, const Inet_Addr& remote_addr)
     }
 
     PARSE_RUDP_MESSAGE(strm, RUDPSyn2AckPacket, ack, "parse syn_ack failed!");
-    //¼ÆËãRTT
+    //è®¡ç®—RTT
     uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
     uint32_t rtt = static_cast<uint32_t>(now_ts > ack.remote_ts_ ? (now_ts - ack.remote_ts_) : 5);
     ccc_.set_rtt(rtt);
 
     RUDP_INFO("rtt = " << rtt << ", rudp socket id = " << rudp_id_);
 
-    //´¥·¢Ò»¸öĞ´ÊÂ¼ş
+    //è§¦å‘ä¸€ä¸ªå†™äº‹ä»¶
     if(event_handler_ != NULL)
         event_handler_->rudp_output_event(rudp_id_);
 }
@@ -890,7 +890,7 @@ void RUDPSocket::process_keeplive_ack(BinStream& strm, const Inet_Addr& remote_a
 
     PARSE_RUDP_MESSAGE(strm, RDUPKeepLive, ack, "parse keeplive ack failed!");
 
-    //¼ÆËãRTT
+    //è®¡ç®—RTT
     uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
     uint32_t rtt = static_cast<uint32_t>(now_ts > ack.timestamp_ ? (now_ts - ack.timestamp_) : 5);
     ccc_.set_rtt(rtt);
@@ -905,14 +905,14 @@ void RUDPSocket::heartbeat()
 
     uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
 
-    //ĞÄÌø¼ÆÊı
+    //å¿ƒè·³è®¡æ•°
     if(now_ts > heart_ts_ + keeplive_intnal_)
     {
         keeplive_count_ ++;
-        if(keeplive_count_ > timeout_count_) //³¬Ê±
+        if(keeplive_count_ > timeout_count_) //è¶…æ—¶
         {
             RUDP_ERROR("keep live timeout, rudp socket id = " << rudp_id_);
-            if(event_handler_ != NULL) //Í¨ÖªÉÏ²ãÒì³£
+            if(event_handler_ != NULL) //é€šçŸ¥ä¸Šå±‚å¼‚å¸¸
             {
                 RUDP_INFO("state = RUDP_FIN2_STATE");
                 set_state(RUDP_FIN2_STATE);
@@ -928,14 +928,14 @@ void RUDPSocket::heartbeat()
                 return ;
             }
         }
-        else//·¢ËÍKEEPLIVE
+        else//å‘é€KEEPLIVE
         {
             RUDP_DEBUG("send keeplive, rudp socket id =" << rudp_id_);
             send_keeplive(now_ts);
         }
     }
 
-    //Ä£¿éĞÄÌø
+    //æ¨¡å—å¿ƒè·³
     ccc_.on_timer(now_ts);
     recv_buffer_.on_timer(now_ts, ccc_.get_rtt_var());
     send_buffer_.on_timer(now_ts);
