@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	rudp_adapter.h
 *
-*to do:		RUDPµÄ·¢ËÍÇÅ½Ó¿Ú£¬Ò»°ãÓÃÀ´°ó¶¨UDPµÄÊı¾İ·¢ËÍ¶ÔÏó
+*to do:		RUDPçš„å‘é€æ¡¥æ¥å£ï¼Œä¸€èˆ¬ç”¨æ¥ç»‘å®šUDPçš„æ•°æ®å‘é€å¯¹è±¡
 *Create on: 2013-04
 *Author:	zerok
 *check list:
@@ -15,31 +15,30 @@
 #include "revolver/base_bin_stream.h"
 #include "revolver/base_inet_addr.h"
 
-//RUDPÊÊÅäÆ÷½Ó¿Ú
+//RUDPé€‚é…å™¨æ¥å£
 BASE_NAMESPACE_BEGIN_DECL
 
-class IRUDPAdapter
-{
+class IRUDPAdapter {
 public:
-	IRUDPAdapter(){index_ = 0xff;};
-	virtual ~IRUDPAdapter() {};
+    IRUDPAdapter() {index_ = 0xff;};
+    virtual ~IRUDPAdapter() {};
 
-	uint8_t				get_index() const {return index_;};
-	void				set_index(uint8_t index) {index_ = index;};
+    uint8_t				get_index() const {return index_;};
+    void				set_index(uint8_t index) {index_ = index;};
 
-	uint8_t				get_title() const {return title_;};
-	void				set_title(uint8_t title) {title_ = title;};
+    uint8_t				get_title() const {return title_;};
+    void				set_title(uint8_t title) {title_ = title;};
 
-	const Inet_Addr&	get_local_addr() const {return local_addr_;};
-	void				set_local_addr(const Inet_Addr& addr) {local_addr_ = addr;};
+    const Inet_Addr&	get_local_addr() const {return local_addr_;};
+    void				set_local_addr(const Inet_Addr& addr) {local_addr_ = addr;};
 
-	void				on_data(BinStream& strm, const Inet_Addr& remote_addr);
-	virtual void		send(BinStream& strm, const Inet_Addr& remote_addr) = 0;
+    void				on_data(BinStream& strm, const Inet_Addr& remote_addr);
+    virtual void		send(BinStream& strm, const Inet_Addr& remote_addr) = 0;
 
 protected:
-	uint8_t				index_;
-	uint8_t				title_;
-	Inet_Addr			local_addr_;
+    uint8_t				index_;
+    uint8_t				title_;
+    Inet_Addr			local_addr_;
 };
 
 BASE_NAMESPACE_END_DECL

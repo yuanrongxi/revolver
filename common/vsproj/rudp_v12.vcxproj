@@ -42,7 +42,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(OutDir)$(ProjectName)</IntDir>
+    <IntDir>$(OutDir)objs\$(Configuration)\$(ProjectName)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
@@ -94,9 +94,12 @@
     <ClInclude Include="..\rudp\rudp_adapter_interface.h" />
     <ClInclude Include="..\rudp\rudp_ccc.h" />
     <ClInclude Include="..\rudp\rudp_channel_interface.h" />
+    <ClInclude Include="..\rudp\rudp_connection.h" />
     <ClInclude Include="..\rudp\rudp_event_handler.h" />
     <ClInclude Include="..\rudp\rudp_half_connection.h" />
+    <ClInclude Include="..\rudp\rudp_handler.h" />
     <ClInclude Include="..\rudp\rudp_interface.h" />
+    <ClInclude Include="..\rudp\rudp_listen_handler.h" />
     <ClInclude Include="..\rudp\rudp_log_macro.h" />
     <ClInclude Include="..\rudp\rudp_packet.h" />
     <ClInclude Include="..\rudp\rudp_recv_buffer.h" />
@@ -108,7 +111,10 @@
   <ItemGroup>
     <ClCompile Include="..\rudp\rudp_adapter.cpp" />
     <ClCompile Include="..\rudp\rudp_ccc.cpp" />
+    <ClCompile Include="..\rudp\rudp_connection.cpp" />
+    <ClCompile Include="..\rudp\rudp_handler.cpp" />
     <ClCompile Include="..\rudp\rudp_interface.cpp" />
+    <ClCompile Include="..\rudp\rudp_listen_handler.cpp" />
     <ClCompile Include="..\rudp\rudp_log_macro.cpp" />
     <ClCompile Include="..\rudp\rudp_recv_buffer.cpp" />
     <ClCompile Include="..\rudp\rudp_segment.cpp" />

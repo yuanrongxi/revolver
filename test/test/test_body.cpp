@@ -301,7 +301,7 @@ protected:
 	string   server_name_;
 };
 
-//½«Ğ­ÒéÀàµÄÄÚÈİ´ò°ü³É¶ş½øÖÆÁ÷
+//å°†åè®®ç±»çš„å†…å®¹æ‰“åŒ…æˆäºŒè¿›åˆ¶æµ
 void test_packet()
 {
 	CTestPacket packet, x;
@@ -579,7 +579,7 @@ void test_thread()
 	CTestThread thr;
 	thr.start();
 
-	//TODO:¹ØÓÚÀà³ÉÔ±º¯ÊıÖ¸ÕëµÄ·½·¨
+	//TODO:å…³äºç±»æˆå‘˜å‡½æ•°æŒ‡é’ˆçš„æ–¹æ³•
 	Xi p = &CTestThread::print2;
 	AFX_PMSG sss = static_cast< AFX_PMSG >(p);
 	CThread *ptest = &thr;
@@ -1062,7 +1062,7 @@ void test_cache_buffer()
 		*p = 10 + 6;
 		for(int i = 5; i < 6; i++)
 		{
-			int32_t *d = cache_buffer.erase(); //É¾³ı×îĞ¡µÄ
+			int32_t *d = cache_buffer.erase(); //åˆ é™¤æœ€å°çš„
 			if(d)
 				delete d;
 
@@ -1225,7 +1225,7 @@ void test_md5()
 void test_base_file()
 {
 	BaseFile wf, rf;
-	//Ğ´ÎÄ¼ş
+	//å†™æ–‡ä»¶
 	if(wf.open("test.dat", "ab+"))
 	{
 		size_t written = 0;
@@ -1243,7 +1243,7 @@ void test_base_file()
 		wf.close();
 	}
 
-	//¶ÁÎÄ¼ş
+	//è¯»æ–‡ä»¶
 	if(rf.open("test.dat", "rb"))
 	{
 		rf.set_postion(0);
@@ -1364,7 +1364,7 @@ void test_json()
 	ServerArray json_obj;
 	string err;
 
-	//½âÂëJSON
+	//è§£ç JSON
 	string json = "{\"SERVERS\":[{\"id\":1,\"type\":1,\"maxUser\":10,\"AreaID\":10,\"ModifyTime\":\"2013-05-13 15:15:42\",\"ModifyUser\":\"1\",\"ip_ct\":\"10.0.0.1\",\"ip_un\":\"192.168.1.1\"}]}";
 	cout << "src json str = " << json << endl;
 	if (json_obj.UnSerialize(json, err) != JSON_SUCCESS)
@@ -1378,7 +1378,7 @@ void test_json()
 		json_obj.server_list[i].print();
 	}
 
-	//±àÂëJSON
+	//ç¼–ç JSON
 	string encode_str;
 	json_obj.Serialize(encode_str);
 	cout << "dst json str = " << encode_str << endl;
@@ -1474,7 +1474,7 @@ void test_conn_hash()
 
 	conn_hash.destroy();
 }
-//·şÎñÆ÷µ¥ÔªµÄÑ¡È¡£¬¿ÉÒÔÓÃ´ËËã·¨£¬ÄÜºÜºÃµÄÆ½ºâ·şÎñÆ÷¸ºÔØÎÊÌâ
+//æœåŠ¡å™¨å•å…ƒçš„é€‰å–ï¼Œå¯ä»¥ç”¨æ­¤ç®—æ³•ï¼Œèƒ½å¾ˆå¥½çš„å¹³è¡¡æœåŠ¡å™¨è´Ÿè½½é—®é¢˜
 void test_node_load()
 {
 	srand((uint32_t)time(NULL));
