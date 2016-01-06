@@ -13,7 +13,7 @@ public:
 #if defined(__linux__) || defined(__APPLE__)
 		pthread_once(&ponce_, &CSingleton::init);
 #else
-		if(obj_ == NULL)		/*WINDOWSä¸‹ä¸æ”¯æŒå¤šçº¿ç¨‹å•ä¾‹*/
+		if(obj_ == NULL)		/*WINDOWSÏÂ²»Ö§³Ö¶àÏß³Ìµ¥Àı*/
 			obj_ = new T();
 #endif
 
