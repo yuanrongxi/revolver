@@ -26,11 +26,8 @@ enum TCPTimerType
 	eTCP_Hearbeat
 };
 
-CConnection::CConnection() : state_(CONN_IDLE), timer_id_(0)
+CCoreConnection::CCoreConnection() : timer_id_(0)
 {
-	index_ = 0;
-	server_id_ = 0;
-	server_type_ = 0;
 	timer_count_ = 0;
 
 	conn_ptr_ = NULL;
@@ -41,49 +38,33 @@ CConnection::CConnection() : state_(CONN_IDLE), timer_id_(0)
 	send_flag_ = false;
 }
 
-CConnection::~CConnection()
+CCoreConnection::~CCoreConnection()
 {
 	cancel_timer();
 	clear_timer_events();
 }
 
-CSockStream& CConnection::get_sock_stream()
+CSockStream& CCoreConnection::get_sock_stream()
 {
 	return sock_stream_;
 }
 
-BASE_HANDLER CConnection::get_handle() const
+BASE_HANDLER CCoreConnection::get_handle() const
 {
 	return sock_stream_.get_handler();
 }
 
-void CConnection::set_handle(BASE_HANDLER handle)
+void CCoreConnection::set_handle(BASE_HANDLER handle)
 {
 	sock_stream_.set_handler(handle);
 }
 
-void CConnection::set_state(uint16_t state)
-{
-	state_ = state;
-	CORE_DEBUG("CConnection, state = CONN_CONNECTING");
-}
-
-void CConnection::set_conn_ptr(void* ptr)
-{
-	conn_ptr_ = ptr;
-}
-
-void* CConnection::get_conn_ptr()
-{
-	return conn_ptr_;
-}
-
-int32_t CConnection::connect(const Inet_Addr& remote_addr)
+int32_t CCoreConnection::connect(const Inet_Addr& remote_addr)
 {
 	return connect(Inet_Addr(0, 0), remote_addr);
 }
 
-int32_t CConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_addr)
+int32_t CCoreConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_addr)
 {
 	CORE_DEBUG("TCP connect " << dst_addr);
 
@@ -118,7 +99,7 @@ int32_t CConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_add
 	return 0;
 }
 
-void CConnection::close()
+void CCoreConnection::close()
 {
 	//删除监听事件
 	REACTOR_INSTANCE()->delete_handler(this);
@@ -129,7 +110,7 @@ void CConnection::close()
 	handle_close(get_handle(), MASK_TIMEOUT);
 }
 
-void CConnection::extern_close()
+void CCoreConnection::extern_close()
 {
 	//删除监听事件
 	REACTOR_INSTANCE()->delete_handler(this);
@@ -140,7 +121,7 @@ void CConnection::extern_close()
 	CORE_DEBUG("push conn = " << this);
 }
 
-int32_t CConnection::send(CCorePacket& packet, bool no_delay)
+int32_t CCoreConnection::send(CBasePacket& packet, bool no_delay)
 {
 	int32_t ret = -1;
 
@@ -193,7 +174,7 @@ int32_t CConnection::send(CCorePacket& packet, bool no_delay)
 	return ret;
 }
 
-int32_t CConnection::send(const string& bin_stream)
+int32_t CCoreConnection::send(const string& bin_stream)
 {
 	if(bin_stream.empty())
 		return -1;
@@ -233,7 +214,7 @@ int32_t CConnection::send(const string& bin_stream)
 	return 0;
 }
 
-void CConnection::reset()
+void CCoreConnection::reset()
 {
 	//清空到初始化状态
 	sock_stream_.close();
@@ -269,7 +250,7 @@ void CConnection::reset()
 	remote_addr_.set_port(0);
 }
 
-uint32_t CConnection::set_timer(uint32_t timer_type, uint32_t delay)
+uint32_t CCoreConnection::set_timer(uint32_t timer_type, uint32_t delay)
 {
 	STCPTimerParam* param = new STCPTimerParam;
 	param->timer_type_ = timer_type;
@@ -278,7 +259,7 @@ uint32_t CConnection::set_timer(uint32_t timer_type, uint32_t delay)
 	return REACTOR_INSTANCE()->set_timer(this, param, delay);
 }
 
-void  CConnection::cancel_timer()
+void  CCoreConnection::cancel_timer()
 {
 	if(timer_id_ > 0)
 	{
@@ -293,7 +274,7 @@ void  CConnection::cancel_timer()
 	}
 }
 
-void CConnection::release_timer_act(const void* act)
+void CCoreConnection::release_timer_act(const void* act)
 {
 	STCPTimerParam* param = (STCPTimerParam *)act;
 	if(param != NULL)
@@ -302,7 +283,7 @@ void CConnection::release_timer_act(const void* act)
 	}
 }
 
-int32_t CConnection::handle_timeout(const void *act, uint32_t timer_id)
+int32_t CCoreConnection::handle_timeout(const void *act, uint32_t timer_id)
 {
 	if(timer_id_ !=  timer_id)
 		return -1;
@@ -347,7 +328,7 @@ int32_t CConnection::handle_timeout(const void *act, uint32_t timer_id)
 	return 0;
 }
 
-int32_t CConnection::handle_exception(BASE_HANDLER handle)
+int32_t CCoreConnection::handle_exception(BASE_HANDLER handle)
 {
 	CORE_DEBUG("handle_exception, error = " << error_no());
 	if(state_ != CONN_IDLE)
@@ -373,7 +354,7 @@ int32_t CConnection::handle_exception(BASE_HANDLER handle)
 	return 0;
 }
 
-int32_t CConnection::handle_close(BASE_HANDLER handle, ReactorMask close_mask)
+int32_t CCoreConnection::handle_close(BASE_HANDLER handle, ReactorMask close_mask)
 {
 	CORE_DEBUG("handle_close");
 	if(state_ != CONN_IDLE)
@@ -399,7 +380,7 @@ int32_t CConnection::handle_close(BASE_HANDLER handle, ReactorMask close_mask)
 	return 0;
 }
 
-int32_t CConnection::handle_input(BASE_HANDLER handle)
+int32_t CCoreConnection::handle_input(BASE_HANDLER handle)
 {
 	CCorePacket	recv_packet;
 
@@ -476,7 +457,7 @@ int32_t CConnection::handle_input(BASE_HANDLER handle)
 	return 0;
 }
 
-int32_t CConnection::handle_output(BASE_HANDLER handle)
+int32_t CCoreConnection::handle_output(BASE_HANDLER handle)
 {
 	check_connecting_state();
 
@@ -504,7 +485,7 @@ int32_t CConnection::handle_output(BASE_HANDLER handle)
 	return 0;
 }
 
-void CConnection::check_connecting_state()
+void CCoreConnection::check_connecting_state()
 {
 	if(state_ == CONN_CONNECTING)
 	{
@@ -531,7 +512,7 @@ void CConnection::check_connecting_state()
 	}
 }
 
-int32_t CConnection::process(CCorePacket &packet, BinStream& istrm)
+int32_t CCoreConnection::process(CCorePacket &packet, BinStream& istrm)
 {
 	uint32_t ret = 0;
 	switch(packet.msg_type_)
@@ -561,7 +542,7 @@ int32_t CConnection::process(CCorePacket &packet, BinStream& istrm)
 	return ret; 
 }
 
-int32_t CConnection::process_handshake(const CCorePacket &packet, BinStream& istrm)
+int32_t CCoreConnection::process_handshake(const CCorePacket &packet, BinStream& istrm)
 {
 	server_id_ = packet.server_id_;
 	server_type_ = packet.server_type_;
@@ -606,7 +587,7 @@ int32_t CConnection::process_handshake(const CCorePacket &packet, BinStream& ist
 	return 0;
 }
 
-void CConnection::process_ping(const CCorePacket &packet)
+void CCoreConnection::process_ping(const CCorePacket &packet)
 {
 	timer_count_ = 0;
 	CORE_DEBUG("recv ping, conn = " << this << "sid = " << server_id_ << ", server = " << GetServerName(server_type_));
@@ -617,7 +598,7 @@ void CConnection::process_ping(const CCorePacket &packet)
 	}
 }
 
-int32_t CConnection::heartbeat()
+int32_t CCoreConnection::heartbeat()
 {
 	timer_count_ ++;
 	//CORE_INFO("heartbeat, timer_count_ = " << timer_count_ << ", conn = " << this);
@@ -640,7 +621,7 @@ int32_t CConnection::heartbeat()
 	return 0;
 }
 
-void CConnection::buffer_reduce()
+void CCoreConnection::buffer_reduce()
 {
 	//如果数据长度为0，而且是对客户端的连接
 	if(server_type_ == eClient && sbuffer_.length() > CLIENT_BUFFER_SIZE && sbuffer_.data_length() == 0)
@@ -656,7 +637,7 @@ void CConnection::buffer_reduce()
 	}
 }
 
-void CConnection::send_ping()
+void CCoreConnection::send_ping()
 {
 	if(!send_flag_)
 	{
@@ -667,7 +648,7 @@ void CConnection::send_ping()
 	}
 }
 
-void CConnection::send_handshake()
+void CCoreConnection::send_handshake()
 {
 	CORE_DEBUG("send TCP HANDSHAKE, conn = " << this);
 	INIT_CORE_HANDSHAKE(packet);
@@ -682,7 +663,7 @@ void CConnection::send_handshake()
 	send_flag_ = false;
 }
 
-void CConnection::generate_digest(uint32_t server_id, uint8_t server_type, string& digest_data)
+void CCoreConnection::generate_digest(uint32_t server_id, uint8_t server_type, string& digest_data)
 {
 	digest_data.clear();
 

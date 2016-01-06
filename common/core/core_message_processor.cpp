@@ -138,7 +138,7 @@ int32_t CMsgProcessor::reciver(BinStream& bin_strm, const Inet_Addr& remote_addr
 int32_t CMsgProcessor::reciver_media(BinStream& bin_strm, CConnection* conn)
 {
 	int32_t ret = -1;
-	//TODO:¿ÉÒÔ¼ÓÈë³öÁĞÁ÷Ã½ÌåĞ­Òé
+	//TODO:å¯ä»¥åŠ å…¥å‡ºåˆ—æµåª’ä½“åè®®
 	
 	return ret;
 }
@@ -146,7 +146,7 @@ int32_t CMsgProcessor::reciver_media(BinStream& bin_strm, CConnection* conn)
 int32_t CMsgProcessor::reciver_media(BinStream& bin_strm, const Inet_Addr& remote_addr)
 {
 	int32_t ret = -1;
-	//TODO:¿ÉÒÔ¼ÓÈë³öÁĞÁ÷Ã½ÌåĞ­Òé
+	//TODO:å¯ä»¥åŠ å…¥å‡ºåˆ—æµåª’ä½“åè®®
 
 	return ret;
 }
@@ -156,7 +156,7 @@ int32_t CMsgProcessor::reciver_media(BinStream& bin_strm, const Inet_Addr& remot
 int32_t CMsgProcessor::on_connect(uint32_t server_id, CConnection* conn)
 {
 	TCP_Connect_Message msg;
-	for(size_t i = 0; i < processors_.size(); ++i)//ËùÓĞµÄÏûÏ¢ÒşÉäÆ÷¶¼»áÊÜµ½TCPÁ¬½ÓµÄÊÂ¼şÏûÏ¢
+	for(size_t i = 0; i < processors_.size(); ++i)//æ‰€æœ‰çš„æ¶ˆæ¯éšå°„å™¨éƒ½ä¼šå—åˆ°TCPè¿æ¥çš„äº‹ä»¶æ¶ˆæ¯
 	{
 		processors_[i]->on_event(TCP_CONNECT_EVENT, server_id, &msg, conn);
 	}
@@ -166,7 +166,7 @@ int32_t CMsgProcessor::on_connect(uint32_t server_id, CConnection* conn)
 int32_t CMsgProcessor::on_disconnect(uint32_t server_id, CConnection* conn)
 {
 	TCP_Close_Message msg;
-	for(size_t i = 0; i < processors_.size(); ++i) //ËùÓĞµÄÏûÏ¢ÒşÉäÆ÷¶¼»áÊÜµ½TCP¶Ï¿ªµÄÊÂ¼şÏûÏ¢
+	for(size_t i = 0; i < processors_.size(); ++i) //æ‰€æœ‰çš„æ¶ˆæ¯éšå°„å™¨éƒ½ä¼šå—åˆ°TCPæ–­å¼€çš„äº‹ä»¶æ¶ˆæ¯
 	{
 		processors_[i]->on_event(TCP_CLOSE_EVENT, server_id, &msg, conn);
 	}

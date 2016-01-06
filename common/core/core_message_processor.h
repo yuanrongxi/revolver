@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename: core_message_processor.h
 *
-*to do:		COREµÄÏûÏ¢ÄÚ²¿´¦ÀíÆ÷,ÏûÏ¢·Ö·¢Æ÷£¬·Ö·¢¸÷¸öÏûÏ¢Ä£¿é½øĞĞ
+*to do:		COREçš„æ¶ˆæ¯å†…éƒ¨å¤„ç†å™¨,æ¶ˆæ¯åˆ†å‘å™¨ï¼Œåˆ†å‘å„ä¸ªæ¶ˆæ¯æ¨¡å—è¿›è¡Œ
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -28,33 +28,33 @@ typedef vector<ICmdTarget *> Processor_Array;
 class CMsgProcessor : public IReciver
 {
 public:
-	CMsgProcessor();
-	~CMsgProcessor();
+    CMsgProcessor();
+    ~CMsgProcessor();
 
-	void regist_target(ICmdTarget* target);
-	//ËùÓĞTCPÏûÏ¢Èë¿Ú
-	int32_t on_message(CCorePacket &packet, BinStream& istrm, CConnection *connection);
-	//ËùÓĞUDPÏûÏ¢Èë¿Ú
-	int32_t on_message(CCorePacket &packet, BinStream& istrm, const Inet_Addr& remote_addr);
+    void regist_target(ICmdTarget* target);
+    //æ‰€æœ‰TCPæ¶ˆæ¯å…¥å£
+    int32_t on_message(CCorePacket &packet, BinStream& istrm, CConnection *connection);
+    //æ‰€æœ‰UDPæ¶ˆæ¯å…¥å£
+    int32_t on_message(CCorePacket &packet, BinStream& istrm, const Inet_Addr& remote_addr);
 
-	//´¦ÀíUDPÏûÏ¢
-	int32_t reciver(BinStream& bin_strm, const Inet_Addr& remote_addr);
-	//´¦ÀíTCPÏûÏ¢
-	int32_t reciver(BinStream& bin_strm,  CConnection* conn);
+    //å¤„ç†UDPæ¶ˆæ¯
+    int32_t reciver(BinStream& bin_strm, const Inet_Addr& remote_addr);
+    //å¤„ç†TCPæ¶ˆæ¯
+    int32_t reciver(BinStream& bin_strm, CConnection* conn);
 
-	int32_t	reciver_media(BinStream& bin_strm,  const Inet_Addr& remote_addr);
-	int32_t	reciver_media(BinStream& bin_strm, CConnection* conn);
+    int32_t	reciver_media(BinStream& bin_strm,  const Inet_Addr& remote_addr);
+    int32_t	reciver_media(BinStream& bin_strm, CConnection* conn);
 
-	//TCP¶Ï¿ªÏûÏ¢
-	int32_t on_connect(uint32_t server_id, CConnection* conn);
-	int32_t on_disconnect(uint32_t server_id, CConnection* conn);
+    //TCPæ–­å¼€æ¶ˆæ¯
+    int32_t on_connect(uint32_t server_id, CConnection* conn);
+    int32_t on_disconnect(uint32_t server_id, CConnection* conn);
 
 protected:
-	int32_t	on_data(uint32_t msg_id, uint32_t server_id, BinStream& istrm,  CConnection *connection);
-	int32_t on_data(uint32_t msg_id, uint32_t server_id, BinStream& istrm, const Inet_Addr& remote_addr);
+    int32_t	on_data(uint32_t msg_id, uint32_t server_id, BinStream& istrm, CConnection *connection);
+    int32_t on_data(uint32_t msg_id, uint32_t server_id, BinStream& istrm, const Inet_Addr& remote_addr);
 
-	//ÏûÏ¢ÒıÉäÆ÷Êı×é¾¡Á¿±£³ÖÔÚ32¸öÒÔÏÂ
-	Processor_Array	processors_;
+    //æ¶ˆæ¯å¼•å°„å™¨æ•°ç»„å°½é‡ä¿æŒåœ¨32ä¸ªä»¥ä¸‹
+    Processor_Array	processors_;
 };
 
 #define CREATE_MSG_PROCESSOR	CSingleton<CMsgProcessor>::instance
@@ -62,23 +62,23 @@ protected:
 #define DESTROY_MSG_PROCESSOR	CSingleton<CMsgProcessor>::destroy
 
 #define ADD_PROCESSOR(PROC) \
-	MSG_PROCESSOR()->regist_target(PROC)
+    MSG_PROCESSOR()->regist_target(PROC)
 
-//´´½¨²¢³õÊ¼»¯ÏûÏ¢·Ö·¢Æ÷,X,Y,ZÊÇÖ÷ÒªµÄÏûÏ¢´¦ÀíÀà£¬ÀıÈç£ºDAEMONÏûÏ¢´¦ÀíÀà
+//åˆ›å»ºå¹¶åˆå§‹åŒ–æ¶ˆæ¯åˆ†å‘å™¨,X,Y,Zæ˜¯ä¸»è¦çš„æ¶ˆæ¯å¤„ç†ç±»ï¼Œä¾‹å¦‚ï¼šDAEMONæ¶ˆæ¯å¤„ç†ç±»
 #define INIT_MSG_PROCESSOR1(X) \
-	CREATE_MSG_PROCESSOR();\
-	ADD_PROCESSOR(X);
+    CREATE_MSG_PROCESSOR();\
+    ADD_PROCESSOR(X);
 
 #define INIT_MSG_PROCESSOR2(X, Y) \
-	CREATE_MSG_PROCESSOR();\
-	ADD_PROCESSOR(X);\
-	ADD_PROCESSOR(Y);
+    CREATE_MSG_PROCESSOR();\
+    ADD_PROCESSOR(X);\
+    ADD_PROCESSOR(Y);
 
 #define INIT_MSG_PROCESSOR3(X, Y, Z) \
-	CREATE_MSG_PROCESSOR();\
-	ADD_PROCESSOR(X);\
-	ADD_PROCESSOR(Y);\
-	ADD_PROCESSOR(Z);
+    CREATE_MSG_PROCESSOR();\
+    ADD_PROCESSOR(X);\
+    ADD_PROCESSOR(Y);\
+    ADD_PROCESSOR(Z);
 
 BASE_NAMESPACE_END_DECL
 #endif

@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename: core_connection_manager.h
 *
-*to do:		·şÎñÆ÷½Úµã¹ÜÀí£¬¿Í»§¶ËÁ¬½Ó²»ÌåÏÖÔÚÕâ¸öÀïÃæ
+*to do:		æœåŠ¡å™¨èŠ‚ç‚¹ç®¡ç†ï¼Œå®¢æˆ·ç«¯è¿æ¥ä¸ä½“ç°åœ¨è¿™ä¸ªé‡Œé¢
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -27,22 +27,22 @@ BASE_NAMESPACE_BEGIN_DECL
 class CoreUDPHandler;
 class ICoreServerNotify;
 
-typedef ObjectMutexPool<CConnection, BaseThreadMutex, CONNECTION_POOL_SIZE>	Connection_Pool;
+typedef ObjectMutexPool<CCoreConnection, BaseThreadMutex, CONNECTION_POOL_SIZE>	Connection_Pool;
 extern Connection_Pool	CONNECTION_POOL;
 
-//±¨ÎÄÔÚÁ¬½Ó¹ı³ÌÖĞµÄ»º³å¶ÓÁĞ
+//æŠ¥æ–‡åœ¨è¿æ¥è¿‡ç¨‹ä¸­çš„ç¼“å†²é˜Ÿåˆ—
 typedef list<string>		StreamList;
 
 typedef struct Server_Node_t
 {
-	CConnection*	conn;
+	CCoreConnection*	conn;
 	uint32_t		server_id;
 	uint8_t			server_type;
 	uint16_t		net_type;
 	uint32_t		index;
-	bool			daemon_del_;	//DAEMONÈÏÎªËÀÈ¥ÁËµÄ½Úµã
-	Inet_Addr		tel_addr;		//µçĞÅµØÖ·
-	Inet_Addr		cnc_addr;		//ÍøÍ¨µØÖ·
+	bool			daemon_del_;	//DAEMONè®¤ä¸ºæ­»å»äº†çš„èŠ‚ç‚¹
+	Inet_Addr		tel_addr;		//ç”µä¿¡åœ°å€
+	Inet_Addr		cnc_addr;		//ç½‘é€šåœ°å€
 	StreamList		strms;
 public:
 	Server_Node_t()
@@ -72,32 +72,32 @@ public:
 	void add_server(uint32_t server_id, uint8_t server_type, uint16_t net_type, const Inet_Addr& tel_addr, const Inet_Addr& cnc_addr);
 	void del_server(uint32_t server_id, uint8_t server_type);
 
-	//Á¬½ÓÔöÉ¾ÊÂ¼ş
-	bool on_add_connection(CConnection* conn);
-	void on_del_connection(CConnection* conn);
+	//è¿æ¥å¢åˆ äº‹ä»¶
+	bool on_add_connection(CCoreConnection* conn);
+	void on_del_connection(CCoreConnection* conn);
 
-	//Í¨¹ıTCP ID·¢ËÍÊı¾İ¸øÆäËû·şÎñÆ÷
+	//é€šè¿‡TCP IDå‘é€æ•°æ®ç»™å…¶ä»–æœåŠ¡å™¨
 	void send_dispatch_by_id(CCorePacket& packet, uint32_t sid);
 	void send_dispatch_by_id(const string& data, uint32_t sid);
 
-	//Í¨¹ıUDP ID·¢ËÍÊı¾İ¸øÆäµÄ·şÎñÆ÷
+	//é€šè¿‡UDP IDå‘é€æ•°æ®ç»™å…¶çš„æœåŠ¡å™¨
 	void send_dispatch_by_udp(CCorePacket& packet, uint32_t sid);
 	void send_dispatch_by_udp(const string& data, uint32_t sid);
 
-	//Í¨¹ıUDP Address·¢ËÍÊı¾İ¸øÆäËû½Úµã
+	//é€šè¿‡UDP Addresså‘é€æ•°æ®ç»™å…¶ä»–èŠ‚ç‚¹
 	void send_udp(CCorePacket& packet, const Inet_Addr& remote_addr);
 	void send_udp(const string& data, const Inet_Addr& remote_addr);
 
-	//Í¨¹ıTCP Connection·¢ËÍÊı¾İ¸øÆäËû½Úµã
-	void send_tcp(CCorePacket& packet, CConnection* conn);
-	void send_tcp(const string& data, CConnection* conn);
-	//»ñÈ¡·şÎñÆ÷µÄĞÅÏ¢
+	//é€šè¿‡TCP Connectionå‘é€æ•°æ®ç»™å…¶ä»–èŠ‚ç‚¹
+	void send_tcp(CCorePacket& packet, CCoreConnection* conn);
+	void send_tcp(const string& data, CCoreConnection* conn);
+	//è·å–æœåŠ¡å™¨çš„ä¿¡æ¯
 	Server_Node_t find_server_info(uint32_t sid);
 	void get_address_pair(const Server_Node_t& node, Inet_Addr& src_addr, Inet_Addr& dst_addr);
 
 protected:
 	void connecting_by_id(const string& data, uint32_t sid);
-	CConnection* get_connection(uint32_t sid);
+	CCoreConnection* get_connection(uint32_t sid);
 
 	const Inet_Addr& get_udp_remote_addr(const Server_Node_t& node);
 

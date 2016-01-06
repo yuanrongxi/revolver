@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename: core_cmd_target.h
 *
-*to do:		ÏûÏ¢Ó³Éä»ù´¡Àà
+*to do:		æ¶ˆæ¯æ˜ å°„åŸºç¡€ç±»
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -29,9 +29,9 @@ public:
 	ICmdTarget();
 	virtual ~ICmdTarget();
 
-	//¶¨Òå¸÷ÖÖ´¥·¢²ÎÊı,ÀıÈç£ºSID,mssage class, connection¾ä±úµÈµÈ
+	//å®šä¹‰å„ç§è§¦å‘å‚æ•°,ä¾‹å¦‚ï¼šSID,mssage class, connectionå¥æŸ„ç­‰ç­‰
 	virtual int32_t on_event(uint32_t msg_id, uint32_t sid, CBasePacket* packet, CConnection* connection);
-	//´¦ÀíUDPÏûÏ¢
+	//å¤„ç†UDPæ¶ˆæ¯
 	virtual int32_t on_event(uint32_t msg_id, uint32_t sid, CBasePacket* packet, const Inet_Addr& remote_addr);
 
 protected:
@@ -43,12 +43,12 @@ typedef map<uint32_t, CMD_MESSAGE_ENTRY>	CMD_MESSAGE_MAP;
 
 typedef struct CMD_MESSAGE_ENTRY
 {
-	uint32_t	msg_id;		//ÏûÏ¢
-	uint32_t	sig;		//º¯Êı¸ñÊ½
-	TARGET_CALL	fun;		//´¥·¢º¯Êı
+	uint32_t	msg_id;		//æ¶ˆæ¯
+	uint32_t	sig;		//å‡½æ•°æ ¼å¼
+	TARGET_CALL	fun;		//è§¦å‘å‡½æ•°
 }CMD_MESSAGE_ENTRY;
 
-//²»ÓÃÊı×é×ö»Øµ÷Ó³Éä£¬·ñÔòÏûÏ¢¶àµÄ»°£¬Ğ§ÂÊ¾ÍÓĞÎÊÌâ
+//ä¸ç”¨æ•°ç»„åšå›è°ƒæ˜ å°„ï¼Œå¦åˆ™æ¶ˆæ¯å¤šçš„è¯ï¼Œæ•ˆç‡å°±æœ‰é—®é¢˜
 class CTargetMessageManager
 {
 public:

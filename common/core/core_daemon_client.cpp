@@ -9,9 +9,9 @@
 #include "core/core_message_processor.h"
 #include "core/core_daemon_client.h"
 
-//DAEOMON SERVERµØÖ·£¬¿ÉÒÔÓÃÓòÃû
-#define DAEMON_SERVER_CNC_IP	"daemon.revolver.com"
-#define DAEMON_SERVER_TEL_IP	"daemon.revolver.com"
+//DAEOMON SERVERåœ°å€ï¼Œå¯ä»¥ç”¨åŸŸå
+#define DAEMON_SERVER_CNC_IP	"daemon.bolo.me"
+#define DAEMON_SERVER_TEL_IP	"daemon.bolo.me"
 #define DAEMON_SERVER_PORT		7600
 #define DAEMON_SERVER_ID		1
 
@@ -22,7 +22,7 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 
-//ÏûÏ¢Ó³Éä°²×°
+//æ¶ˆæ¯æ˜ å°„å®‰è£…
 BEGIN_MSGCALL_MAP(CDaemonClient)
 	ON_MSG_ADDR_INT(DAEMON_STUN_PONG, &CDaemonClient::on_daemon_pong)
 	ON_MSG_ID_INT(DAEMON_ADD_SERVER, &CDaemonClient::on_add_server)
@@ -60,9 +60,9 @@ CDaemonClient::~CDaemonClient()
 
 void CDaemonClient::init()
 {
-	//×¢²áÏûÏ¢´¦Àí¾ä±úÓ³Éä
+	//æ³¨å†Œæ¶ˆæ¯å¤„ç†å¥æŸ„æ˜ å°„
 	INIT_MSG_PROCESSOR1(this);
-	//°²×°ÏûÏ¢ÌåÓ³Éä
+	//å®‰è£…æ¶ˆæ¯ä½“æ˜ å°„
 	LOAD_MESSAGEMAP_DECL(DAEMON);
 
 	init_flag_ = true;
@@ -94,7 +94,7 @@ bool CDaemonClient::is_focus(uint8_t type)
 
 void CDaemonClient::start(bool wan)
 {
-	//Î´³õÊ¼»¯
+	//æœªåˆå§‹åŒ–
 	if(!init_flag_)
 	{
 		CORE_WARNING("daemon client not init!!");
@@ -107,7 +107,7 @@ void CDaemonClient::start(bool wan)
 		return ;
 	}
 
-	//¶ÁÈ¡ÅäÖÃ£¬Ö÷ÒªÊÇSERVER ID
+	//è¯»å–é…ç½®ï¼Œä¸»è¦æ˜¯SERVER ID
 	if(config_ != NULL)
 	{
 		config_->read();
@@ -129,7 +129,7 @@ void CDaemonClient::start(bool wan)
 			daemon_udp_.attach(MSG_PROCESSOR());
 		}
 
-		//·¢ËÍÒ»¸öSTUNÌ½²â±¨ÎÄÌ½²â×Ô¼ºµÄWAN IP
+		//å‘é€ä¸€ä¸ªSTUNæ¢æµ‹æŠ¥æ–‡æ¢æµ‹è‡ªå·±çš„WAN IP
 		send_daemon_stun();
 	}
 	else
@@ -187,7 +187,7 @@ void CDaemonClient::stop()
 
 int32_t CDaemonClient::handle_timeout(const void *act, uint32_t timer_id)
 {
-	if(reconnect_count_ > 1000) //³ÖĞø4Ğ¡Ê±×óÓÒ
+	if(reconnect_count_ > 1000) //æŒç»­4å°æ—¶å·¦å³
 	{
 		CORE_WARNING("daemon client start timeout!");
 		return 0;
@@ -235,7 +235,7 @@ int32_t CDaemonClient::on_daemon_pong(CBasePacket* packet, uint32_t sid, const I
 
 		cancel_timer();
 
-		//Æô¶¯TCP
+		//å¯åŠ¨TCP
 		star_daemon_tcp();
 	}
 
@@ -257,7 +257,7 @@ int32_t CDaemonClient::on_register_res(CBasePacket* packet, uint32_t sid)
 
 		daemon_event_->on_register(res->sid_, res->stype_, res->net_type_, res->tel_addr_, res->cnc_addr_);
 
-		//Ë¢ĞÂ±£´æÅäÖÃ
+		//åˆ·æ–°ä¿å­˜é…ç½®
 		if(config_ != NULL)
 		{
 			config_->write();
@@ -311,7 +311,7 @@ int32_t CDaemonClient::connect_event(CBasePacket* packet, uint32_t sid, CConnect
 
 		return 0;
 	}
-
+    
 	return -1;
 }
 
@@ -321,7 +321,7 @@ int32_t CDaemonClient::disconnect_event(CBasePacket* packet, uint32_t sid, CConn
 	{
 		state_ = eDaemon_Disconnect;
 		cancel_timer();
-		timer_id_ = set_timer(DAEMON_RECONNECT_TICK); //2ÃëºóÔÙ´Î·¢ÆğÁ¬½Ó
+		timer_id_ = set_timer(DAEMON_RECONNECT_TICK); //2ç§’åå†æ¬¡å‘èµ·è¿æ¥
 
 		CORE_WARNING("disconnect Daemon Server!");
 

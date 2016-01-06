@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	core_server_type.h
 *
-*to do:		¶¨Òå·şÎñÆ÷ÀàĞÍ
+*to do:		å®šä¹‰æœåŠ¡å™¨ç±»å‹
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -13,12 +13,13 @@
 const char* GetServerName(uint8_t stype);
 typedef enum EServerType
 {
-	eClient					= 0x00,
-	eDaemon_Server			= 0x01,
-	//Ò»¸öÀı×ÓµÄ·şÎñÀàĞÍ
-	eSample_Server			= 0x02,
-	//todo:¿ÉÒÔÌîĞ´ÆäËûµÄSERVERÀàĞÍ£¬Êı×Ö±ØĞëĞ¡ÓÚ0xff£¬¶øÇÒºÍÇ°ÃæµÄÀàĞÍ²»ÖØ¸´
-	eMax_Server_Type
+    eClient					= 0x00,
+    eDaemon_Server			= 0x01,
+    //ä¸€ä¸ªä¾‹å­çš„æœåŠ¡ç±»å‹
+    eSample_Server			= 0x02,
+    //todo:å¯ä»¥å¡«å†™å…¶ä»–çš„SERVERç±»å‹ï¼Œæ•°å­—å¿…é¡»å°äº0xffï¼Œè€Œä¸”å’Œå‰é¢çš„ç±»å‹ä¸é‡å¤
+    eGateway_Server,
+    eMax_Server_Type
 }EServerType;
 #endif
 /************************************************************************************/

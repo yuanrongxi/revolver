@@ -43,10 +43,10 @@ int32_t CCoreTCPListener::close()
 
 int32_t CCoreTCPListener::handle_input(BASE_HANDLER handle)
 {
-	while(true) //EPOLL ET模式是需要将事件全部处理干净，直到状态EAGAIN
+	while(true) //EPOLL ET妯″紡鏄渶瑕佸皢浜嬩欢鍏ㄩ儴澶勭悊骞插噣锛岀洿鍒扮姸鎬丒AGAIN
 	{
 		Inet_Addr remote_addr;
-		CConnection *conn = CONNECTION_POOL.pop_obj();
+		CCoreConnection *conn = CONNECTION_POOL.pop_obj();
 		conn->reset();
 
 		if(acceptor_.accept(conn->get_sock_stream(), remote_addr, true) == 0)
@@ -56,7 +56,7 @@ int32_t CCoreTCPListener::handle_input(BASE_HANDLER handle)
 
 			if(REACTOR_INSTANCE()->register_handler(conn, MASK_WRITE | MASK_READ) == 0)
 			{	
-				conn->set_state(CConnection::CONN_CONNECTING);
+				conn->set_state(CCoreConnection::CONN_CONNECTING);
 
 				CORE_INFO("pop conn = " << conn);
 			}

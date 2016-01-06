@@ -3,16 +3,17 @@
 #define MAX_SERVER_SIZE	eMax_Server_Type
 
 const char*	 ServerName[] = {
-	"eClient",
-	"eDaemon_Server",
-	"eSample_Server",
-	//TODO:填写对应的SERVER类型名称
-	"errorServerName"
+    "eClient",
+    "eDaemon_Server",
+    "eSample_Server",
+    //TODO:濉啓瀵瑰簲鐨凷ERVER绫诲瀷鍚嶇О
+    "Gateway_Server",
+    "errorServerName"
 };
 
 const char* GetServerName(uint8_t stype)
 {
-	return ServerName[stype > MAX_SERVER_SIZE ? MAX_SERVER_SIZE : stype];
+    return ServerName[stype > MAX_SERVER_SIZE ? MAX_SERVER_SIZE : stype];
 }
 
 

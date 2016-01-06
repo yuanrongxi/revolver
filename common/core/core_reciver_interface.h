@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	core_reciver_interface.h
 *
-*to do:		定义一个基本的网络数据接收接口
+*to do:		瀹氫箟涓�涓熀鏈殑缃戠粶鏁版嵁鎺ユ敹鎺ュ彛
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -18,18 +18,18 @@ using namespace std;
 
 
 BASE_NAMESPACE_BEGIN_DECL
-class CConnection;
+class CCoreConnection;
 class Inet_Addr;
 
 class IReciver
 {
 public:
 	virtual int32_t	reciver(BinStream& bin_strm, const Inet_Addr& remote_addr){return -1;};
-	virtual int32_t	reciver(BinStream& bin_strm, CConnection* conn){return -1;};
+	virtual int32_t	reciver(BinStream& bin_strm, CCoreConnection* conn){return -1;};
 	virtual int32_t	reciver_media(BinStream& bin_strm,  const Inet_Addr& remote_addr){return -1;};
-	virtual int32_t	reciver_media(BinStream& bin_strm, CConnection* conn){return -1;};
-	virtual int32_t on_connect(uint32_t server_id, CConnection* conn){return -1;};
-	virtual int32_t on_disconnect(uint32_t server_id, CConnection* conn){return -1;};
+	virtual int32_t	reciver_media(BinStream& bin_strm, CCoreConnection* conn){return -1;};
+	virtual int32_t on_connect(uint32_t server_id, CCoreConnection* conn){return -1;};
+	virtual int32_t on_disconnect(uint32_t server_id, CCoreConnection* conn){return -1;};
 };
 
 typedef vector<IReciver*>	UDPReciverArray;

@@ -81,7 +81,7 @@ ReactorEventHandlerInfo* CEpollReactor::find_handler_info(CEventHandler* handler
 	return info;
 }
 
-//����д��������Ƿ�����
+//检查读写后的连接是否正常
 void CEpollReactor::check_connection(int32_t rc, CEventHandler* handler)
 {
 	if(rc < 0)
@@ -123,7 +123,7 @@ int32_t CEpollReactor::event_loop()
 
 		handler_id = handler->get_handle();
 		
-		if(events_[i].events & EPOLLIN) //���¼�
+		if(events_[i].events & EPOLLIN) //读事件
 		{
 			int32_t rc = handler->handle_input(handler_id);
 
@@ -134,7 +134,7 @@ int32_t CEpollReactor::event_loop()
 			}
 		}
 		
-		if(events_[i].events & EPOLLOUT) //д�¼�
+		if(events_[i].events & EPOLLOUT) //写事件
 		{
 			int32_t rc = handler->handle_output(handler_id);
 
@@ -145,7 +145,7 @@ int32_t CEpollReactor::event_loop()
 			}
 		}
 
-		if((events_[i].events & EPOLLHUP) /*| (events_[i].events & EPOLLRDHUP)*/) //�ر��¼�
+		if((events_[i].events & EPOLLHUP) /*| (events_[i].events & EPOLLRDHUP)*/) //关闭事件
 		{
 			delete_handler(handler);
 
@@ -153,7 +153,7 @@ int32_t CEpollReactor::event_loop()
 			continue;
 		}
 
-		if(events_[i].events & EPOLLERR)//�쳣�¼�
+		if(events_[i].events & EPOLLERR)//异常事件
 		{
 			delete_handler(handler);
 
@@ -161,19 +161,19 @@ int32_t CEpollReactor::event_loop()
 		}
 	}
 
-	//��������¼���
-	if(count >= nevent_ && nevent_ < MAX_NEVENT) //8192��LIB EVENT�е�����¼���
+	//调整最大事件数
+	if(count >= nevent_ && nevent_ < MAX_NEVENT) //8192是LIB EVENT中的最大事件数
 	{
 		nevent_ = 2 * nevent_;
 	}
 
-	//ɨ�趨ʱ��
+	//扫描定时器
 	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
 	if(cur_ts > prev_ts_ + 5)
 	{
 		epoll_delay_ = timer_queue_.expire();
 
-		//ɨ���ڲ�����
+		//扫描内部队列
 		if(msg_proc_ != 0)
 		{
 			msg_proc_->processor();
@@ -187,7 +187,7 @@ int32_t CEpollReactor::event_loop()
 	return 0;
 }
 
-//�������ڲ���Ϣ���д���������������REACTOR THREAD����event_loopѭ�������
+//必须是内部消息队列触发本函数或者在REACTOR THREAD结束event_loop循环后调用
 int32_t CEpollReactor::stop_event_loop()
 {
 	for(uint32_t i = 1; i < EPOLL_HEAP_SIZE; i ++)

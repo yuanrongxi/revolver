@@ -33,7 +33,7 @@ void Connection_Manager::attach_udp(CoreUDPHandler* handler)
 
 void Connection_Manager::close_all()
 {
-	vector<CConnection *> conn_list;
+	vector<CCoreConnection *> conn_list;
 	for(Server_Node_Map::iterator it = nodes_.begin(); it != nodes_.end(); it ++)
 	{
 		if(it->second.conn != NULL)
@@ -81,11 +81,11 @@ void Connection_Manager::del_server(uint32_t server_id, uint8_t server_type)
 {
 	CORE_INFO("delete server, sid = " << server_id << ", server_type = " << GetServerName(server_type));
 	Server_Node_Map::iterator it = nodes_.find(server_id);
-	if(it != nodes_.end()) //Ö»É¾³ýÁ¬½Ó¶Ï¿ªµÄ
+	if(it != nodes_.end()) //åªåˆ é™¤è¿žæŽ¥æ–­å¼€çš„
 	{
 		if(it->second.conn == NULL)
 		{
-			//¿ÉÒÔ×ö¸öÉÏ²ã½Ó¿Ú£¬Í¨Öª½ÚµãÕæÕýµÄËÀÈ¥
+			//å¯ä»¥åšä¸ªä¸Šå±‚æŽ¥å£ï¼Œé€šçŸ¥èŠ‚ç‚¹çœŸæ­£çš„æ­»åŽ»
 			if(notify_ != NULL)
 			{
 				notify_->on_server_dead(it->second.server_id, it->second.server_type);
@@ -100,7 +100,7 @@ void Connection_Manager::del_server(uint32_t server_id, uint8_t server_type)
 	}
 }
 
-bool Connection_Manager::on_add_connection(CConnection* conn)
+bool Connection_Manager::on_add_connection(CCoreConnection* conn)
 {
 	CORE_INFO("on add connection, sid = " << conn->get_server_id() << ", server type = " << GetServerName(conn->get_server_type()));
 	if(conn->get_server_id() == 0)
@@ -143,7 +143,7 @@ bool Connection_Manager::on_add_connection(CConnection* conn)
 	return false;
 }
 
-void Connection_Manager::on_del_connection(CConnection* conn)
+void Connection_Manager::on_del_connection(CCoreConnection* conn)
 {
 	if(conn->get_server_type() >= eDaemon_Server)
 	{
@@ -177,7 +177,7 @@ void Connection_Manager::get_address_pair(const Server_Node_t& node, Inet_Addr& 
 	uint16_t local_type = (SERVER_NET_TYPE & 0x00ff);
 	uint16_t remote_type = (node.net_type & 0x00ff);
 
-	if(local_type == 0x00ff) //±¾µØÊÇË«Ïß,
+	if(local_type == 0x00ff) //æœ¬åœ°æ˜¯åŒçº¿,
 	{
 		if(remote_type == 0x0001)
 		{
@@ -190,7 +190,7 @@ void Connection_Manager::get_address_pair(const Server_Node_t& node, Inet_Addr& 
 			dst_addr = node.tel_addr;
 		}
 	}
-	else if(remote_type == 0x00ff) //Ô¶¶ËÊÇË«Ïß
+	else if(remote_type == 0x00ff) //è¿œç«¯æ˜¯åŒçº¿
 	{
 		if(local_type == 0x0001)
 		{
@@ -213,8 +213,8 @@ void Connection_Manager::connecting_by_id(const string& data, uint32_t sid)
 	Server_Node_Map::iterator it = nodes_.find(sid);
 	if(it != nodes_.end())
 	{
-		CConnection* conn = NULL;
-		if(it->second.conn == NULL) //½¨Á¢Ò»ÌõÐÂµÄTCP·þÎñÆ÷Á¬½Ó 
+		CCoreConnection* conn = NULL;
+		if(it->second.conn == NULL) //å»ºç«‹ä¸€æ¡æ–°çš„TCPæœåŠ¡å™¨è¿žæŽ¥ 
 		{
 			conn = CONNECTION_POOL.pop_obj();
 
@@ -222,12 +222,12 @@ void Connection_Manager::connecting_by_id(const string& data, uint32_t sid)
 			conn->set_server_type(it->second.server_type);
 			conn->set_server_id(it->second.server_id);			
 			
-			//Ñ¡È¡Á¬½ÓµØÖ·£¬Ä¿±êµØÖ·ÎªµçÐÅÓÃµçÐÅÍø¿¨½øÐÐÁ¬½Ó£¬ÒÀ´ÎÀàÍÆ
+			//é€‰å–è¿žæŽ¥åœ°å€ï¼Œç›®æ ‡åœ°å€ä¸ºç”µä¿¡ç”¨ç”µä¿¡ç½‘å¡è¿›è¡Œè¿žæŽ¥ï¼Œä¾æ¬¡ç±»æŽ¨
 			Inet_Addr src_addr, dst_addr;
 			get_address_pair(it->second, src_addr, dst_addr);
 
 			src_addr.set_port(0);
-			//Ëæ»úÒ»¸ö¶Ë¿Ú×÷Îª¿Í»§»ú¶Ë¿Ú
+			//éšæœºä¸€ä¸ªç«¯å£ä½œä¸ºå®¢æˆ·æœºç«¯å£
 			if(src_addr.get_ip() != INADDR_ANY)
 			{
 				src_addr.set_port(15000 + rand() % 15000);
@@ -251,7 +251,7 @@ void Connection_Manager::connecting_by_id(const string& data, uint32_t sid)
 			conn = it->second.conn;
 		}
 
-		if(conn->get_state() != CConnection::CONN_CONNECTED) //´¦ÓÚÁ¬½Ó×´Ì¬£¬»º³åµ½LISTÖÐ
+		if(conn->get_state() != CCoreConnection::CONN_CONNECTED) //å¤„äºŽè¿žæŽ¥çŠ¶æ€ï¼Œç¼“å†²åˆ°LISTä¸­
 			it->second.strms.push_back(data);
 		else
 			conn->send(data);
@@ -262,13 +262,13 @@ void Connection_Manager::connecting_by_id(const string& data, uint32_t sid)
 	}
 }
 
-CConnection* Connection_Manager::get_connection(uint32_t sid)
+CCoreConnection* Connection_Manager::get_connection(uint32_t sid)
 {
-	CConnection* ret = NULL;
+	CCoreConnection* ret = NULL;
 
 	Server_Node_Map::iterator it = nodes_.find(sid);
 	if(it != nodes_.end() && it->second.conn != NULL 
-		&& it->second.conn->get_state() == CConnection::CONN_CONNECTED) //Ö»»ñÈ¡Á¬½ÓÍê³ÉµÄCONNECTION,·ñÔò·µ»Ø1¸öNULL
+		&& it->second.conn->get_state() == CCoreConnection::CONN_CONNECTED) //åªèŽ·å–è¿žæŽ¥å®Œæˆçš„CONNECTION,å¦åˆ™è¿”å›ž1ä¸ªNULL
 	{
 		ret = it->second.conn;
 	}
@@ -278,7 +278,7 @@ CConnection* Connection_Manager::get_connection(uint32_t sid)
 
 void Connection_Manager::send_dispatch_by_id(CCorePacket& packet, uint32_t sid)
 {
-	CConnection* conn = get_connection(sid);
+	CCoreConnection* conn = get_connection(sid);
 	if(conn == NULL)
 	{
 		GAIN_BINSTREAM(strm);
@@ -298,7 +298,7 @@ void Connection_Manager::send_dispatch_by_id(CCorePacket& packet, uint32_t sid)
 
 void Connection_Manager::send_dispatch_by_id(const string& data, uint32_t sid)
 {
-	CConnection* conn = get_connection(sid);
+	CCoreConnection* conn = get_connection(sid);
 	if(conn == NULL)
 		connecting_by_id(data, sid);
 	else
@@ -331,19 +331,19 @@ void Connection_Manager::send_dispatch_by_udp(const string& data, uint32_t sid)
 	}
 }
 
-void Connection_Manager::send_tcp(CCorePacket& packet, CConnection* conn)
+void Connection_Manager::send_tcp(CCorePacket& packet, CCoreConnection* conn)
 {
-	//±¨ÎÄ±àÂë
-	if(conn->get_state() == CConnection::CONN_CONNECTED)
+	//æŠ¥æ–‡ç¼–ç 
+	if(conn->get_state() == CCoreConnection::CONN_CONNECTED)
 	{
 		conn->send(packet);
 	}
 }
 
-void Connection_Manager::send_tcp(const string& data, CConnection* conn)
+void Connection_Manager::send_tcp(const string& data, CCoreConnection* conn)
 {
-	//±¨ÎÄ±àÂë
-	if(conn->get_state() == CConnection::CONN_CONNECTED)
+	//æŠ¥æ–‡ç¼–ç 
+	if(conn->get_state() == CCoreConnection::CONN_CONNECTED)
 	{
 		conn->send(data);
 	}
@@ -351,7 +351,7 @@ void Connection_Manager::send_tcp(const string& data, CConnection* conn)
 
 void Connection_Manager::send_udp(CCorePacket& packet, const Inet_Addr& remote_addr)
 {
-	//»ñÈ¡ÒÑ¾­Á¬½ÓµÄUDP HANDLER£¬½«±¨ÎÄ·¢ËÍ¸ø¶ÔÓ¦µØÖ·
+	//èŽ·å–å·²ç»è¿žæŽ¥çš„UDP HANDLERï¼Œå°†æŠ¥æ–‡å‘é€ç»™å¯¹åº”åœ°å€
 	if(udp_handler_ != NULL)
 	{
 		udp_handler_->send(packet, remote_addr);
@@ -360,7 +360,7 @@ void Connection_Manager::send_udp(CCorePacket& packet, const Inet_Addr& remote_a
 
 void Connection_Manager::send_udp(const string& data, const Inet_Addr& remote_addr)
 {
-	//»ñÈ¡ÒÑ¾­Á¬½ÓµÄUDP HANDLER£¬½«±¨ÎÄ·¢ËÍ¸ø¶ÔÓ¦µØÖ·
+	//èŽ·å–å·²ç»è¿žæŽ¥çš„UDP HANDLERï¼Œå°†æŠ¥æ–‡å‘é€ç»™å¯¹åº”åœ°å€
 	if(udp_handler_ != NULL)
 	{
 		udp_handler_->send(data, remote_addr);

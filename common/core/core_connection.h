@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	core_connection.h
 *
-*to do:		COREÁ¬½Ó¶ÔÏó»ù´¡£¬ÊµÏÖTCPÁ¬½ÓÊı¾İÊÕ·¢´¦ÀíÁ÷³Ì
+*to do:		COREè¿æ¥å¯¹è±¡åŸºç¡€ï¼Œå®ç°TCPè¿æ¥æ•°æ®æ”¶å‘å¤„ç†æµç¨‹
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -14,21 +14,23 @@
 #include "revolver/base_sock_stream.h"
 #include "core/core_reciver_interface.h"
 #include "revolver/base_block_buffer.h"
+#include "revolver/base_packet.h"
+#include "core/core_log_macro.h"
 
 #include <list>
 using namespace std;
 
 BASE_NAMESPACE_BEGIN_DECL
-//16K¶ÓÁĞ
+//16Ké˜Ÿåˆ—
 typedef CReciverBuffer_T<BinStream, CSockStream, 1024 * 4>		RBuffer_16K; 
 typedef CSenderBuffer_T<BinStream, CSockStream, 1024 * 4>		SBuffer_16K;
-//256K¶ÓÁĞ
+//256Ké˜Ÿåˆ—
 typedef CReciverBuffer_T<BinStream, CSockStream, 1024 * 256>	RBuffer_256K; 
 typedef CSenderBuffer_T<BinStream, CSockStream, 1024 * 256>		SBuffer_256K;
-//1M¶ÓÁĞ
+//1Mé˜Ÿåˆ—
 typedef CReciverBuffer_T<BinStream, CSockStream, 1024 * 1024>	RBuffer_1M;
 typedef CSenderBuffer_T<BinStream, CSockStream, 1024 * 1024>	SBuffer_1M;
-//10M¶ÓÁĞ
+//10Mé˜Ÿåˆ—
 typedef CReciverBuffer_T<BinStream, CSockStream, 1024 * 1280 * 8>	RBuffer_10M;
 typedef CSenderBuffer_T<BinStream, CSockStream, 1024 * 1280 * 8>	SBuffer_10M;
 
@@ -57,105 +59,126 @@ typedef SBuffer_16K		SBuffer;
 class CCorePacket;
 class CoreExpPacket;
 
-class CConnection : public CEventHandler
+class CConnection {
+public:
+    enum
+    {
+        CONN_IDLE,			//å¹³é™çŠ¶æ€,æœ‰å¯èƒ½æ˜¯æœªè¿æ¥
+        CONN_CONNECTING,	//è¿æ¥çŠ¶æ€
+        CONN_CONNECTED,		//è¿æ¥çŠ¶æ€
+    };
+
+    CConnection() : state_(CONN_IDLE) {
+        server_id_ = 0;
+        server_type_ = 0;
+        index_ = 0;
+    }
+    virtual ~CConnection() {}
+
+    uint32_t get_server_id() const { return server_id_; };
+    void set_server_id(uint32_t server_id){ server_id_ = server_id; };
+
+    //è·å–ç«¯çš„ä¿¡æ¯
+    uint8_t get_server_type() const{ return server_type_; };
+    void set_server_type(uint8_t server_type){ server_type_ = server_type; };
+
+    const Inet_Addr& get_remote_addr() const { return remote_addr_; };
+    void set_remote_addr(const Inet_Addr& remote_addr) { remote_addr_ = remote_addr; };
+
+    uint32_t get_index() const{ return index_; };
+    void set_index(uint32_t index){ index_ = index; };
+
+    void set_conn_ptr(void* ptr) { conn_ptr_ = ptr; }
+    void* get_conn_ptr() { return conn_ptr_; }
+
+    uint16_t get_state() const { return state_; };
+    void set_state(uint16_t state) {
+        state_ = state;
+        CORE_DEBUG("CConnection, state = CONN_CONNECTING");
+    }
+
+public:
+    virtual int32_t send(CBasePacket& packet, bool no_delay = false) = 0;
+    //å‘èµ·ä¸€æ¡TCPè¿æ¥
+    virtual int32_t connect(const Inet_Addr& remote_addr) = 0;
+    //å…³é—­è¿æ¥
+    virtual void close() = 0;
+
+protected:
+    uint32_t server_id_;		//ç«¯ID
+    uint8_t server_type_;		//0è¡¨ç¤ºå®¢æˆ·ç«¯
+
+    Inet_Addr remote_addr_;
+
+    uint32_t index_;  //è¿æ¥æ˜ å°„ç´¢å¼•
+    void* conn_ptr_;  //è¿æ¥çš„ç‰¹å¾ä¿¡æ¯
+
+    uint16_t state_;
+};
+
+class CCoreConnection : public CEventHandler, public CConnection
 {
 public:
-	enum 
-	{
-		CONN_IDLE,			//Æ½¾²×´Ì¬,ÓĞ¿ÉÄÜÊÇÎ´Á¬½Ó
-		CONN_CONNECTING,	//Á¬½Ó×´Ì¬
-		CONN_CONNECTED,		//Á¬½Ó×´Ì¬
-	};
-
-	CConnection();
-	virtual ~CConnection();
+    CCoreConnection();
+    virtual ~CCoreConnection();
 
 public:
-	void			 reset();
-	CSockStream&	get_sock_stream();
+    void			reset();
+    CSockStream&	get_sock_stream();
 
+    BASE_HANDLER	get_handle() const;
+    void			set_handle(BASE_HANDLER handle);
 
-	uint16_t		get_state() const {return state_;};
-	void			set_state(uint16_t state);
+    //äº‹ä»¶æ¥å£
+    int32_t			handle_input(BASE_HANDLER handle);
+    int32_t			handle_output(BASE_HANDLER handle);
+    int32_t			handle_close(BASE_HANDLER handle, ReactorMask close_mask);
+    int32_t			handle_exception(BASE_HANDLER handle);
+    int32_t			handle_timeout(const void *act, uint32_t timer_id);
 
-	BASE_HANDLER	get_handle() const;
-	void			set_handle(BASE_HANDLER handle);
+    //å‘èµ·ä¸€æ¡TCPè¿æ¥
+    int32_t			connect(const Inet_Addr& remote_addr);
+    int32_t			connect(const Inet_Addr& src_addr, const Inet_Addr& dst_addr);
+    //å…³é—­è¿æ¥
+    void			close();
+    void			extern_close();
 
-	void			set_conn_ptr(void* ptr);
-	void*			get_conn_ptr();
-
-	uint32_t		get_index() const{return index_;};
-	void			set_index(uint32_t index){index_ = index;};
-
-	const Inet_Addr& get_remote_addr() const {return remote_addr_;};
-	void			set_remote_addr(const Inet_Addr& remote_addr) {remote_addr_ = remote_addr;};
-
-
-	//»ñÈ¡¶ËµÄĞÅÏ¢
-	uint8_t			get_server_type() const{return server_type_;};
-	void			set_server_type(uint8_t server_type){server_type_ = server_type;};	
-	uint32_t		get_server_id() const {return server_id_;};
-	void			set_server_id(uint32_t server_id){server_id_ = server_id;};
-
-	//ÊÂ¼ş½Ó¿Ú
-	int32_t			handle_input(BASE_HANDLER handle);
-	int32_t			handle_output(BASE_HANDLER handle);
-	int32_t			handle_close(BASE_HANDLER handle, ReactorMask close_mask);
-	int32_t			handle_exception(BASE_HANDLER handle);
-	int32_t			handle_timeout(const void *act, uint32_t timer_id);
-
-	//·¢ÆğÒ»ÌõTCPÁ¬½Ó
-	int32_t			connect(const Inet_Addr& remote_addr);
-	int32_t			connect(const Inet_Addr& src_addr, const Inet_Addr& dst_addr);
-	//¹Ø±ÕÁ¬½Ó
-	void			close();
-	void			extern_close();
-
-	//·¢ËÍÊı¾İ
-	int32_t			send(CCorePacket& packet, bool no_delay = false);
-	int32_t			send(const string& bin_stream);
+    //å‘é€æ•°æ®
+    int32_t			send(CBasePacket/*CCorePacket*/& packet, bool no_delay = false);
+    int32_t			send(const string& bin_stream);
 
 protected:
-	int32_t			process(CCorePacket &packet, BinStream& istrm);
-	void			process_ping(const CCorePacket &packet);
-	int32_t			process_handshake(const CCorePacket &packet, BinStream& istrm);
+    int32_t			process(CCorePacket &packet, BinStream& istrm);
+    void			process_ping(const CCorePacket &packet);
+    int32_t			process_handshake(const CCorePacket &packet, BinStream& istrm);
 
-	void			send_ping();
-	void			send_handshake();
+    void			send_ping();
+    void			send_handshake();
 
-	void			check_connecting_state();
-	void			buffer_reduce();
+    void			check_connecting_state();
+    void			buffer_reduce();
 
-	uint32_t		set_timer(uint32_t timer_type, uint32_t delay = 60000); 
-	void			cancel_timer();
-	void			release_timer_act(const void* act);
+    uint32_t		set_timer(uint32_t timer_type, uint32_t delay = 60000); 
+    void			cancel_timer();
+    void			release_timer_act(const void* act);
 
-	int32_t			heartbeat();
-	
-	void			generate_digest(uint32_t server_id, uint8_t server_type, string& digest_data);
+    int32_t			heartbeat();
+    
+    void			generate_digest(uint32_t server_id, uint8_t server_type, string& digest_data);
 protected:
-	uint16_t		state_;
-	uint32_t		timer_id_;
+    uint32_t		timer_id_;
 
-	CSockStream		sock_stream_;
+    CSockStream		sock_stream_;
 
-	SBuffer			sbuffer_;			//·¢ËÍBUFFER
-	RBuffer			rbuffer_;			//½ÓÊÕBUFFER
+    SBuffer			sbuffer_;			//å‘é€BUFFER
+    RBuffer			rbuffer_;			//æ¥æ”¶BUFFER
 
-	BinStream		istrm_;
+    BinStream		istrm_;
 
-	void*			conn_ptr_;			//Á¬½ÓµÄÌØÕ÷ĞÅÏ¢
+    uint32_t		timer_count_;		//å®šæ—¶å™¨è®¡æ•°
 
-	uint32_t		index_;				//Á¬½ÓÓ³ÉäË÷Òı
-	uint8_t			server_type_;		//0±íÊ¾¿Í»§¶Ë
-	uint32_t		server_id_;			//¶ËID
-
-	uint32_t		timer_count_;		//¶¨Ê±Æ÷¼ÆÊı
-
-	string			conn_name_;
-	bool			send_flag_;			//·¢ËÍ±¨ÎÄ±êÖ¾
-
-	Inet_Addr		remote_addr_;
+    string			conn_name_;
+    bool			send_flag_;			//å‘é€æŠ¥æ–‡æ ‡å¿—
 };
 
 BASE_NAMESPACE_END_DECL

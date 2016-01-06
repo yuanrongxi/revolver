@@ -1,8 +1,8 @@
 /*************************************************************************************
 *filename:	core_daemon_client.h
 *
-*to do:		¶¨ÒåCOREµÄ¿ò¼Ü£¬Ö÷ÒªÊÇ±¾µØ½ÚµãĞÅÏ¢¹ÜÀí¡¢UDP/TCP¼àÌı¹ÜÀí¡¢Daemon ClientÆô¶¯
-¹ÜÀí
+*to do:		å®šä¹‰COREçš„æ¡†æ¶ï¼Œä¸»è¦æ˜¯æœ¬åœ°èŠ‚ç‚¹ä¿¡æ¯ç®¡ç†ã€UDP/TCPç›‘å¬ç®¡ç†ã€Daemon Clientå¯åŠ¨
+ç®¡ç†
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -27,77 +27,77 @@ class IDaemonConfig;
 typedef std::map<uint8_t, uint8_t>		FocusSet;
 
 class CDaemonClient : public ICmdTarget, 
-					  public CEventHandler
+                      public CEventHandler
 {
 public:
-	enum {
-		eDaemon_Idle		= 0x01,
-		eStunning			= 0x02,
-		eDaemon_Connecting	= 0x03,
-		eDaemon_Connected	= 0x04,
-		eDaemon_Disconnect	= 0x05,
-		eDaemon_Finished	= 0x06
-	};
+    enum {
+        eDaemon_Idle		= 0x01,
+        eStunning			= 0x02,
+        eDaemon_Connecting	= 0x03,
+        eDaemon_Connected	= 0x04,
+        eDaemon_Disconnect	= 0x05,
+        eDaemon_Finished	= 0x06
+    };
 
 public:
-	CDaemonClient();
-	~CDaemonClient();
-	
-	void attach_event(IDaemonEvent * daemon_event, IDaemonConfig* config);
+    CDaemonClient();
+    ~CDaemonClient();
+    
+    void attach_event(IDaemonEvent * daemon_event, IDaemonConfig* config);
 
-	void init();
+    void init();
 
-	//Æô¶¯ºÍÍ£Ö¹
-	void start(bool wan = false);
-	void stop();
+    //å¯åŠ¨å’Œåœæ­¢
+    void start(bool wan = false);
+    void stop();
 
-	//Ìí¼ÓÒ»¸ö¸ĞÖª½¹µã
-	void add_focus(uint8_t type);
+    //æ·»åŠ ä¸€ä¸ªæ„ŸçŸ¥ç„¦ç‚¹
+    void add_focus(uint8_t type);
 
-	//¶¨Ê±Æ÷½Ó¿Ú
-	virtual int32_t handle_timeout(const void *act, uint32_t timer_id);
+    //å®šæ—¶å™¨æ¥å£
+    virtual int32_t handle_timeout(const void *act, uint32_t timer_id);
 
-	//ÏûÏ¢¹ØÁªº¯Êı
-	int32_t	on_daemon_pong(CBasePacket* packet, uint32_t sid, const Inet_Addr& remote_addr);
-	int32_t on_register_res(CBasePacket* packet, uint32_t sid);
-	int32_t on_add_server(CBasePacket* packet, uint32_t sid);
-	int32_t on_del_server(CBasePacket* packet, uint32_t sid);
-	//Á¬½ÓÍ¨¸æÊÂ¼ş
-	int32_t connect_event(CBasePacket* packet, uint32_t sid, CConnection* connection);
-	int32_t disconnect_event(CBasePacket* packet, uint32_t sid, CConnection* connection);
+    //æ¶ˆæ¯å…³è”å‡½æ•°
+    int32_t	on_daemon_pong(CBasePacket* packet, uint32_t sid, const Inet_Addr& remote_addr);
+    int32_t on_register_res(CBasePacket* packet, uint32_t sid);
+    int32_t on_add_server(CBasePacket* packet, uint32_t sid);
+    int32_t on_del_server(CBasePacket* packet, uint32_t sid);
+    //è¿æ¥é€šå‘Šäº‹ä»¶
+    int32_t connect_event(CBasePacket* packet, uint32_t sid, CConnection* connection);
+    int32_t disconnect_event(CBasePacket* packet, uint32_t sid, CConnection* connection);
 
-	int32_t	send_node_state(const string& node_info);
-
-protected:
-	uint32_t set_timer(uint32_t delay = 12000);
-	void	 cancel_timer();
-
-	bool	 is_focus(uint8_t type);
-
-	void	 send_daemon_stun();
-	void	 star_daemon_tcp();
+    int32_t	send_node_state(const string& node_info);
 
 protected:
-	uint8_t			state_;
-	uint32_t		timer_id_;
-	IDaemonEvent*	daemon_event_;
-	IDaemonConfig*	config_;
+    uint32_t set_timer(uint32_t delay = 12000);
+    void	 cancel_timer();
 
-	//DAEMON SERVERµÄĞÅÏ¢
-	uint32_t		daemon_sid_;	
-	uint8_t			daemon_stype_;
-	Inet_Addr		daemon_tel_addr_;
-	Inet_Addr		daemon_cnc_addr_;
+    bool	 is_focus(uint8_t type);
 
-	FocusSet		focus_;
+    void	 send_daemon_stun();
+    void	 star_daemon_tcp();
 
-	//Ì½²â¹«ÍøµØÖ·UDP
-	bool			wan_;
-	bool			init_flag_;
-	CoreUDPHandler	daemon_udp_;
-	uint32_t		reconnect_count_;
+protected:
+    uint8_t			state_;
+    uint32_t		timer_id_;
+    IDaemonEvent*	daemon_event_;
+    IDaemonConfig*	config_;
 
-	DECLARE_MSGCALL_MAP()
+    //DAEMON SERVERçš„ä¿¡æ¯
+    uint32_t		daemon_sid_;	
+    uint8_t			daemon_stype_;
+    Inet_Addr		daemon_tel_addr_;
+    Inet_Addr		daemon_cnc_addr_;
+
+    FocusSet		focus_;
+
+    //æ¢æµ‹å…¬ç½‘åœ°å€UDP
+    bool			wan_;
+    bool			init_flag_;
+    CoreUDPHandler	daemon_udp_;
+    uint32_t		reconnect_count_;
+
+    DECLARE_MSGCALL_MAP()
 };
 
 BASE_NAMESPACE_END_DECL

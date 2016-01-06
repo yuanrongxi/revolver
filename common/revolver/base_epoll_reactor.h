@@ -1,12 +1,13 @@
-/*************************************************************************************
-*filename:	base_epoll_reactor.h
-*
-*to do:		����LINUXϵͳ�µ�EPOLL��Ӧ��
-*Create on: 2012-05
-*Author:	zerok
-*check list: EPOLL REACTOR����������������HANDLER�Ĳ����ɾ������ͨ���ڲ�����Ϣ����������
-			 ���Խ�ֹ���̲߳���EPOLL ��Ӧ�������ɾ��������	
-*************************************************************************************/
+/************************************************************************************* 
+ *filename:	base_epoll_reactor.h 
+ * 
+ *to do:		定义LINUX系统下的EPOLL反应器 
+ *Create on: 2012-05 
+ *Author:	zerok 
+ *check list: EPOLL REACTOR不做锁保护，所有HANDLER的插入和删除必须通过内部的消息队列来控制 
+			 绝对禁止多线程操作EPOLL 反应器的添加删除操作。	 
+ *************************************************************************************/ 
+
 #ifndef __BASE_EPOLL_REACTOR_H
 #define __BASE_EPOLL_REACTOR_H
 
@@ -69,7 +70,7 @@ private:
 
 	BASE_HANDLER				epfd_;
 	epoll_event*				events_;
-	int32_t						nevent_;		//������EVENT����
+	int32_t						nevent_;		//触发的EVENT个数 
 
 	uint64_t					prev_ts_;
 };

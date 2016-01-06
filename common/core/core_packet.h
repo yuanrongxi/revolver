@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	core_packet.h
 *
-*to do:		¶¨Òåµ×²ãÏûÏ¢»ù´¡Àà,Ö÷Òª°üº¬»ù±¾µÄÍ·ĞÅÏ¢¡¢ÏûÏ¢IDµÈ
+*to do:		å®šä¹‰åº•å±‚æ¶ˆæ¯åŸºç¡€ç±»,ä¸»è¦åŒ…å«åŸºæœ¬çš„å¤´ä¿¡æ¯ã€æ¶ˆæ¯IDç­‰
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -42,7 +42,7 @@ typedef enum PacketClass
 	CORE_ZLIB,
 	CORE_PONG
 }PacketClass;
-//¶¨Òå¾»ºÉÏà¶Ô´óµÄ±¨ÎÄ£¬Ö÷ÒªÃèÊö
+//å®šä¹‰å‡€è·ç›¸å¯¹å¤§çš„æŠ¥æ–‡ï¼Œä¸»è¦æè¿°
 class CCorePacket : public CBasePacket
 {
 public:
@@ -79,10 +79,10 @@ public:
 	void		set_body(CBasePacket& packet);
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const;
 	
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm);
 
 	virtual void	Print(std::ostream& os) const
@@ -96,11 +96,11 @@ protected:
 	}
 	
 public:
-	uint32_t		server_id_;		//·şÎñÆ÷ID
-	uint8_t			server_type_;	//·şÎñÆ÷ÀàĞÍ,0±íÊ¾¿Í»§¶Ë
-	uint32_t		msg_id_;		//ÏûÏ¢ID
-	uint8_t			msg_type_;		//ÏûÏ¢ÀàĞÍ£¬ÀıÈç¶ÀÁ¢µÄPING PONGÏûÏ¢£¬ÎÕÊÖÏûÏ¢£¬Ó¦ÓÃ²ãÏûÏ¢µÈ
-	CBasePacket*	body_ptr_;		//ÏûÏ¢ÄÚÈİ
+	uint32_t		server_id_;		//æœåŠ¡å™¨ID
+	uint8_t			server_type_;	//æœåŠ¡å™¨ç±»å‹,0è¡¨ç¤ºå®¢æˆ·ç«¯
+	uint32_t		msg_id_;		//æ¶ˆæ¯ID
+	uint8_t			msg_type_;		//æ¶ˆæ¯ç±»å‹ï¼Œä¾‹å¦‚ç‹¬ç«‹çš„PING PONGæ¶ˆæ¯ï¼Œæ¡æ‰‹æ¶ˆæ¯ï¼Œåº”ç”¨å±‚æ¶ˆæ¯ç­‰
+	CBasePacket*	body_ptr_;		//æ¶ˆæ¯å†…å®¹
 };
 
 class HandShakeBody : public CBasePacket
@@ -122,20 +122,20 @@ public:
 	};
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 		strm << digest_data;
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 		strm >> digest_data;
 	};
 
 public:
-	string digest_data;	//ÕªÒªĞÅÏ¢
+	string digest_data;	//æ‘˜è¦ä¿¡æ¯
 };
 
 #define INIT_CORE_REQUEST(p, MSGID)\
