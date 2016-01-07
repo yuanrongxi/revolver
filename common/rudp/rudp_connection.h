@@ -79,18 +79,24 @@ protected:
     BinStream		istrm_;
 };
 
-extern ObjectMutexPool<RudpConnection, BaseThreadMutex, 512> RUDPCONNPOOL;
+typedef ObjectMutexPool<RudpConnection, BaseThreadMutex, 512> RudpConnPool;
+
+#define CREATE_RUDPCONNPOOL CSingleton<RudpConnPool>::instance
+#define RUDPCONNPOOL		CSingleton<RudpConnPool>::instance
+#define DESTROY_RUDPCONNPOOL	CSingleton<RudpConnPool>::destroy
+
+//extern ObjectMutexPool<RudpConnection, BaseThreadMutex, 512> RUDPCONNPOOL;
 
 
 #define GAIN_RUDP_CONN(conn) \
-    RudpConnection* conn = RUDPCONNPOOL.pop_obj(); \
+    RudpConnection* conn = RUDPCONNPOOL()->pop_obj(); \
     conn->reset()
 
 #define RETURN_RUDP_CONN(conn) \
 if (conn != NULL) \
 {\
     conn->reset(); \
-    RUDPCONNPOOL.push_obj(conn); \
+    RUDPCONNPOOL()->push_obj(conn); \
 }
 
 

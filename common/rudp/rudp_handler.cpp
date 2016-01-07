@@ -82,6 +82,7 @@ int32_t RudpHandler::close()
 int32_t RudpHandler::send(BinStream& bin_strm, const Inet_Addr& remote_addr)
 {
     int32_t rc = sock_dgram_.send(bin_strm.get_rptr(), bin_strm.data_size(), remote_addr);
+    
     if (rc < 0)
     {
         if (XEAGAIN == error_no() || XEINPROGRESS == error_no()) //插入一个写事件，防止SOCKET异常
@@ -95,7 +96,7 @@ int32_t RudpHandler::send(BinStream& bin_strm, const Inet_Addr& remote_addr)
             return -1;
         }
     }
-
+    RUDP_SEND_DEBUG("send raw data: " << rc);
     return rc;
 }
 
@@ -106,8 +107,10 @@ int32_t RudpHandler::handle_input(BASE_HANDLER handle)
     {
         bin_strm_.rewind(true);
         int32_t rc = sock_dgram_.recv(bin_strm_.get_wptr(), MAX_UDP_PACKET, remote_addr);
+        
         if (rc > 0)
         {
+            RUDP_RECV_DEBUG("recv raw data: " << rc);
             bin_strm_.set_used_size(rc);
             uint8_t packet_type = 0;
             bin_strm_ >> packet_type;

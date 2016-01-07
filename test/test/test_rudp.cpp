@@ -12,6 +12,7 @@
 #include "core/core_message_processor.h"
 #include "core/core_event_message.h"
 
+#include "cli_gateway.h"
 
 using namespace BASE;
 using namespace BASE_NAMEPSACE_DECL;
@@ -107,6 +108,15 @@ void test_rudp_cli() {
     addr.set_ip("127.0.0.1");
     addr.set_port(4040);
     RUDP_CONN()->connect(addr);
+
+    usleep(2000000);
+
+    CLIENT_GATEWAY::StartLiveShowRequest req;
+    req.user_account_id = "111111";
+    req.user_type = 0;
+    req.room_id = 1000;
+
+    RUDP_CONN()->send(req);
 
     char ch = getchar();
 

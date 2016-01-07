@@ -9,7 +9,7 @@ BASE_NAMESPACE_BEGIN_DECL
 
 #define RUDP_CONNECT_DELAY 25000
 
-ObjectMutexPool<RudpConnection, BaseThreadMutex, 512> RUDPCONNPOOL;
+//ObjectMutexPool<RudpConnection, BaseThreadMutex, 512> RUDPCONNPOOL;
 
 RudpConnection::RudpConnection()
 {
@@ -200,7 +200,7 @@ int32_t RudpConnection::rudp_input_event(int32_t rudp_id)
                 if (split_ret == 0)
                 {
 
-                    /*try{ istrm_ >> recv_packet_; }
+                    try{ istrm_ >> recv_packet_; }
                     catch (...)
                     {
                         RUDP_WARNING("parse received packet encounter error, close the connection(" << rudp_id << ")");
@@ -208,7 +208,7 @@ int32_t RudpConnection::rudp_input_event(int32_t rudp_id)
                         return -2;
                     }
 
-                    process(recv_packet_);*/
+                    process(recv_packet_);
                 }
                 else if (split_ret < 0) //非法报文
                 {
