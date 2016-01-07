@@ -41,6 +41,18 @@ protected:
     Inet_Addr			local_addr_;
 };
 
+class RudpHandler;
+class RudpAdapter : public IRUDPAdapter {
+public:
+    RudpAdapter(RudpHandler* handler) : _handler(handler) {}
+    virtual ~RudpAdapter() {}
+
+    virtual void send(BinStream& strm, const Inet_Addr& remote_addr);
+
+protected:
+    RudpHandler *_handler;
+};
+
 BASE_NAMESPACE_END_DECL
 
 #endif

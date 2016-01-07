@@ -59,10 +59,10 @@
     <ClInclude Include="..\rudp\rudp_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\rudp\rudp_listen_handler.h">
+    <ClInclude Include="..\rudp\rudp_connection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\rudp\rudp_connection.h">
+    <ClInclude Include="..\rudp\rudp_listener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -97,10 +97,10 @@
     <ClCompile Include="..\rudp\rudp_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\rudp\rudp_listen_handler.cpp">
+    <ClCompile Include="..\rudp\rudp_connection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\rudp\rudp_connection.cpp">
+    <ClCompile Include="..\rudp\rudp_listener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

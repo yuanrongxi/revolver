@@ -8,10 +8,10 @@
 #define RUDP_DEFAULT_POOL_SIZE	1024
 #define MAX_LOCAL_ADDR_SIZE		256
 
-//RUDPµÄĞÄÌøÖÜÆÚÊÇ5ºÁÃë
+//RUDPçš„å¿ƒè·³å‘¨æœŸæ˜¯5æ¯«ç§’
 #define RUDP_TIMER_DELAY		10
 
-//ÏûÏ¢½âÂëºê
+//æ¶ˆæ¯è§£ç å®
 #define PARSE_RUDP_HEAD(head, info) \
         RUDPHeadPacket head;\
         try{\
@@ -70,7 +70,7 @@ int32_t RUDPObject::handle_timeout(const void *act, uint32_t timer_id)
 
 void RUDPObject::heartbeat()
 {
-    //É¨ÃèËùÓĞµÄRUDP SOCKET¶ÔÏó
+    //æ‰«ææ‰€æœ‰çš„RUDP SOCKETå¯¹è±¡
     uint32_t id = INVALID_RUDP_HANDLE;
     int32_t size = socket_array_.size();
 
@@ -179,7 +179,7 @@ int32_t RUDPObject::create_socket()
 {
     int32_t ret = INVALID_RUDP_HANDLE;
 
-    //¾ä±ú²»¹»
+    //å¥æŸ„ä¸å¤Ÿ
     if(free_socket_ids_.empty())
         alloc_sockets();
 
@@ -192,7 +192,7 @@ int32_t RUDPObject::create_socket()
 
         free_socket_ids_.erase(it);
         used_socket_ids_.insert(ret);
-        //¹ØÁªRUDP SOCKET¾ä±ú
+        //å…³è”RUDP SOCKETå¥æŸ„
         rudp_session->open(ret);
 
         RUDP_INFO("create rudp socket, socket id = " << ret);
@@ -251,11 +251,11 @@ int32_t RUDPObject::bind(int32_t rudp_id, const Inet_Addr& local_addr)
         return -1;
     }
 
-    for(uint8_t i = 0; i < adapter_array_.size(); ++i)
+    for(uint16_t i = 0; i < adapter_array_.size(); ++i)
     {
         if(adapter_array_[i] != NULL && local_addr == adapter_array_[i]->get_local_addr())
         {
-            if(rudp_session->bind(i, adapter_array_[i]->get_title()) != 0)//°ó¶¨±¾µØµÄÒ»¸öUDP·¢ËÍ½Ó¿Ú
+            if(rudp_session->bind(i, adapter_array_[i]->get_title()) != 0)//ç»‘å®šæœ¬åœ°çš„ä¸€ä¸ªUDPå‘é€æ¥å£
             {
                 RUDP_FATAL("bind failed, rudp socket = " << rudp_id);
                 return -1;
@@ -458,12 +458,12 @@ void RUDPObject::process(IRUDPAdapter* adapter, BinStream& strm, const Inet_Addr
         return ;
     }
 
-    //´¦ÀíSYNÁ¬½ÓÇëÇó
+    //å¤„ç†SYNè¿æ¥è¯·æ±‚
     if(rudp_head.msg_id_ == RUDP_SYN && rudp_head.remote_rudp_id_ == INVALID_RUDP_HANDLE)
     {
         PARSE_RUDP_MESSAGE(strm, RUDPSynPacket, syn, "parse syn failed!");
 
-        //ÔÚ°ë¿ªÁ¬½ÓÖĞÕÒ
+        //åœ¨åŠå¼€è¿æ¥ä¸­æ‰¾
         rudp_session = find_by_peer_id(syn.local_rudp_id_, remote_addr);
         if(rudp_session == NULL)
         {
@@ -484,19 +484,19 @@ void RUDPObject::process(IRUDPAdapter* adapter, BinStream& strm, const Inet_Addr
                 return ;
             }
 
-            //½¨Á¢Ô¶³ÌSOCKET IDÓë±¾µØSOCKET IDµÄ¹ØÏµ£¬·ÀÖ¹ÖØ¸´½¨Á¢Á¬½Ó
+            //å»ºç«‹è¿œç¨‹SOCKET IDä¸æœ¬åœ°SOCKET IDçš„å…³ç³»ï¼Œé˜²æ­¢é‡å¤å»ºç«‹è¿æ¥
             RUDPPeerInfo info(syn.local_rudp_id_, remote_addr);
             peer_socket_ids_[info] = new_rudp_id;
 
             rudp_session = get_socket(new_rudp_id);
             rudp_session->set_check_sum(rudp_head.check_sum_);
 
-            //ÌáÊ¾ÉÏ²ãEVENT HANDLE½øĞĞACCEPT£¬¿ÉÒÔÔÚÉÏ²ã½øĞĞSOCKETÊôĞÔÉèÖÃ
+            //æç¤ºä¸Šå±‚EVENT HANDLEè¿›è¡ŒACCEPTï¼Œå¯ä»¥åœ¨ä¸Šå±‚è¿›è¡ŒSOCKETå±æ€§è®¾ç½®
             if(listener_ != NULL)
                 listener_->rudp_accept_event(new_rudp_id);
         }
 
-        //½øĞĞÏûÏ¢´¦Àí
+        //è¿›è¡Œæ¶ˆæ¯å¤„ç†
         rudp_session->process_syn(syn, remote_addr);
     }
     else
@@ -533,15 +533,15 @@ void RUDPObject::attach(IRUDPAdapter* adapter)
         return ;
     }
 
-    for(uint8_t i = 0; i < adapter_array_.size(); i ++) //¹ØÁª±¾µØµÄÍøÂçÊÊÅäÆ÷
+    for(uint16_t i = 0; i < adapter_array_.size(); i ++) //å…³è”æœ¬åœ°çš„ç½‘ç»œé€‚é…å™¨
     {
-        if(adapter_array_[i] == adapter || i >= INVALID_ADAPTER_INDEX) //ÖØ¸´ATTACH
+        if(adapter_array_[i] == adapter || i >= INVALID_ADAPTER_INDEX) //é‡å¤ATTACH
         {
             RUDP_WARNING("repeat attach adapter!!");
             break;
         }
 
-        //°ó¶¨
+        //ç»‘å®š
         if(adapter_array_[i] == NULL)
         {
             adapter->set_index(i);
@@ -561,7 +561,7 @@ void RUDPObject::unattach(IRUDPAdapter* adapter)
     }
 }
 
-//·¢ËÍÒ»¸öÎÕÊÖÊ§°ÜµÄSYN2
+//å‘é€ä¸€ä¸ªæ¡æ‰‹å¤±è´¥çš„SYN2
 void RUDPObject::send_syn2(uint32_t remote_rudp_id, uint8_t result, uint16_t check_sum, const Inet_Addr& remote_addr, IRUDPAdapter* adapter)
 {
     if(adapter == NULL)

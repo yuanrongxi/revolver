@@ -6,7 +6,7 @@
 #include "revolver/base_bin_stream.h"
 #include "rudp/rudp_adapter.h"
 
-using namespace BASE;
+BASE_NAMESPACE_BEGIN_DECL
 
 class RudpHandler : public CEventHandler {
 public:
@@ -38,5 +38,6 @@ protected:
     Inet_Addr local_addr_;	//本地绑定的网卡地址
 };
 
+BASE_NAMESPACE_END_DECL
 
 #endif // __REVOLVER_RUDP_HANDLER_H__

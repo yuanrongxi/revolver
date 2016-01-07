@@ -12,8 +12,10 @@
 #include "revolver/base_block_buffer.h"
 #include "revolver/base_bin_stream.h"
 
+#include "rudp/rudp_adapter.h"
+#include "rudp/rudp_handler.h"
 
-using namespace BASE;
+BASE_NAMESPACE_BEGIN_DECL
 
 typedef CReciverBuffer_T<BinStream, RUDPStream, 1024 * 16>  RUDPRBuffer;
 typedef CSenderBuffer_T<BinStream, RUDPStream, 1024 * 16>   RUDPSBuffer;
@@ -91,5 +93,32 @@ if (conn != NULL) \
     RUDPCONNPOOL.push_obj(conn); \
 }
 
+
+class RudpClientCtx {
+public:
+    RudpClientCtx() : _adapter(&_rudp_handler) {
+    }
+
+    virtual ~RudpClientCtx() {}
+
+    int32_t open(const Inet_Addr& local_addr);
+    int32_t close();
+
+    const Inet_Addr& get_local_addr() { return _adapter.get_local_addr(); }
+protected:
+    RudpAdapter _adapter;
+    RudpHandler _rudp_handler;
+    
+};
+
+#define CREATE_RUDP_CLI  CSingleton<RudpClientCtx>::instance
+#define RUDP_CLI		 CSingleton<RudpClientCtx>::instance
+#define DESTROY_RUDP_CLI CSingleton<RudpClientCtx>::destroy
+
+int32_t create_rudp_client(uint16_t port = 0);
+void destroy_rudp_client();
+
+
+BASE_NAMESPACE_END_DECL
 
 #endif // __REVOLVER_RUDP_CONNECTION_H__

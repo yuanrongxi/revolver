@@ -5,6 +5,8 @@
 #include "rudp/rudp_log_macro.h"
 #include "core/core_message_processor.h"
 
+BASE_NAMESPACE_BEGIN_DECL
+
 #define RUDP_CONNECT_DELAY 25000
 
 ObjectMutexPool<RudpConnection, BaseThreadMutex, 512> RUDPCONNPOOL;
@@ -69,6 +71,8 @@ int32_t RudpConnection::handle_timeout(const void *act, uint32_t timer_id)
 
 int32_t RudpConnection::connect(const Inet_Addr& dst_addr)
 {
+    local_addr_ = RUDP_CLI()->get_local_addr();
+
     if (rudp_sock_.open(local_addr_) != 0)
     {
         return -1;
@@ -294,6 +298,38 @@ const Inet_Addr& RudpConnection::get_local_addr() const
 }
 
 
+int32_t RudpClientCtx::open(const Inet_Addr& local_addr) {
+    _rudp_handler.attach_adapter(&_adapter);
+    if (_rudp_handler.open(local_addr) == 0)
+    {
+        CORE_INFO("open rudp client, client addr = " << local_addr);
+        return 0;
+    }
+    else
+    {
+        CORE_ERROR("open rudp client failed, client addr = " << local_addr << ",error = " << error_no());
+        return -1;
+    }
+    return 0;
+}
 
+int32_t RudpClientCtx::close() {
+    _rudp_handler.close();
+    return 0;
+}
+
+
+int32_t create_rudp_client(uint16_t port) {
+    CREATE_RUDP_CLI();
+    Inet_Addr addr(INADDR_ANY, port);
+    return RUDP_CLI()->open(addr);
+}
+
+void destroy_rudp_client() {
+    RUDP_CLI()->close();
+    DESTROY_RUDP_CLI();
+}
+
+BASE_NAMESPACE_END_DECL
 
 

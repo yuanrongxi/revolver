@@ -4,7 +4,7 @@
 
 #include "rudp/rudp_connection.h"
 #include "rudp/rudp_handler.h"
-#include "rudp/rudp_listen_handler.h"
+#include "rudp/rudp_listener.h"
 
 #include "revolver/base_thread.h"
 #include "core/core_cmd_target.h"
@@ -37,9 +37,9 @@ public:
 #define DESTROY_RUDP_HANDLER CSingleton<RudpHandler>::destroy
 
 
-#define CREATE_RUDP_LISTEN	CSingleton<RUDPListenHandler>::instance
-#define RUDP_LISTEN			CSingleton<RUDPListenHandler>::instance
-#define DESTROY_RUDP_LISTEN	CSingleton<RUDPListenHandler>::destroy
+#define CREATE_RUDP_LISTEN	CSingleton<RUDPListenerHandler>::instance
+#define RUDP_LISTEN			CSingleton<RUDPListenerHandler>::instance
+#define DESTROY_RUDP_LISTEN	CSingleton<RUDPListenerHandler>::destroy
 
 class TestRudpAdapter : public IRUDPAdapter
 {
@@ -82,6 +82,88 @@ BEGIN_MSGCALL_MAP(TestRudpProcessor)
 END_MSGCALL_MAP()
 
 
+#define CREATE_LISTENER CSingleton<RUDPListener>::instance
+#define RUDP_LISTENER		CSingleton<RUDPListener>::instance
+#define DESTROY_LISTENER	CSingleton<RUDPListener>::destroy
+
+#define CREATE_RUDP_CONN CSingleton<RudpConnection>::instance
+#define RUDP_CONN		CSingleton<RudpConnection>::instance
+#define DESTROY_RUDP_CONN	CSingleton<RudpConnection>::destroy
+
+void test_rudp_cli() {
+    REACTOR_CREATE();
+    REACTOR_INSTANCE()->open_reactor(256);
+
+    init_rudp_socket();
+    RUDP_EV_THREAD();
+
+    RUDP_EV_THREAD()->start();
+
+    CREATE_RUDP_CONN();
+
+    create_rudp_client();
+
+    Inet_Addr addr;
+    addr.set_ip("127.0.0.1");
+    addr.set_port(4040);
+    RUDP_CONN()->connect(addr);
+
+    char ch = getchar();
+
+    RUDP_CONN()->close();
+    usleep(2000000);
+
+    destroy_rudp_client();
+
+    RUDP_EV_THREAD()->terminate();
+
+    destroy_rudp_socket();
+
+    REACTOR_INSTANCE()->close_reactor();
+
+    DESTROY_RUDP_HANDLER();
+    REACTOR_DESTROY();
+}
+
+void test_rudp_srv() {
+    REACTOR_CREATE();
+    REACTOR_INSTANCE()->open_reactor(256);
+
+    init_rudp_socket();
+    RUDP_EV_THREAD();
+
+    //CREATE_RUDP_HANDLER();
+    create_rudp_listener();
+
+    Inet_Addr local_addr(INADDR_ANY, 4040);
+    RUDP_LISTENER()->open(local_addr);
+    /*RUDP_HANDLER()->attach_adapter(RUDP_ADAPTER());
+    RUDP_HANDLER()->open(local_addr);
+
+    CREATE_RUDP_LISTEN();
+    RUDP()->attach_listener(RUDP_LISTEN());*/
+
+    INIT_MSG_PROCESSOR1(CLIENT_PROCESSOR());
+
+    RUDP_EV_THREAD()->start();
+
+    char ch = getchar();
+
+    RUDP_EV_THREAD()->terminate();
+
+    RUDP_LISTENER()->close();
+    
+    //RUDP_HANDLER()->close();
+    destroy_rudp_listener();
+
+    RUDP()->destroy();
+
+    REACTOR_INSTANCE()->close_reactor();
+
+    DESTROY_RUDP_HANDLER();
+    REACTOR_DESTROY();
+}
+
 void test_rudp_init() {
     REACTOR_CREATE();
     REACTOR_INSTANCE()->open_reactor(256);
@@ -97,42 +179,6 @@ void test_rudp_init() {
 
     RUDP()->attach_listener(0);  // client mode.
 
-
-    RUDP_EV_THREAD()->start();
-
-    char ch = getchar();
-
-    RUDP_EV_THREAD()->terminate();
-
-    RUDP()->attach_listener(0);
-    RUDP()->destroy();
-
-    RUDP_HANDLER()->close();
-
-    REACTOR_INSTANCE()->close_reactor();
-
-    DESTROY_RUDP_HANDLER();
-    REACTOR_DESTROY();
-}
-
-
-void test_rudp_srv() {
-    REACTOR_CREATE();
-    REACTOR_INSTANCE()->open_reactor(256);
-
-    init_rudp_socket();
-    RUDP_EV_THREAD();
-
-    CREATE_RUDP_HANDLER();
-
-    Inet_Addr local_addr(INADDR_ANY, 9090);
-    RUDP_HANDLER()->attach_adapter(RUDP_ADAPTER());
-    RUDP_HANDLER()->open(local_addr);
-
-    CREATE_RUDP_LISTEN();
-    RUDP()->attach_listener(RUDP_LISTEN());
-
-    INIT_MSG_PROCESSOR1(CLIENT_PROCESSOR());
 
     RUDP_EV_THREAD()->start();
 

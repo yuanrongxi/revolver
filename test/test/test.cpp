@@ -98,7 +98,9 @@ int main(int argc, char* argv[])
     //test_conn_hash();
     //test_node_load();
     //test_rudp_init();
-    test_rudp_srv();
+    //test_rudp_srv();
+    test_rudp_cli();
+
     destroy_socket();
     LOG_DESTROY(); //防止LOG内存泄露
     return 0;

@@ -99,7 +99,7 @@
     <ClInclude Include="..\rudp\rudp_half_connection.h" />
     <ClInclude Include="..\rudp\rudp_handler.h" />
     <ClInclude Include="..\rudp\rudp_interface.h" />
-    <ClInclude Include="..\rudp\rudp_listen_handler.h" />
+    <ClInclude Include="..\rudp\rudp_listener.h" />
     <ClInclude Include="..\rudp\rudp_log_macro.h" />
     <ClInclude Include="..\rudp\rudp_packet.h" />
     <ClInclude Include="..\rudp\rudp_recv_buffer.h" />
@@ -114,7 +114,7 @@
     <ClCompile Include="..\rudp\rudp_connection.cpp" />
     <ClCompile Include="..\rudp\rudp_handler.cpp" />
     <ClCompile Include="..\rudp\rudp_interface.cpp" />
-    <ClCompile Include="..\rudp\rudp_listen_handler.cpp" />
+    <ClCompile Include="..\rudp\rudp_listener.cpp" />
     <ClCompile Include="..\rudp\rudp_log_macro.cpp" />
     <ClCompile Include="..\rudp\rudp_recv_buffer.cpp" />
     <ClCompile Include="..\rudp\rudp_segment.cpp" />
