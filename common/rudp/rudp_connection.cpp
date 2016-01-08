@@ -121,9 +121,11 @@ int32_t RudpConnection::send(CBasePacket& packet, bool no_delay /* = false */)
         if (sbuffer_.length() < MAX_BUFFER_SIZE)//扩大TCP发送缓冲区,防止缓冲区太小造成发送包异常
         {
             sbuffer_.realloc_buffer(bin_strm->data_size());
+            CORE_WARNING("sbuffer realloc buffer, size = " << sbuffer_.length());
         }
         else //发送报文丢弃
         {
+            CORE_ERROR("sbuffer is full, sbuffer.size = " << sbuffer_.length());
             RETURN_BINSTREAM(bin_strm);
             return -1;
         }
@@ -131,7 +133,16 @@ int32_t RudpConnection::send(CBasePacket& packet, bool no_delay /* = false */)
 
     if (sbuffer_.put(*bin_strm))
     {
-        RUDP()->register_event(rudp_sock_.get_handler(), MASK_WRITE);
+        if (no_delay)
+        {
+            sbuffer_.send(rudp_sock_);
+        }
+
+
+        if (sbuffer_.data_length() > 0)
+        {
+            RUDP()->register_event(rudp_sock_.get_handler(), MASK_WRITE);
+        }
         ret = 0;
     }
 
@@ -208,7 +219,7 @@ int32_t RudpConnection::rudp_input_event(int32_t rudp_id)
                         return -2;
                     }
 
-                    process(recv_packet_);
+                    process(recv_packet_, istrm_);
                 }
                 else if (split_ret < 0) //非法报文
                 {
@@ -273,11 +284,14 @@ int32_t RudpConnection::rudp_exception_event(int32_t rudp_id)
     return 0;
 }
 
-void RudpConnection::process(CBasePacket& packet)
+void RudpConnection::process(CCorePacket& packet, BinStream& istrm)
 {
     //GROUP_MANAGER()->on_message(packet, this);
-    send(packet);
+    //send(packet);
     //RUDP_DEBUG("receive rudp payload packet, data size: " << packet.ctx.length());
+    //消息处理
+    MSG_PROCESSOR()->on_message(packet, istrm, this);
+
 }
 
 void RudpConnection::get_send_state(uint32_t& send_bw, uint32_t& cache_size)

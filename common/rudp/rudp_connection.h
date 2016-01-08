@@ -5,6 +5,7 @@
 #include "revolver/base_thread_mutex.h"
 #include "revolver/base_event_handler.h"
 #include "core/core_connection.h"
+#include "core/core_packet.h"
 
 #include "rudp/rudp_stream.h"
 #include "rudp/rudp_interface.h"
@@ -50,8 +51,6 @@ public:
     int32_t			handle_timeout(const void *act, uint32_t timer_id);
 
 public:
-    void			set_state(uint8_t state) { state_ = state; };
-    uint8_t			get_state() const { return state_; };
     RUDPStream&		get_rudp_stream() { return rudp_sock_; };
     const Inet_Addr& get_remote_addr() { rudp_sock_.get_peer_addr(remote_addr_); return remote_addr_; };
     void			set_remote_addr(const Inet_Addr& remote_addr) { remote_addr_ = remote_addr; };
@@ -60,7 +59,7 @@ public:
     void            set_local_addr(const Inet_Addr& addr) { local_addr_ = addr; }
     void			get_send_state(uint32_t& bw, uint32_t& cache_size);
 protected:
-    void			process(CBasePacket &packet);
+    void			process(CCorePacket& packet, BinStream& istrm);
     void			send_packet();
 
 protected:
@@ -74,9 +73,8 @@ protected:
     RUDPRBuffer		rbuffer_;			//接收BUFFER
     RUDPSBuffer		sbuffer_;			//发送BUFFER
 
-    uint8_t			state_;
-
     BinStream		istrm_;
+    CCorePacket	    recv_packet_;
 };
 
 typedef ObjectMutexPool<RudpConnection, BaseThreadMutex, 512> RudpConnPool;
