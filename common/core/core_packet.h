@@ -14,6 +14,8 @@
 #include "revolver/object_pool.h"
 
 #include <string>
+#include "core/core_local_info.h"
+
 using namespace std;
 
 BASE_NAMESPACE_BEGIN_DECL

@@ -112,6 +112,9 @@ void RudpConnection::force_close()
 
 int32_t RudpConnection::send(CBasePacket& packet, bool no_delay /* = false */)
 {
+    if (get_state() != CONN_CONNECTED)
+        return -1;
+
     int32_t ret = -1;
     GAIN_BINSTREAM(bin_strm);
     *bin_strm << packet;
