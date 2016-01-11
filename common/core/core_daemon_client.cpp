@@ -10,8 +10,9 @@
 #include "core/core_daemon_client.h"
 
 //DAEOMON SERVER地址，可以用域名
-#define DAEMON_SERVER_CNC_IP	"daemon.bolo.me"
-#define DAEMON_SERVER_TEL_IP	"daemon.bolo.me"
+
+//#define DAEMON_SERVER_CNC_IP	"daemon.bolo.me"
+//#define DAEMON_SERVER_TEL_IP	"daemon.bolo.me"
 #define DAEMON_SERVER_PORT		7600
 #define DAEMON_SERVER_ID		1
 
@@ -34,8 +35,8 @@ END_MSGCALL_MAP()
 
 CDaemonClient::CDaemonClient() : timer_id_(0), daemon_event_(NULL),
 	daemon_sid_(DAEMON_SERVER_ID), daemon_stype_(eDaemon_Server),
-	daemon_tel_addr_(DAEMON_SERVER_TEL_IP, DAEMON_SERVER_PORT),
-	daemon_cnc_addr_(DAEMON_SERVER_CNC_IP, DAEMON_SERVER_PORT)
+	daemon_tel_addr_(daemon_server_tel_ip, DAEMON_SERVER_PORT),
+	daemon_cnc_addr_(daemon_server_cnc_ip, DAEMON_SERVER_PORT)
 {
 	daemon_event_ = NULL;
 	config_ = NULL;

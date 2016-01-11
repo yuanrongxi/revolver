@@ -19,6 +19,9 @@
 
 #include <map>
 
+extern const char* daemon_server_cnc_ip;
+extern const char* daemon_server_tel_ip;
+
 BASE_NAMESPACE_BEGIN_DECL
 
 class IDaemonEvent;
