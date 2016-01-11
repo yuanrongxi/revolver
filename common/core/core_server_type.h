@@ -11,16 +11,14 @@
 
 #include "revolver/base_typedef.h"
 const char* GetServerName(uint8_t stype);
-typedef enum EServerType
-{
-    eClient					= 0x00,
-    eDaemon_Server			= 0x01,
-    //一个例子的服务类型
-    eSample_Server			= 0x02,
-    //todo:可以填写其他的SERVER类型，数字必须小于0xff，而且和前面的类型不重复
-    eGateway_Server,
-    eMax_Server_Type
-}EServerType;
+void SetMaxServerCount(uint8_t size);
+
+#define eClient   0x00
+#define eDaemon_Server  0x01
+
+extern const char* server_name_list[];
+
+
 #endif
 /************************************************************************************/
 

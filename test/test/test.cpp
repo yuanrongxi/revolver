@@ -11,6 +11,16 @@
 #include <iostream>
 #include "test_rudp.h"
 
+const char*	  server_name_list[256] = {
+    "eClient",
+    "eDaemon_Server",
+    "eSample_Server",
+    //TODO:填写对应的SERVER类型名称
+    "Gateway_Server",
+    "errorServerName"
+};
+
+
 using namespace std;
 
 void test_localtime_s()
