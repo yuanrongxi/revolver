@@ -75,10 +75,10 @@ void CCppTranslator::AddFileDescToFile()
 	left_file_desc_.push_back("#endif");
 
 	out_file_ << endl;
-	out_file_ << "#include \"base_packet.h\"" << endl;
-	out_file_ << "#include \"core_server_type.h\"" << endl;
-	out_file_ << "#include \"core_message_map_decl.h\"" << endl;
-	out_file_ << "#include \"base_inet_addr.h\"" << endl;
+	out_file_ << "#include \"revolver/base_packet.h\"" << endl;
+	out_file_ << "#include \"core/core_server_type.h\"" << endl;
+	out_file_ << "#include \"core/core_message_map_decl.h\"" << endl;
+	out_file_ << "#include \"revolver/base_inet_addr.h\"" << endl;
 
 	out_file_ << "#include <string>" << endl;
 	out_file_ << "using namespace std;" << endl;
@@ -358,13 +358,13 @@ void CCppTranslator::OutputLeftFileDesc()
 		out_file_ << endl;
 	}
 
-	//×¢Òâ£ºÈôÌõ¼þÎªi>=0, size_typeÎªÕýÊý£¬µ±i×Ô¼õÐ¡ÓÚ0ºó£¬»á±ä³ÉÒ»¸ö´óµÄÕýÊý£¬µ¼ÖÂÊý×éÔ½½ç
+	//æ³¨æ„ï¼šè‹¥æ¡ä»¶ä¸ºi>=0, size_typeä¸ºæ­£æ•°ï¼Œå½“iè‡ªå‡å°äºŽ0åŽï¼Œä¼šå˜æˆä¸€ä¸ªå¤§çš„æ­£æ•°ï¼Œå¯¼è‡´æ•°ç»„è¶Šç•Œ
 	for (StringArray::size_type i = left_file_desc_.size() - 1; i > 0; i--)
 	{
 // 		cout << "i" << i << endl;
 		out_file_ << left_file_desc_[i] << endl;
 	}
-	//´¦Àí i==0 µÄÇé¿ö
+	//å¤„ç† i==0 çš„æƒ…å†µ
 	out_file_ << left_file_desc_[0] << endl;
 }
 
@@ -469,7 +469,7 @@ void CCppTranslator::GeneratePrintFunction(const string& str_type, const MemItem
 	for (MemItemVec::const_iterator c_ite = v_mem.begin();
 		c_ite != v_mem.end(); c_ite++)
 	{
-		//´¦Àí¶þ½øÖÆÊý¾ÝBIN_DATA£¬²»ÐèÒªdump
+		//å¤„ç†äºŒè¿›åˆ¶æ•°æ®BIN_DATAï¼Œä¸éœ€è¦dump
 		if (c_ite->m_type == "BIN_DATA")
 		{
 			out_file_ << "\t\tos << \"" << c_ite->m_name << "\'s size = \"";
