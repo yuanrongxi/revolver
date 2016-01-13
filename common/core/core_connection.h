@@ -59,7 +59,7 @@ typedef SBuffer_16K		SBuffer;
 class CCorePacket;
 class CoreExpPacket;
 
-class CConnection {
+class CConnection : public CEventHandler {
 public:
     enum
     {
@@ -97,6 +97,11 @@ public:
         CORE_DEBUG("CConnection, state = CONN_CONNECTING");
     }
 
+    bool is_open() const
+    {
+        return (get_handle() != INVALID_HANDLER);
+    }
+
 public:
     virtual int32_t send(CBasePacket& packet, bool no_delay = false) = 0;
     //发起一条TCP连接
@@ -116,7 +121,7 @@ protected:
     uint16_t state_;
 };
 
-class CCoreConnection : public CEventHandler, public CConnection
+class CCoreConnection : public CConnection
 {
 public:
     CCoreConnection();

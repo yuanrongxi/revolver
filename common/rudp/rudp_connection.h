@@ -21,8 +21,7 @@ BASE_NAMESPACE_BEGIN_DECL
 typedef CReciverBuffer_T<BinStream, RUDPStream, 1024 * 16>  RUDPRBuffer;
 typedef CSenderBuffer_T<BinStream, RUDPStream, 1024 * 16>   RUDPSBuffer;
 
-
-class RudpConnection : public CEventHandler, public CConnection,
+class RudpConnection : public CConnection,
     public RUDPEventHandler
 {
 public:
