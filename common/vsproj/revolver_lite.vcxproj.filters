@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="revolver">
+      <UniqueIdentifier>{f788d0e7-8081-4f72-8fde-92f39a698013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{081a1234-0151-4d11-84e0-5ffb21c52408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rudp">
+      <UniqueIdentifier>{673fe341-d8c5-472f-a4bd-9278e3c6efb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="silencer">
+      <UniqueIdentifier>{b570b12d-43a2-4b3e-aebc-23599056a3b3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\revolver\base_log.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_frame.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_epoll_reactor.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_event_handler.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_file.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_inet_addr.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\date_time.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_select_reactor.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_message_map_decl.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_message_processor.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_cmd_target.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_packet.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_timer_value.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_udp_handler.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\timer_ring.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_sock_dgram.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_sock_stream.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_socket.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\lzo_object.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_tcp_listener.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_sock_acceptor.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_sock_connector.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_connection.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\minilzo.c">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\md5c.c">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_log_macro.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_connection_mananger.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_log_thread.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_hex_string.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_bandwidth_throttler.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_main.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\gettimeofday.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base_thread.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_daemon_client.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_dc_client.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\dc_short_conn.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_reactor_thread.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_adapter.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_ccc.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_connection.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_handler.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_interface.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_listener.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_log_macro.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_recv_buffer.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_segment.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_send_buffer.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_socket.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rudp\rudp_stream.cpp">
+      <Filter>rudp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_server_type.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\revolver\base64.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\revolver\base_log.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_frame.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_epoll_reactor.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_event_handler.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_file.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_guard.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_inet_addr.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\date_time.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_select_reactor.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_message_map_decl.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_message_processor.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_cmd_target.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_packet.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_timer_value.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_udp_handler.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\timer_node_t.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\timer_queue_t.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\timer_ring.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_sock_dgram.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_sock_stream.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_socket.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\lzo_object.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\lzoconf.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\lzodefs.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_tcp_listener.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_sock_acceptor.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_sock_connector.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_connection.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\minilzo.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\md5.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_log_macro.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_connection_manager.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_log_thread.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_hex_string.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_bandwidth_throttler.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_main.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\gettimeofday.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base_thread.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_daemon_client.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_daemon_event.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_daemon_msg.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_dc_client.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\dc_short_conn.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_reactor_thread.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_acceptor.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_adapter.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_adapter_interface.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_ccc.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_channel_interface.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_connection.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_event_handler.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_half_connection.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_handler.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_interface.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_listener.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_log_macro.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_packet.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_recv_buffer.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_segment.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_send_buffer.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_socket.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\rudp_stream.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_server_type.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\base64.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\revolver\timer_node_t.inl">
+      <Filter>revolver</Filter>
+    </None>
+    <None Include="..\revolver\timer_queue_t.inl">
+      <Filter>revolver</Filter>
+    </None>
+  </ItemGroup>
+</Project>

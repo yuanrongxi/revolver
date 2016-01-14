@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\core\core_bandwidth_throttler.cpp" />
+    <ClCompile Include="..\core\core_cmd_target.cpp" />
+    <ClCompile Include="..\core\core_connection.cpp" />
+    <ClCompile Include="..\core\core_connection_mananger.cpp" />
+    <ClCompile Include="..\core\core_daemon_client.cpp" />
+    <ClCompile Include="..\core\core_dc_client.cpp" />
+    <ClCompile Include="..\core\core_frame.cpp" />
+    <ClCompile Include="..\core\core_log_macro.cpp" />
+    <ClCompile Include="..\core\core_main.cpp" />
+    <ClCompile Include="..\core\core_message_map_decl.cpp" />
+    <ClCompile Include="..\core\core_message_processor.cpp" />
+    <ClCompile Include="..\core\core_packet.cpp" />
+    <ClCompile Include="..\core\core_reactor_thread.cpp" />
+    <ClCompile Include="..\core\core_server_type.cpp" />
+    <ClCompile Include="..\core\core_tcp_listener.cpp" />
+    <ClCompile Include="..\core\core_udp_handler.cpp" />
+    <ClCompile Include="..\core\dc_short_conn.cpp" />
+    <ClCompile Include="..\revolver\base64.cpp" />
+    <ClCompile Include="..\revolver\base_epoll_reactor.cpp" />
+    <ClCompile Include="..\revolver\base_event_handler.cpp" />
+    <ClCompile Include="..\revolver\base_file.cpp" />
+    <ClCompile Include="..\revolver\base_hex_string.cpp" />
+    <ClCompile Include="..\revolver\base_inet_addr.cpp" />
+    <ClCompile Include="..\revolver\base_log.cpp" />
+    <ClCompile Include="..\revolver\base_log_thread.cpp" />
+    <ClCompile Include="..\revolver\base_select_reactor.cpp" />
+    <ClCompile Include="..\revolver\base_socket.cpp" />
+    <ClCompile Include="..\revolver\base_sock_acceptor.cpp" />
+    <ClCompile Include="..\revolver\base_sock_connector.cpp" />
+    <ClCompile Include="..\revolver\base_sock_dgram.cpp" />
+    <ClCompile Include="..\revolver\base_sock_stream.cpp" />
+    <ClCompile Include="..\revolver\base_thread.cpp" />
+    <ClCompile Include="..\revolver\base_timer_value.cpp" />
+    <ClCompile Include="..\revolver\date_time.cpp" />
+    <ClCompile Include="..\revolver\gettimeofday.cpp" />
+    <ClCompile Include="..\revolver\lzo_object.cpp" />
+    <ClCompile Include="..\revolver\md5c.c" />
+    <ClCompile Include="..\revolver\minilzo.c" />
+    <ClCompile Include="..\revolver\timer_ring.cpp" />
+    <ClCompile Include="..\rudp\rudp_adapter.cpp" />
+    <ClCompile Include="..\rudp\rudp_ccc.cpp" />
+    <ClCompile Include="..\rudp\rudp_connection.cpp" />
+    <ClCompile Include="..\rudp\rudp_handler.cpp" />
+    <ClCompile Include="..\rudp\rudp_interface.cpp" />
+    <ClCompile Include="..\rudp\rudp_listener.cpp" />
+    <ClCompile Include="..\rudp\rudp_log_macro.cpp" />
+    <ClCompile Include="..\rudp\rudp_recv_buffer.cpp" />
+    <ClCompile Include="..\rudp\rudp_segment.cpp" />
+    <ClCompile Include="..\rudp\rudp_send_buffer.cpp" />
+    <ClCompile Include="..\rudp\rudp_socket.cpp" />
+    <ClCompile Include="..\rudp\rudp_stream.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\core\core_bandwidth_throttler.h" />
+    <ClInclude Include="..\core\core_cmd_target.h" />
+    <ClInclude Include="..\core\core_connection.h" />
+    <ClInclude Include="..\core\core_connection_manager.h" />
+    <ClInclude Include="..\core\core_daemon_client.h" />
+    <ClInclude Include="..\core\core_daemon_event.h" />
+    <ClInclude Include="..\core\core_daemon_msg.h" />
+    <ClInclude Include="..\core\core_dc_client.h" />
+    <ClInclude Include="..\core\core_frame.h" />
+    <ClInclude Include="..\core\core_log_macro.h" />
+    <ClInclude Include="..\core\core_main.h" />
+    <ClInclude Include="..\core\core_message_map_decl.h" />
+    <ClInclude Include="..\core\core_message_processor.h" />
+    <ClInclude Include="..\core\core_packet.h" />
+    <ClInclude Include="..\core\core_reactor_thread.h" />
+    <ClInclude Include="..\core\core_server_type.h" />
+    <ClInclude Include="..\core\core_tcp_listener.h" />
+    <ClInclude Include="..\core\core_udp_handler.h" />
+    <ClInclude Include="..\core\dc_short_conn.h" />
+    <ClInclude Include="..\revolver\base64.h" />
+    <ClInclude Include="..\revolver\base_epoll_reactor.h" />
+    <ClInclude Include="..\revolver\base_event_handler.h" />
+    <ClInclude Include="..\revolver\base_file.h" />
+    <ClInclude Include="..\revolver\base_guard.h" />
+    <ClInclude Include="..\revolver\base_hex_string.h" />
+    <ClInclude Include="..\revolver\base_inet_addr.h" />
+    <ClInclude Include="..\revolver\base_log.h" />
+    <ClInclude Include="..\revolver\base_log_thread.h" />
+    <ClInclude Include="..\revolver\base_select_reactor.h" />
+    <ClInclude Include="..\revolver\base_socket.h" />
+    <ClInclude Include="..\revolver\base_sock_acceptor.h" />
+    <ClInclude Include="..\revolver\base_sock_connector.h" />
+    <ClInclude Include="..\revolver\base_sock_dgram.h" />
+    <ClInclude Include="..\revolver\base_sock_stream.h" />
+    <ClInclude Include="..\revolver\base_thread.h" />
+    <ClInclude Include="..\revolver\base_timer_value.h" />
+    <ClInclude Include="..\revolver\date_time.h" />
+    <ClInclude Include="..\revolver\gettimeofday.h" />
+    <ClInclude Include="..\revolver\lzoconf.h" />
+    <ClInclude Include="..\revolver\lzodefs.h" />
+    <ClInclude Include="..\revolver\lzo_object.h" />
+    <ClInclude Include="..\revolver\md5.h" />
+    <ClInclude Include="..\revolver\minilzo.h" />
+    <ClInclude Include="..\revolver\timer_node_t.h" />
+    <ClInclude Include="..\revolver\timer_queue_t.h" />
+    <ClInclude Include="..\revolver\timer_ring.h" />
+    <ClInclude Include="..\rudp\rudp_acceptor.h" />
+    <ClInclude Include="..\rudp\rudp_adapter.h" />
+    <ClInclude Include="..\rudp\rudp_adapter_interface.h" />
+    <ClInclude Include="..\rudp\rudp_ccc.h" />
+    <ClInclude Include="..\rudp\rudp_channel_interface.h" />
+    <ClInclude Include="..\rudp\rudp_connection.h" />
+    <ClInclude Include="..\rudp\rudp_event_handler.h" />
+    <ClInclude Include="..\rudp\rudp_half_connection.h" />
+    <ClInclude Include="..\rudp\rudp_handler.h" />
+    <ClInclude Include="..\rudp\rudp_interface.h" />
+    <ClInclude Include="..\rudp\rudp_listener.h" />
+    <ClInclude Include="..\rudp\rudp_log_macro.h" />
+    <ClInclude Include="..\rudp\rudp_packet.h" />
+    <ClInclude Include="..\rudp\rudp_recv_buffer.h" />
+    <ClInclude Include="..\rudp\rudp_segment.h" />
+    <ClInclude Include="..\rudp\rudp_send_buffer.h" />
+    <ClInclude Include="..\rudp\rudp_socket.h" />
+    <ClInclude Include="..\rudp\rudp_stream.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\revolver\timer_node_t.inl" />
+    <None Include="..\revolver\timer_queue_t.inl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{917DA0E3-F64D-4EFB-BD09-4DC07410A076}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>revolver_lite</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>$(OutDir)objs\$(Configuration)\$(ProjectName)</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <OutputFile>..\lib\debug\revolver_lite.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
