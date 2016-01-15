@@ -78,7 +78,7 @@ int32_t CSockStream::get_remote_addr(Inet_Addr &remote_addr) const
 #ifdef WIN32
 	int32_t len = sizeof(sockaddr_in);
 #else
-	uint32_t len = sizeof(sockaddr_in);
+	socklen_t len = sizeof(sockaddr_in);
 #endif
 
 	sockaddr* addr = reinterpret_cast<sockaddr *>(remote_addr.get_addr());

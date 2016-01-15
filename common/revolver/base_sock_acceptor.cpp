@@ -42,7 +42,7 @@ int32_t CSockAcceptor::accept(CSockStream& new_stream, Inet_Addr &remote_addr,  
 #ifdef WIN32
 	int32_t addr_len = sizeof(addr);
 #else
-	uint32_t addr_len = sizeof(addr);
+	socklen_t addr_len = sizeof(addr);
 #endif
 
 	BASE_HANDLER new_socket = ::accept(get_socket_handler(),(sockaddr *)&addr, &addr_len);

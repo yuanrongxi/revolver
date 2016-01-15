@@ -55,7 +55,7 @@ int32_t CBaseSocket::get_local_addr(Inet_Addr &local_addr) const
 #ifdef WIN32
 	int32_t len = sizeof(sockaddr_in);
 #else
-	uint32_t len = sizeof(sockaddr_in);
+	socklen_t len = sizeof(sockaddr_in);
 #endif
 
 	  sockaddr *addr = reinterpret_cast<sockaddr *> (local_addr.get_addr());
@@ -81,7 +81,7 @@ int32_t CBaseSocket::recv(void* buf, uint32_t buf_size, Inet_Addr& remote_addr)
 #ifdef WIN32
 	int32_t from_size = sizeof(struct sockaddr_in);
 #else
-	uint32_t from_size = sizeof(struct sockaddr_in);
+	socklen_t from_size = sizeof(struct sockaddr_in);
 #endif
 
 	return ::recvfrom(get_handler(), (char *)buf, buf_size, 0, (struct sockaddr *)remote_addr.get_addr(), &from_size);

@@ -38,7 +38,7 @@
 
 using namespace BASE_NAMEPSACE_DECL;
 
-BaseThreadMutex mutex;
+BaseThreadMutex lock;
 class CGuardThread : public CThread
 {
 public:
@@ -48,33 +48,33 @@ public:
 	 void	execute()
 	 {
 		 printf("guard begin\n");
-		 BASE_GUARD(BaseThreadMutex, cf_mon, mutex);
-		 int i = 0;
-		 while(i < 15)
-		 {
-			 i ++;
-			 usleep(100000);
-		 }
+//		 BASE_GUARD(BaseThreadMutex, cf_mon, lock);
+//		 int i = 0;
+//		 while(i < 15)
+//		 {
+//			 i ++;
+//			 usleep(100000);
+//		 }
 		 printf("guard end\n");
 	 };
 };
 
 int test_guard()
 {
-	CGuardThread test_thr;
-	test_thr.start();
-
-	usleep(10000);
-	BASE_GUARD_RETURN(BaseThreadMutex, cf_mon1, mutex, -1);
-	printf("hehe!!\n");
-
-	int i = 0;
-	while(i < 15)
-	{
-		usleep(100000);
-		i ++;
-	}
-	test_thr.terminate();
+//	CGuardThread test_thr;
+//	test_thr.start();
+//
+//	usleep(10000);
+//	BASE_GUARD_RETURN(BaseThreadMutex, cf_mon1, lock, -1);
+//	printf("hehe!!\n");
+//
+//	int i = 0;
+//	while(i < 15)
+//	{
+//		usleep(100000);
+//		i ++;
+//	}
+//	test_thr.terminate();
 
 	return 0;
 }
