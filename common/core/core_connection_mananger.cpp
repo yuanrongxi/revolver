@@ -8,7 +8,7 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 
-Connection_Pool	CONNECTION_POOL;
+//Connection_Pool	CONNECTION_POOL;
 
 Connection_Manager::Connection_Manager()
 {
@@ -216,7 +216,7 @@ void Connection_Manager::connecting_by_id(const string& data, uint32_t sid)
 		CCoreConnection* conn = NULL;
 		if(it->second.conn == NULL) //建立一条新的TCP服务器连接 
 		{
-			conn = CONNECTION_POOL.pop_obj();
+			conn = CONNECTION_POOL()->pop_obj();
 
 			conn->set_index(0);
 			conn->set_server_type(it->second.server_type);
@@ -238,7 +238,7 @@ void Connection_Manager::connecting_by_id(const string& data, uint32_t sid)
 			if(conn->connect(src_addr, dst_addr) != 0)
 			{
 				conn->close();
-				CONNECTION_POOL.push_obj(conn);
+				CONNECTION_POOL()->push_obj(conn);
 				CORE_DEBUG("push conn = " << this);
 				CORE_ERROR("connect " << dst_addr << "failed!!");
 				return ;

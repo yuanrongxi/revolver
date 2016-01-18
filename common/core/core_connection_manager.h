@@ -28,7 +28,11 @@ class CoreUDPHandler;
 class ICoreServerNotify;
 
 typedef ObjectMutexPool<CCoreConnection, BaseThreadMutex, CONNECTION_POOL_SIZE>	Connection_Pool;
-extern Connection_Pool	CONNECTION_POOL;
+//extern Connection_Pool	CONNECTION_POOL;
+
+#define CREATE_CONNECTION_POOL		CSingleton<Connection_Pool>::instance
+#define CONNECTION_POOL			CSingleton<Connection_Pool>::instance
+#define DESTROY_CONNECTION_POOL	CSingleton<Connection_Pool>::destroy
 
 //报文在连接过程中的缓冲队列
 typedef list<string>		StreamList;

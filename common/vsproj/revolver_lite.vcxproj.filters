@@ -18,9 +18,6 @@
     <ClCompile Include="..\revolver\base_log.cpp">
       <Filter>revolver</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\core_frame.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="..\revolver\base_epoll_reactor.cpp">
       <Filter>revolver</Filter>
     </ClCompile>
@@ -72,17 +69,11 @@
     <ClCompile Include="..\revolver\lzo_object.cpp">
       <Filter>revolver</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\core_tcp_listener.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="..\revolver\base_sock_acceptor.cpp">
       <Filter>revolver</Filter>
     </ClCompile>
     <ClCompile Include="..\revolver\base_sock_connector.cpp">
       <Filter>revolver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\core_connection.cpp">
-      <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="..\revolver\minilzo.c">
       <Filter>revolver</Filter>
@@ -91,9 +82,6 @@
       <Filter>revolver</Filter>
     </ClCompile>
     <ClCompile Include="..\core\core_log_macro.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\core_connection_mananger.cpp">
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="..\revolver\base_log_thread.cpp">
@@ -113,15 +101,6 @@
     </ClCompile>
     <ClCompile Include="..\revolver\base_thread.cpp">
       <Filter>revolver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\core_daemon_client.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\core_dc_client.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\dc_short_conn.cpp">
-      <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="..\core\core_reactor_thread.cpp">
       <Filter>core</Filter>
@@ -168,13 +147,19 @@
     <ClCompile Include="..\revolver\base64.cpp">
       <Filter>revolver</Filter>
     </ClCompile>
+    <ClCompile Include="..\core\core_cli_frame.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_connection.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core_connection_mananger.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\revolver\base_log.h">
       <Filter>revolver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core_frame.h">
-      <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\revolver\base_epoll_reactor.h">
       <Filter>revolver</Filter>
@@ -242,17 +227,11 @@
     <ClInclude Include="..\revolver\lzodefs.h">
       <Filter>revolver</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\core_tcp_listener.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\revolver\base_sock_acceptor.h">
       <Filter>revolver</Filter>
     </ClInclude>
     <ClInclude Include="..\revolver\base_sock_connector.h">
       <Filter>revolver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core_connection.h">
-      <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\revolver\minilzo.h">
       <Filter>revolver</Filter>
@@ -261,9 +240,6 @@
       <Filter>revolver</Filter>
     </ClInclude>
     <ClInclude Include="..\core\core_log_macro.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core_connection_manager.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\revolver\base_log_thread.h">
@@ -283,21 +259,6 @@
     </ClInclude>
     <ClInclude Include="..\revolver\base_thread.h">
       <Filter>revolver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core_daemon_client.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core_daemon_event.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core_daemon_msg.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core_dc_client.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\dc_short_conn.h">
-      <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\core\core_reactor_thread.h">
       <Filter>core</Filter>
@@ -361,6 +322,18 @@
     </ClInclude>
     <ClInclude Include="..\revolver\base64.h">
       <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_connection_base.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_cli_frame.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_connection.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core_connection_manager.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

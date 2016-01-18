@@ -12,12 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\core_bandwidth_throttler.cpp" />
+    <ClCompile Include="..\core\core_cli_frame.cpp" />
     <ClCompile Include="..\core\core_cmd_target.cpp" />
     <ClCompile Include="..\core\core_connection.cpp" />
     <ClCompile Include="..\core\core_connection_mananger.cpp" />
-    <ClCompile Include="..\core\core_daemon_client.cpp" />
-    <ClCompile Include="..\core\core_dc_client.cpp" />
-    <ClCompile Include="..\core\core_frame.cpp" />
     <ClCompile Include="..\core\core_log_macro.cpp" />
     <ClCompile Include="..\core\core_main.cpp" />
     <ClCompile Include="..\core\core_message_map_decl.cpp" />
@@ -25,9 +23,7 @@
     <ClCompile Include="..\core\core_packet.cpp" />
     <ClCompile Include="..\core\core_reactor_thread.cpp" />
     <ClCompile Include="..\core\core_server_type.cpp" />
-    <ClCompile Include="..\core\core_tcp_listener.cpp" />
     <ClCompile Include="..\core\core_udp_handler.cpp" />
-    <ClCompile Include="..\core\dc_short_conn.cpp" />
     <ClCompile Include="..\revolver\base64.cpp" />
     <ClCompile Include="..\revolver\base_epoll_reactor.cpp" />
     <ClCompile Include="..\revolver\base_event_handler.cpp" />
@@ -65,14 +61,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\core\core_bandwidth_throttler.h" />
+    <ClInclude Include="..\core\core_cli_frame.h" />
     <ClInclude Include="..\core\core_cmd_target.h" />
     <ClInclude Include="..\core\core_connection.h" />
+    <ClInclude Include="..\core\core_connection_base.h" />
     <ClInclude Include="..\core\core_connection_manager.h" />
-    <ClInclude Include="..\core\core_daemon_client.h" />
-    <ClInclude Include="..\core\core_daemon_event.h" />
-    <ClInclude Include="..\core\core_daemon_msg.h" />
-    <ClInclude Include="..\core\core_dc_client.h" />
-    <ClInclude Include="..\core\core_frame.h" />
     <ClInclude Include="..\core\core_log_macro.h" />
     <ClInclude Include="..\core\core_main.h" />
     <ClInclude Include="..\core\core_message_map_decl.h" />
@@ -80,9 +73,7 @@
     <ClInclude Include="..\core\core_packet.h" />
     <ClInclude Include="..\core\core_reactor_thread.h" />
     <ClInclude Include="..\core\core_server_type.h" />
-    <ClInclude Include="..\core\core_tcp_listener.h" />
     <ClInclude Include="..\core\core_udp_handler.h" />
-    <ClInclude Include="..\core\dc_short_conn.h" />
     <ClInclude Include="..\revolver\base64.h" />
     <ClInclude Include="..\revolver\base_epoll_reactor.h" />
     <ClInclude Include="..\revolver\base_event_handler.h" />

@@ -117,7 +117,7 @@ void CCoreConnection::extern_close()
 
 	reset();
 	//将连接对象返回给连接池
-	CONNECTION_POOL.push_obj(this);
+	CONNECTION_POOL()->push_obj(this);
 	CORE_DEBUG("push conn = " << this);
 }
 
@@ -343,7 +343,7 @@ int32_t CCoreConnection::handle_exception(BASE_HANDLER handle)
 
 		reset();
 		//将连接对象返回给连接池
-		CONNECTION_POOL.push_obj(this);
+		CONNECTION_POOL()->push_obj(this);
 		CORE_DEBUG("push conn = " << this);
 	}
 	else
@@ -369,7 +369,7 @@ int32_t CCoreConnection::handle_close(BASE_HANDLER handle, ReactorMask close_mas
 
 		reset();
 		//将连接对象返回给连接池
-		CONNECTION_POOL.push_obj(this);
+		CONNECTION_POOL()->push_obj(this);
 		CORE_DEBUG("push conn = " << this);
 	}
 	else
