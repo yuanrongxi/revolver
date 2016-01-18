@@ -46,7 +46,7 @@ int32_t CCoreTCPListener::handle_input(BASE_HANDLER handle)
 	while(true) //EPOLL ET模式是需要将事件全部处理干净，直到状态EAGAIN
 	{
 		Inet_Addr remote_addr;
-		CCoreConnection *conn = CONNECTION_POOL.pop_obj();
+		CCoreConnection *conn = CONNECTION_POOL()->pop_obj();
 		conn->reset();
 
 		if(acceptor_.accept(conn->get_sock_stream(), remote_addr, true) == 0)
@@ -63,7 +63,7 @@ int32_t CCoreTCPListener::handle_input(BASE_HANDLER handle)
 			else 
 			{
 				conn->reset();
-				CONNECTION_POOL.push_obj(conn);
+				CONNECTION_POOL()->push_obj(conn);
 			}
 #ifdef WIN32
 			return 0;
@@ -72,7 +72,7 @@ int32_t CCoreTCPListener::handle_input(BASE_HANDLER handle)
 		else
 		{
 			conn->reset();
-			CONNECTION_POOL.push_obj(conn);
+			CONNECTION_POOL()->push_obj(conn);
 #ifndef WIN32
 			if (errno != EAGAIN && errno != ECONNABORTED && errno != EPROTO && errno != EINTR)
 			{

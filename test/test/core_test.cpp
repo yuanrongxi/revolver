@@ -29,7 +29,7 @@ MESSAGEMAP_DECL_END()
 void test_message_map()
 {
 	CREATE_MESSAGE_MAP_DECL();
-	//×°ÔØÏûÏ¢ÌåÓ³Éä
+	//è£…è½½æ¶ˆæ¯ä½“æ˜ å°„
 	LOAD_MESSAGEMAP_DECL(core_packet);
 
 	CCorePacket* packet = (CCorePacket *)MESSAGE_MAP_DECL()->gain_message(10);
@@ -54,13 +54,13 @@ public:
 	}
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 		strm << value_;
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 		strm >> value_;
@@ -70,7 +70,7 @@ public:
 	uint32_t value_;
 };
 
-//ÏûÏ¢ÌåÓ³Éä¹ØÏµ
+//æ¶ˆæ¯ä½“æ˜ å°„å…³ç³»
 MESSAGEMAP_DECL_BEGIN(ValuePacket)
 MESSAGEMAP_REGISTER(TEST_MSG, new CValuePacket())
 MESSAGEMAP_REGISTER(TEST_MSG2, new CValuePacket())
@@ -79,7 +79,7 @@ MESSAGEMAP_REGISTER(TEST_MSG4, new CValuePacket())
 MESSAGEMAP_REGISTER(TEST_MSG5, new CValuePacket())
 MESSAGEMAP_DECL_END()
 
-//ÏûÏ¢Ó³Éä´¥·¢
+//æ¶ˆæ¯æ˜ å°„è§¦å‘
 class CTestMessageProcessor : public ICmdTarget
 {
 public:
@@ -136,7 +136,7 @@ public:
 	DECLARE_MSGCALL_MAP()
 };
 
-//ÏûÏ¢Ó³Éä°²×°
+//æ¶ˆæ¯æ˜ å°„å®‰è£…
 BEGIN_MSGCALL_MAP(CTestMessageProcessor)
 	ON_MSG_VOID(TEST_MSG, &CTestMessageProcessor::process_1)
 	ON_MSG_INT(TEST_MSG2, &CTestMessageProcessor::process_2)
@@ -203,33 +203,33 @@ void test_message_call2()
 
 void test_core_udp()
 {
-	//½¨Á¢ÈÕÖ¾
+	//å»ºç«‹æ—¥å¿—
 	LOG_CREATE();
 	LOG_THREAD_CREATE();
 	LOG_THREAD_INSTANCE()->start();
 
-	//½¨Á¢Ò»¸öREACTOR_THERAD
+	//å»ºç«‹ä¸€ä¸ªREACTOR_THERAD
 	REACTOR_CREATE();
 	REACTOR_INSTANCE()->open_reactor(20000);
 	CREATE_REACTOR_THREAD();
 
-	//½¨Á¢ÏûÏ¢Ó³Éä¹ØÏµ
+	//å»ºç«‹æ¶ˆæ¯æ˜ å°„å…³ç³»
 	CREATE_MSG_PROCESSOR();
 
 	CTestMessageProcessor processor;
 	INIT_MSG_PROCESSOR1(&processor);
 
-	//½¨Á¢ÏûÏ¢Ìå¹ÜÀí¹ØÏµ
+	//å»ºç«‹æ¶ˆæ¯ä½“ç®¡ç†å…³ç³»
 	LOAD_MESSAGEMAP_DECL(ValuePacket);
 
 	REACTOR_THREAD()->start();
 
-	//´´½¨Ò»¸öUDP¶ÔÏó
+	//åˆ›å»ºä¸€ä¸ªUDPå¯¹è±¡
 	CoreUDPHandler udp_handler;
 	Inet_Addr local_addr("127.0.0.1", 4563);
 	udp_handler.open(local_addr);
 
-	//¹Ø¼üÏûÏ¢½ÓÊÕ
+	//å…³é”®æ¶ˆæ¯æ¥æ”¶
 	udp_handler.attach(MSG_PROCESSOR());
 
 	CCorePacket packet;
@@ -267,24 +267,24 @@ void test_core_tcp_server()
 	
 	CREATE_REACTOR_THREAD();
 
-	//½¨Á¢ÏûÏ¢Ó³Éä¹ØÏµ
+	//å»ºç«‹æ¶ˆæ¯æ˜ å°„å…³ç³»
 	CREATE_MSG_PROCESSOR();
 
 	CTestMessageProcessor processor;
 	INIT_MSG_PROCESSOR1(&processor);
 
-	//½¨Á¢ÏûÏ¢Ìå¹ÜÀí¹ØÏµ
+	//å»ºç«‹æ¶ˆæ¯ä½“ç®¡ç†å…³ç³»
 	LOAD_MESSAGEMAP_DECL(ValuePacket);
 	LOAD_MESSAGEMAP_DECL(TCP_EVENT);
 
 	REACTOR_THREAD()->start();
 
-	//´´½¨Ò»¸öUDP¶ÔÏó
+	//åˆ›å»ºä¸€ä¸ªUDPå¯¹è±¡
 	CCoreTCPListener tcp_listener;
 	Inet_Addr local_addr(INADDR_ANY, 4563);
 	tcp_listener.open(local_addr);
 
-	CConnection* conn = CONNECTION_POOL.pop_obj();
+	CConnection* conn = CONNECTION_POOL()->pop_obj();
 	Inet_Addr remote_addr("127.0.0.1", 4563);
 	conn->connect(remote_addr);
 	int i = 0;
