@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	base_log.h
 *
-*to do:		¶¨ÒålogÈÕÖ¾ÎÄ¼şÏµÍ³
+*to do:		å®šä¹‰logæ—¥å¿—æ–‡ä»¶ç³»ç»Ÿ
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -26,149 +26,151 @@
 using namespace std;
 using namespace BASE_NAMEPSACE_DECL;
 
-//ÈÕÖ¾ÎÄ¼ş
+//æ—¥å¿—æ–‡ä»¶
 class BaseLog
 {
 public:
-	BaseLog(const char* _pfile_name);
-	virtual ~BaseLog();
-	
-	//Ğ´ÈëÈÕÖ¾
-	void		write_log(const string& str_log);
-	void		flush();
-	void		change_path(const std::string& _str_path);
-	void		change_log_file(const string& filename);
+    BaseLog(const char* log_path, const char* log_name);
+    BaseLog(const char* _pfile_name);
+    virtual ~BaseLog();
+    
+    //å†™å…¥æ—¥å¿—
+    void		write_log(const string& str_log);
+    void		flush();
+    void		change_path(const std::string& _str_path);
+    void		change_log_file(const string& filename);
 protected:
-	void		init_trace_file();
-	const char* get_fullexepath(std::string& _str_path) const;
-	bool		create_tracedir(const char* _pdir, const char* _pparent) const;
-	string		get_log_name(bool cur_flag = false);
+    void		init_trace_file();
+    const char* get_fullexepath(std::string& _str_path) const;
+    bool		create_tracedir(const char* _pdir, const char* _pparent) const;
+    string		get_log_name(bool cur_flag = false);
 
 private:
-	BaseLog& operator = (const BaseLog& _other);
-	BaseLog(const BaseLog& _other);
+    BaseLog& operator = (const BaseLog& _other);
+    BaseLog(const BaseLog& _other);
 
 protected:
-	ofstream		m_of_file;
-	string			m_file_path;
-	string			m_filename;
-	string			rename_filename;
-	int32_t			m_line_count;
-	int32_t			m_file_count;
+    ofstream		m_of_file;
+    string			m_file_path;
+    string			m_filename;
+    string			rename_filename;
+    int32_t			m_line_count;
+    int32_t			m_file_count;
 
-	int32_t			day_;
-	bool			wait_flush_;
+    int32_t			day_;
+    bool			wait_flush_;
 };
 
-//ÈÕÖ¾¹ÜÀíºÍË÷Òı
+//æ—¥å¿—ç®¡ç†å’Œç´¢å¼•
 typedef vector<BaseLog*>	BaseLogVector;
 
 class BaseLogManager
 {
 public:
-	BaseLogManager();
-	~BaseLogManager();
+    BaseLogManager();
+    ~BaseLogManager();
 
-	int32_t			create_base_log(const char* _pfile_name);
-	BaseLog*		get_log_handler(int32_t log_index);
-	void			flush();
+    int32_t			create_base_log(const char* _pfile_name);
+    BaseLog*		get_log_handler(int32_t log_index);
+    void			flush();
 
 private:
-	BaseLogVector	m_log_vector;
-	uint64_t		flush_ts_;
+    BaseLogVector	m_log_vector;
+    uint64_t		flush_ts_;
 };	
 
 #define LOG_CREATE		CSingleton<BaseLogManager>::instance
 #define LOG_INSTANCE	CSingleton<BaseLogManager>::instance
 #define LOG_DESTROY		CSingleton<BaseLogManager>::destroy
 
-//ÈÕÖ¾Á÷
+//æ—¥å¿—æµ
 class BaseLogStreamInterface
 {
 public:
-	enum TRACE_LEVEL 
-	{
-		fatal	= 0,
-		error	= 1,
-		warning = 2,
-		general = 3,
-		debug	= 4,
-	};
+    enum TRACE_LEVEL 
+    {
+        fatal	= 0,
+        error	= 1,
+        warning = 2,
+        general = 3,
+        debug	= 4,
+    };
 
 public:
-	BaseLogStreamInterface(){};
-	virtual ~BaseLogStreamInterface(){};
+    BaseLogStreamInterface(){};
+    virtual ~BaseLogStreamInterface(){};
 
-	virtual std::ostream&	dump_trace(int32_t _level) = 0;
-	virtual std::ostream&	get_ostream() = 0;
-	virtual void			put_log(int32_t level) = 0;
+    virtual std::ostream&	dump_trace(int32_t _level) = 0;
+    virtual std::ostream&	get_ostream() = 0;
+    virtual void			put_log(int32_t level) = 0;
 
-	bool					is_enable_trace(int32_t level) const { return (level <= m_level); }
-	void					set_trace_level(int32_t level) { m_level = level; }
+    bool					is_enable_trace(int32_t level) const { return (level <= m_level); }
+    void					set_trace_level(int32_t level) { m_level = level; }
 
 protected:
-	int32_t					m_level;
+    int32_t					m_level;
 
 public:
-	BaseThreadMutex			mutex_;
+    BaseThreadMutex			mutex_;
 };
 
 class BaseLogStream : public BaseLogStreamInterface
 {
 public:
-	BaseLogStream(const char* pfile_name, int32_t level);
-	~BaseLogStream();
+    BaseLogStream(const char* pfile_name, int32_t level);
+    ~BaseLogStream();
 
 public:
-	std::ostream&			dump_trace(int32_t _level);
-	std::ostream&			get_ostream();
-	void					put_log(int32_t level);
-	//Õâ¸öÄ£Ê½ÏÂ²»ÄÜ¸Ä±äÂ·¾¶
-	void					change_path(const std::string& path){};
+    std::ostream&			dump_trace(int32_t _level);
+    std::ostream&			get_ostream();
+    void					put_log(int32_t level);
+    //è¿™ä¸ªæ¨¡å¼ä¸‹ä¸èƒ½æ”¹å˜è·¯å¾„
+    void					change_path(const std::string& path){};
 
 private:
-	int32_t					m_log_index;
-	std::string				m_strFileName;
-	ostringstream			m_strm;
+    int32_t					m_log_index;
+    std::string				m_strFileName;
+    ostringstream			m_strm;
 };
 
 class SingleLogStream : public  BaseLogStreamInterface,
-						public  BaseLog
+                        public  BaseLog
 {
 public:
-	SingleLogStream(const char* pfile_name, int32_t level);
-	~SingleLogStream();
+    SingleLogStream(const char* pfile_name, int32_t level);
+    SingleLogStream(const char* log_path, const char* pfile_name, int32_t level);
+    ~SingleLogStream();
 
 public:
-	std::ostream&			dump_trace(int32_t _level);
-	std::ostream&			get_ostream();
-	void					put_log(int32_t level);
+    std::ostream&			dump_trace(int32_t _level);
+    std::ostream&			get_ostream();
+    void					put_log(int32_t level);
 };
 
-//ÈÕÖ¾ºê, 
+//æ—¥å¿—å®, 
 #define BASE_TRACE(ofTrace, level, arg)	\
-	if (ofTrace.is_enable_trace(level))	\
-	{\
-		BaseGuard<BaseThreadMutex> cf_mon(ofTrace.mutex_);\
-		ofTrace.dump_trace(level) << "[" << get_file_name(__FILE__) << ":" << __LINE__ << "] " << arg << std::endl; \
-		ofTrace.put_log(level);\
-	}\
+    if (ofTrace.is_enable_trace(level))	\
+    {\
+        BaseGuard<BaseThreadMutex> cf_mon(ofTrace.mutex_);\
+        ofTrace.dump_trace(level) << "[" << get_file_name(__FILE__) << ":" << __LINE__ << "] " << arg << std::endl; \
+        ofTrace.put_log(level);\
+    }\
 
 #define FATAL_TRACE(ofTrace, arg) \
-	BASE_TRACE(ofTrace, BaseLogStreamInterface::fatal, arg);
+    BASE_TRACE(ofTrace, BaseLogStreamInterface::fatal, arg);
 
 #define ERROR_TRACE(ofTrace, arg) \
-	BASE_TRACE(ofTrace, BaseLogStreamInterface::error, arg);
+    BASE_TRACE(ofTrace, BaseLogStreamInterface::error, arg);
 
 
 #define WARNING_TRACE(ofTrace, arg) \
-	BASE_TRACE(ofTrace, BaseLogStreamInterface::warning, arg);
+    BASE_TRACE(ofTrace, BaseLogStreamInterface::warning, arg);
 
 #define INFO_TRACE(ofTrace, arg) \
-	BASE_TRACE(ofTrace, BaseLogStreamInterface::general, arg);
+    BASE_TRACE(ofTrace, BaseLogStreamInterface::general, arg);
 
 #define DEBUG_TRACE(ofTrace, arg) \
-	BASE_TRACE(ofTrace, BaseLogStreamInterface::debug, arg);
+    BASE_TRACE(ofTrace, BaseLogStreamInterface::debug, arg);
 
 #endif
 

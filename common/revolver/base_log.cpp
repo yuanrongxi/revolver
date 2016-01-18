@@ -20,256 +20,283 @@
 #define MAX_PATH 1024
 
 const char* title_str[] = {
-			"[fatal]",
-			"[error]",
-			"[warning]",
-			"[info]",
-			"[debug]"
+            "[fatal]",
+            "[error]",
+            "[warning]",
+            "[info]",
+            "[debug]"
 };
 
 const char* get_time_str(char *date_str)
 {
-	struct tm tm_now;
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
+    struct tm tm_now;
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
 
-	time_t now = tv.tv_sec;
+    time_t now = tv.tv_sec;
 #ifdef WIN32
-	::localtime_s(&tm_now, &now);
+    ::localtime_s(&tm_now, &now);
 #else
-	::localtime_r(&now, &tm_now);
+    ::localtime_r(&now, &tm_now);
 #endif
 
-	sprintf(date_str, "%04d-%02d-%02d %02d:%02d:%02d.%3ld", tm_now.tm_year + 1900, tm_now.tm_mon + 1, tm_now.tm_mday,
-		tm_now.tm_hour, tm_now.tm_min, tm_now.tm_sec, tv.tv_usec /1000);
+    sprintf(date_str, "%04d-%02d-%02d %02d:%02d:%02d.%3ld", tm_now.tm_year + 1900, tm_now.tm_mon + 1, tm_now.tm_mday,
+        tm_now.tm_hour, tm_now.tm_min, tm_now.tm_sec, tv.tv_usec /1000);
 
-	return date_str;
+    return date_str;
+}
+
+BaseLog::BaseLog(const char* log_path, const char* log_name) :m_line_count(0), m_file_count(0), wait_flush_(false)
+{
+    string str_exepath = log_path;
+#ifdef WIN32
+    create_tracedir("\\log", str_exepath.c_str());
+#else
+    create_tracedir("/log", str_exepath.c_str());
+#endif
+   
+    m_filename = log_name;
+
+    m_file_path = log_path;
+
+#ifdef WIN32
+    m_file_path += "\\log\\";
+#else
+    m_file_path += "/log/";
+#endif
+    //	m_file_path += m_filename;
+
+    rename_filename = "";
+    day_ = DateTime::GetNow().GetDay();
+
+    init_trace_file();
 }
 
 BaseLog::BaseLog(const char *_pfile_name) :m_line_count(0), m_file_count(0), wait_flush_(false) 
 {
-	string str_exepath;
+    string str_exepath;
 
 #ifdef WIN32
-	create_tracedir("\\log", get_fullexepath(str_exepath));
+    create_tracedir("\\log", get_fullexepath(str_exepath));
 #else
-	create_tracedir("/log", get_fullexepath(str_exepath));
+    create_tracedir("/log", get_fullexepath(str_exepath));
 #endif
 
-	char buffer[MAX_PATH]= {0};
+    char buffer[MAX_PATH]= {0};
 
 #ifdef WIN32
-	char *path = _getcwd(buffer, MAX_PATH);
+    char *path = _getcwd(buffer, MAX_PATH);
 #else
-	char* path = getcwd(buffer, MAX_PATH);
+    char* path = getcwd(buffer, MAX_PATH);
 #endif
 
-	m_filename = _pfile_name;
+    m_filename = _pfile_name;
 
-	m_file_path = buffer;
+    m_file_path = buffer;
 
 #ifdef WIN32
-	m_file_path +=  "\\log\\";
+    m_file_path +=  "\\log\\";
 #else
-	m_file_path +=  "/log/";
+    m_file_path +=  "/log/";
 #endif
 //	m_file_path += m_filename;
 
-	rename_filename = "";
-	day_ = DateTime::GetNow().GetDay();
+    rename_filename = "";
+    day_ = DateTime::GetNow().GetDay();
 
-	init_trace_file();
+    init_trace_file();
 }
 
 BaseLog::~BaseLog()
 {
-	if (m_of_file.is_open())
-	{
-		m_of_file.flush();
-		m_of_file.close();
-	}
+    if (m_of_file.is_open())
+    {
+        m_of_file.flush();
+        m_of_file.close();
+    }
 }
 string BaseLog::get_log_name(bool cur_flag)
 {
-	string final_file_name = m_filename;
-	if(!cur_flag)
-	{
-		final_file_name += "-";
-		char date[20] = {0}; 
-		sprintf(date, "%d-%d", DateTime::GetNow().GetMonth() + 1, DateTime::GetNow().GetDay());
-		final_file_name += date;
-	}
+    string final_file_name = m_filename;
+    if(!cur_flag)
+    {
+        final_file_name += "-";
+        char date[20] = {0}; 
+        sprintf(date, "%d-%d", DateTime::GetNow().GetMonth() + 1, DateTime::GetNow().GetDay());
+        final_file_name += date;
+    }
 
-	final_file_name +=".log";
+    final_file_name +=".log";
 
-	return final_file_name;
+    return final_file_name;
 }
 
 void BaseLog::write_log(const string& str_log)
 {
-	if (m_of_file.is_open())
-	{
-		m_line_count ++;
-		if (m_line_count > _MAX_LOGLINE || day_ != DateTime::GetNow().GetDay()) //π˝¡ÀÕÌ…œ12µ„£¨ªªŒƒº˛
-		{
-			this->flush();
-			init_trace_file();
-			day_ = DateTime::GetNow().GetDay();
-		}
+    if (m_of_file.is_open())
+    {
+        m_line_count ++;
+        if (m_line_count > _MAX_LOGLINE || day_ != DateTime::GetNow().GetDay()) //Ëøá‰∫ÜÊôö‰∏ä12ÁÇπÔºåÊç¢Êñá‰ª∂
+        {
+            this->flush();
+            init_trace_file();
+            day_ = DateTime::GetNow().GetDay();
+        }
 
-		char info[64] = {0};
-		m_of_file << get_time_str(info); 
-		m_of_file << str_log;
+        char info[64] = {0};
+        m_of_file << get_time_str(info); 
+        m_of_file << str_log;
 
-		wait_flush_ = true;
-	}
+        wait_flush_ = true;
+    }
 }
 
 void BaseLog::flush()
 {
-	if(m_of_file.is_open() && wait_flush_)
-	{
-		m_of_file.flush();
-		wait_flush_ = false;
-	}
+    if(m_of_file.is_open() && wait_flush_)
+    {
+        m_of_file.flush();
+        wait_flush_ = false;
+    }
 }
 
 void BaseLog::init_trace_file()
 {	
-	char newFile[1024] = {0};
+    char newFile[1024] = {0};
 
-	string rename_path = m_file_path + get_log_name();
+    string rename_path = m_file_path + get_log_name();
 
-	sprintf(newFile, "%s.%d", rename_path.data(), m_file_count++);
-	if (m_of_file.is_open())
-	{
-		m_of_file.close();
-	}
+    sprintf(newFile, "%s.%d", rename_path.data(), m_file_count++);
+    if (m_of_file.is_open())
+    {
+        m_of_file.close();
+    }
 
-	string str_logfile_path = m_file_path + get_log_name(true);
-	if(m_line_count > _MAX_LOGLINE || day_ != DateTime::GetNow().GetDay()) //Œƒº˛¬˙£¨«Âø’Œƒº˛
-	{
-		rename(str_logfile_path.data(), rename_filename.c_str());
-		m_of_file.open(str_logfile_path.c_str(), std::ios_base::trunc|std::ios_base::out);
-	}
-	else //∏’ø™ º£¨÷±Ω”◊∑º”µΩ∫Û√Ê
-	{
-		m_of_file.open(str_logfile_path.c_str(), std::ios_base::app|std::ios_base::out);
-	}
+    string str_logfile_path = m_file_path + get_log_name(true);
+    if(m_line_count > _MAX_LOGLINE || day_ != DateTime::GetNow().GetDay()) //Êñá‰ª∂Êª°ÔºåÊ∏ÖÁ©∫Êñá‰ª∂
+    {
+        rename(str_logfile_path.data(), rename_filename.c_str());
+        m_of_file.open(str_logfile_path.c_str(), std::ios_base::trunc|std::ios_base::out);
+    }
+    else //ÂàöÂºÄÂßãÔºåÁõ¥Êé•ËøΩÂä†Âà∞ÂêéÈù¢
+    {
+        m_of_file.open(str_logfile_path.c_str(), std::ios_base::app|std::ios_base::out);
+    }
 
-	rename_filename = newFile;
+    rename_filename = newFile;
 
-	m_line_count = 0;
+    m_line_count = 0;
 
 }
 
 const char* BaseLog::get_fullexepath(string& _str_path) const
 {
-	char buffer[MAX_PATH]= {0};
+    char buffer[MAX_PATH]= {0};
 #ifdef WIN32
-	char *path = _getcwd(buffer, MAX_PATH);
+    char *path = _getcwd(buffer, MAX_PATH);
 #else
-	char* path = getcwd(buffer, MAX_PATH);
+    char* path = getcwd(buffer, MAX_PATH);
 #endif
-	_str_path = path;
+    _str_path = path;
 
-	return _str_path.c_str();
+    return _str_path.c_str();
 }
 
 bool BaseLog::create_tracedir(const char* _pdir, const char* _pparent) const
 {
-	if (_pparent == NULL || strlen(_pparent) == 0)
-		return false;
+    if (_pparent == NULL || strlen(_pparent) == 0)
+        return false;
 
-	string str_dir = _pparent;
-	str_dir += _pdir;
+    string str_dir = _pparent;
+    str_dir += _pdir;
 #ifdef WIN32
-	_mkdir(str_dir.c_str());
+    _mkdir(str_dir.c_str());
 #else 
-	mkdir(str_dir.c_str(), S_IRWXU);
+    mkdir(str_dir.c_str(), S_IRWXU);
 #endif
 
-	return true;
+    return true;
 }
 
 void BaseLog::change_path(const std::string& _str_path)
 {
-	if (m_of_file.is_open())
-		m_of_file.close();
+    if (m_of_file.is_open())
+        m_of_file.close();
 
-	m_file_path = _str_path;
+    m_file_path = _str_path;
 
+    create_tracedir("/log", _str_path.c_str());
 #ifdef WIN32
-	m_file_path +=  "\\";
+    m_file_path +=  "\\";
 #else
-	m_file_path +=  "/";
+    m_file_path +=  "/";
 #endif
 
-	init_trace_file();
+    init_trace_file();
 }
 
 void BaseLog::change_log_file(const string& filename)
 {
-	if (m_of_file.is_open())
-		m_of_file.close();
+    if (m_of_file.is_open())
+        m_of_file.close();
 
-	m_filename = filename;
+    m_filename = filename;
 
-	init_trace_file();
+    init_trace_file();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 BaseLogManager::BaseLogManager()
 {
-	flush_ts_ = CBaseTimeValue::get_time_value().msec();
+    flush_ts_ = CBaseTimeValue::get_time_value().msec();
 }
 
 BaseLogManager::~BaseLogManager()
 {
-	// Õ∑≈Œƒº˛
-	for(size_t i = 0; i < m_log_vector.size(); ++ i)
-	{
-		delete m_log_vector[i];
-	}
+    //ÈáäÊîæÊñá‰ª∂
+    for(size_t i = 0; i < m_log_vector.size(); ++ i)
+    {
+        delete m_log_vector[i];
+    }
 }
 
 int32_t BaseLogManager::create_base_log(const char *pfile_name)
 {
-	int32_t index = -1;
-	
-	BaseLog *file_log = new BaseLog(pfile_name);
-	index = m_log_vector.size();
-	m_log_vector.push_back(file_log);
+    int32_t index = -1;
+    
+    BaseLog *file_log = new BaseLog(pfile_name);
+    index = m_log_vector.size();
+    m_log_vector.push_back(file_log);
 
-	return index;
+    return index;
 }
 
 BaseLog* BaseLogManager::get_log_handler(int32_t index)
 {	
-	if(index < 0 || index > m_log_vector.size())
-		return NULL;
-	else
-		return m_log_vector[index];
+    if(index < 0 || index > m_log_vector.size())
+        return NULL;
+    else
+        return m_log_vector[index];
 }
 
 void BaseLogManager::flush()
 {
-	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
-	if(cur_ts > flush_ts_ + 200)
-	{
-		for(int32_t i = 0; i < m_log_vector.size(); ++i)
-			m_log_vector[i]->flush();
+    uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
+    if(cur_ts > flush_ts_ + 200)
+    {
+        for(int32_t i = 0; i < m_log_vector.size(); ++i)
+            m_log_vector[i]->flush();
 
-		flush_ts_ = cur_ts;
-	}
+        flush_ts_ = cur_ts;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 BaseLogStream::BaseLogStream(const char* pfile_name, int32_t level)
 {
-	 m_level = level;
-	m_log_index = LOG_INSTANCE()->create_base_log(pfile_name);
-	m_strFileName = pfile_name;
+     m_level = level;
+    m_log_index = LOG_INSTANCE()->create_base_log(pfile_name);
+    m_strFileName = pfile_name;
 }
 
 BaseLogStream::~BaseLogStream()
@@ -279,39 +306,45 @@ BaseLogStream::~BaseLogStream()
 
 ostream& BaseLogStream::dump_trace(int32_t _level)
 {	 
-	if(_level > 0 && _level < 5)
-	{
-		m_strm << title_str[_level] << "\t";
-	}
+    if(_level > 0 && _level < 5)
+    {
+        m_strm << title_str[_level] << "\t";
+    }
 
-	return m_strm;
+    return m_strm;
 }
 
 std::ostream& BaseLogStream::get_ostream()
 {
-	return m_strm;
+    return m_strm;
 }
 
 void BaseLogStream::put_log(int32_t level)
 {
-	//–¥»ÎLOGœﬂ≥Ã
-	LogInfoData* data = LOGPOOL.pop_obj();
-	if(data != NULL)
-	{
-		data->index = m_log_index;
-		data->level = level;
-		data->str_log = m_strm.str();
-		
-		LOG_THREAD_INSTANCE()->put_log(data);
+    //ÂÜôÂÖ•LOGÁ∫øÁ®ã
+    LogInfoData* data = LOGPOOL.pop_obj();
+    if(data != NULL)
+    {
+        data->index = m_log_index;
+        data->level = level;
+        data->str_log = m_strm.str();
+        
+        LOG_THREAD_INSTANCE()->put_log(data);
 
-		m_strm.str("");
-	}
+        m_strm.str("");
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 SingleLogStream::SingleLogStream(const char* pfile_name, int32_t level) : BaseLog(pfile_name)
 {
-	m_level = level;
+    m_level = level;
+}
+
+SingleLogStream::SingleLogStream(const char* log_path, const char* pfile_name, int32_t level)
+: BaseLog(log_path, pfile_name)
+{
+    m_level = level;
 }
 
 SingleLogStream::~SingleLogStream()
@@ -322,24 +355,24 @@ SingleLogStream::~SingleLogStream()
 
 std::ostream& SingleLogStream::dump_trace(int32_t _level)
 {
-	if(_level > 0 && _level < 5)
-	{
-		write_log(title_str[_level]);
-		m_of_file << "\t";
-	}
+    if(_level > 0 && _level < 5)
+    {
+        write_log(title_str[_level]);
+        m_of_file << "\t";
+    }
 
-	return m_of_file;
+    return m_of_file;
 }
 
 std::ostream& SingleLogStream::get_ostream()
 {
-	return m_of_file;
+    return m_of_file;
 }
 
 
 void SingleLogStream::put_log(int32_t level)
 {
-	flush();
+    flush();
 }
 
 
