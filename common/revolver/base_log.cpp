@@ -271,6 +271,17 @@ int32_t BaseLogManager::create_base_log(const char *pfile_name)
     return index;
 }
 
+int32_t BaseLogManager::create_base_log(const char *path, const char *pfile_name)
+{
+    int32_t index = -1;
+
+    BaseLog *file_log = new BaseLog(path, pfile_name);
+    index = m_log_vector.size();
+    m_log_vector.push_back(file_log);
+
+    return index;
+}
+
 BaseLog* BaseLogManager::get_log_handler(int32_t index)
 {	
     if(index < 0 || index > m_log_vector.size())
@@ -296,6 +307,13 @@ BaseLogStream::BaseLogStream(const char* pfile_name, int32_t level)
 {
      m_level = level;
     m_log_index = LOG_INSTANCE()->create_base_log(pfile_name);
+    m_strFileName = pfile_name;
+}
+
+BaseLogStream::BaseLogStream(const char* log_path, const char* pfile_name, int32_t level)
+{
+    m_level = level;
+    m_log_index = LOG_INSTANCE()->create_base_log(log_path, pfile_name);
     m_strFileName = pfile_name;
 }
 

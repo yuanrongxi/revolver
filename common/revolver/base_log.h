@@ -71,6 +71,7 @@ public:
     ~BaseLogManager();
 
     int32_t			create_base_log(const char* _pfile_name);
+    int32_t			create_base_log(const char* path, const char* _pfile_name);
     BaseLog*		get_log_handler(int32_t log_index);
     void			flush();
 
@@ -118,6 +119,7 @@ class BaseLogStream : public BaseLogStreamInterface
 {
 public:
     BaseLogStream(const char* pfile_name, int32_t level);
+    BaseLogStream(const char* log_path, const char* pfile_name, int32_t level);
     ~BaseLogStream();
 
 public:
