@@ -119,39 +119,56 @@ int32_t RudpConnection::send(CBasePacket& packet, bool no_delay /* = false */)
     GAIN_BINSTREAM(bin_strm);
     *bin_strm << packet;
 
-    if (sbuffer_.remaining_length() < bin_strm->data_size() + sizeof(uint32_t))
-    {
-        if (sbuffer_.length() < MAX_BUFFER_SIZE)//扩大TCP发送缓冲区,防止缓冲区太小造成发送包异常
-        {
-            sbuffer_.realloc_buffer(bin_strm->data_size());
-            CORE_WARNING("sbuffer realloc buffer, size = " << sbuffer_.length());
-        }
-        else //发送报文丢弃
-        {
-            CORE_ERROR("sbuffer is full, sbuffer.size = " << sbuffer_.length());
-            RETURN_BINSTREAM(bin_strm);
-            return -1;
-        }
-    }
+    send(*bin_strm);
+    //if (sbuffer_.remaining_length() < bin_strm->data_size() + sizeof(uint32_t))
+    //{
+    //    if (sbuffer_.length() < MAX_BUFFER_SIZE)//扩大TCP发送缓冲区,防止缓冲区太小造成发送包异常
+    //    {
+    //        sbuffer_.realloc_buffer(bin_strm->data_size());
+    //        CORE_WARNING("sbuffer realloc buffer, size = " << sbuffer_.length());
+    //    }
+    //    else //发送报文丢弃
+    //    {
+    //        CORE_ERROR("sbuffer is full, sbuffer.size = " << sbuffer_.length());
+    //        RETURN_BINSTREAM(bin_strm);
+    //        return -1;
+    //    }
+    //}
 
-    if (sbuffer_.put(*bin_strm))
-    {
-        if (no_delay)
-        {
-            sbuffer_.send(rudp_sock_);
-        }
+    //if (sbuffer_.put(*bin_strm))
+    //{
+    //    if (no_delay)
+    //    {
+    //        sbuffer_.send(rudp_sock_);
+    //    }
 
 
-        if (sbuffer_.data_length() > 0)
-        {
-            RUDP()->register_event(rudp_sock_.get_handler(), MASK_WRITE);
-        }
-        ret = 0;
-    }
+    //    if (sbuffer_.data_length() > 0)
+    //    {
+    //        RUDP()->register_event(rudp_sock_.get_handler(), MASK_WRITE);
+    //    }
+    //    ret = 0;
+    //}
 
     RETURN_BINSTREAM(bin_strm);
 
     return ret;
+}
+
+int32_t RudpConnection::send(const string& bin_stream)
+{
+    if (get_state() != CONN_CONNECTED)
+        return -1;
+
+    if (bin_stream.empty())
+        return -1;
+
+    GAIN_BINSTREAM(strm);
+    *strm = bin_stream;
+    send(*strm);
+    RETURN_BINSTREAM(strm);
+
+    return 0;
 }
 
 int32_t RudpConnection::send(BinStream& strm)

@@ -106,7 +106,7 @@ public:
     uint8_t			server_type_;	//服务器类型,0表示客户端
     uint32_t		msg_id_;		//消息ID
     uint8_t			msg_type_;		//消息类型，例如独立的PING PONG消息，握手消息，应用层消息等
-    CBasePacket*	body_ptr_;		//消息内容
+    CBasePacket*	body_ptr_;		//引用消息内容
 };
 
 class HandShakeBody : public CBasePacket

@@ -6,89 +6,98 @@ BASE_NAMESPACE_BEGIN_DECL
 template<class Elem, uint32_t CAPACITY>
 BinStream_T<Elem, CAPACITY>::BinStream_T()
 {
-	//ÅĞ¶Ï×Ö½ÚĞò
-	union 
-	{
-		uint16_t	s16;
-		uint8_t		s8[2];
-	}un;
-	un.s16 = 0x010a;
-	big_endian = (un.s8[0] == 0x01);
+    //åˆ¤æ–­å­—èŠ‚åº
+    union 
+    {
+        uint16_t	s16;
+        uint8_t		s8[2];
+    }un;
+    un.s16 = 0x010a;
+    big_endian = (un.s8[0] == 0x01);
 
-	//¿ª±ÙBinstream¶ÔÏó»º³åÇø
-	size_ = sizeof(Elem) * CAPACITY;
-	data_ = (Elem *)malloc(size_);
+    //å¼€è¾ŸBinstreamå¯¹è±¡ç¼“å†²åŒº
+    size_ = sizeof(Elem) * CAPACITY;
+    data_ = (Elem *)malloc(size_);
 
-	rptr_ = (uint8_t *)data_;
-	wptr_ = (uint8_t *)data_;
+    rptr_ = (uint8_t *)data_;
+    wptr_ = (uint8_t *)data_;
 
-	used_ = 0;
-	rsize_ = 0;
+    used_ = 0;
+    rsize_ = 0;
 }
 
 template<class Elem, uint32_t CAPACITY>
 BinStream_T<Elem, CAPACITY>::~BinStream_T()
 {
-	if(data_ != NULL)
-	{
-		free(data_);
-		data_ = NULL;
+    if(data_ != NULL)
+    {
+        free(data_);
+        data_ = NULL;
 
-		rptr_ = NULL;
-		wptr_ = NULL;
+        rptr_ = NULL;
+        wptr_ = NULL;
 
-		size_ = 0;
+        size_ = 0;
 
-		used_ = 0;
-		rsize_ = 0;
-	}
+        used_ = 0;
+        rsize_ = 0;
+    }
 } 
 
 template<class Elem, uint32_t CAPACITY>
 void BinStream_T<Elem, CAPACITY>::rewind(bool reset)
 {
-	if(reset)
-	{
-		wptr_ = (uint8_t *)data_;
-		used_ = 0;
-	}
+    if(reset)
+    {
+        wptr_ = (uint8_t *)data_;
+        used_ = 0;
+    }
 
-	rptr_ = (uint8_t *)data_;
-	rsize_ = 0;
+    rptr_ = (uint8_t *)data_;
+    rsize_ = 0;
 }
-//ÖØĞÂÉèÖÃÄÚ´æ´óĞ¡
+//é‡æ–°è®¾ç½®å†…å­˜å¤§å°
 template<class Elem, uint32_t CAPACITY>
 void BinStream_T<Elem, CAPACITY>::resize(uint32_t new_size)
 {
-	if(new_size <= size_)
-		return ;
+    if(new_size <= size_)
+        return ;
 
-	uint32_t alloc_size  = size_;
-	while(new_size >= alloc_size)
-		alloc_size *= 2;
+    uint32_t alloc_size  = size_;
+    while(new_size >= alloc_size)
+        alloc_size *= 2;
 
-	data_ = (Elem *)realloc(data_, alloc_size);
-	size_ = alloc_size;
-	wptr_ = (uint8_t *)data_ + used_;
-	rptr_ = (uint8_t *)data_ + 	rsize_;
+    data_ = (Elem *)realloc(data_, alloc_size);
+    size_ = alloc_size;
+    wptr_ = (uint8_t *)data_ + used_;
+    rptr_ = (uint8_t *)data_ + 	rsize_;
 }
-//¸´Î»ÄÚ´æÕ¼ÓÃ
+//å¤ä½å†…å­˜å ç”¨
 template<class Elem, uint32_t CAPACITY>
 void BinStream_T<Elem, CAPACITY>::reduce()
 {
-	if(size_ > 4096) //4KB
-	{
-		free(data_);
+    if(size_ > 4096) //4KB
+    {
+        free(data_);
 
-		size_ = sizeof(Elem) * CAPACITY;
-		data_ = (Elem *)malloc(size_);
+        size_ = sizeof(Elem) * CAPACITY;
+        data_ = (Elem *)malloc(size_);
 
-		rptr_ = (uint8_t *)data_;
-		wptr_ = (uint8_t *)data_;
+        rptr_ = (uint8_t *)data_;
+        wptr_ = (uint8_t *)data_;
 
-		used_ = 0;
-		rsize_ = 0;
-	}
+        used_ = 0;
+        rsize_ = 0;
+    }
+}
+//append data to the end of stream
+template<class Elem, uint32_t CAPACITY>
+void BinStream_T<Elem, CAPACITY>::append_data(const uint8_t* data, uint32_t len)
+{
+    resize(used_ + len);
+    ::memcpy((void *)wptr_, (const void *)data, (size_t)len);
+    wptr_ += len;
+    used_ += len;
 }
 
 BASE_NAMESPACE_END_DECL

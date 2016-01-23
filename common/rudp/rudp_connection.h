@@ -40,6 +40,7 @@ public:
     void			close();
     void			force_close();
     int32_t			send(CBasePacket& packet, bool no_delay = false);
+    int32_t         send(const string& bin_stream);
     int32_t			send(BinStream& strm);
 
 public:

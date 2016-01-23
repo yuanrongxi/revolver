@@ -90,6 +90,7 @@ public:
 
 public:
     virtual int32_t send(CBasePacket& packet, bool no_delay = false) = 0;
+    virtual int32_t send(const string& bin_stream) = 0;
     //发起一条TCP连接
     virtual int32_t connect(const Inet_Addr& remote_addr) = 0;
     //关闭连接

@@ -1,9 +1,9 @@
 /*************************************************************************************
 *filename:	base_bin_stream.h
 *
-*to do:		ÊµÏÖĞ­Òé¶ÔÏóµÄ¶ş½øÖÆ´ò°üÁ÷¶ÔÏó,ÍøÂç×Ö½ÚĞòÄ£Ê½Á÷
+*to do:		å®ç°åè®®å¯¹è±¡çš„äºŒè¿›åˆ¶æ‰“åŒ…æµå¯¹è±¡,ç½‘ç»œå­—èŠ‚åºæ¨¡å¼æµ
 *Create on: 2012-04
-			2012-11 Ôö¼Ó =ºÅÖØÔØ¡¢bin_to_stringÁ½¸öº¯Êı£¬Ö÷ÒªÊµÏÖ¶ÔSTRINGµÄÏà»¥×ª»»
+            2012-11 å¢åŠ  =å·é‡è½½ã€bin_to_stringä¸¤ä¸ªå‡½æ•°ï¼Œä¸»è¦å®ç°å¯¹STRINGçš„ç›¸äº’è½¬æ¢
 *Author:	zerok
 *check list:
 *************************************************************************************/
@@ -23,301 +23,305 @@ using namespace std;
 
 BASE_NAMESPACE_BEGIN_DECL
 
-//1KµÄÄ¬ÈÏ´óĞ¡
+//1Kçš„é»˜è®¤å¤§å°
 #define DEFAULT_PACKET_SIZE	 1024
 
 #define ENCODE(data, type) \
-	int32_t type_size = sizeof(type);\
-	resize(used_ + type_size);\
-	uint8_t* pos = (uint8_t*)&data;\
-	if(big_endian) \
-	{\
-		::memcpy(wptr_, pos, type_size);\
-	}\
-	else\
-	{\
-		pos = pos + type_size - 1;\
-		for(int32_t i = 0; i < type_size; ++i)\
-		{\
-			wptr_[i] = *pos;\
-			-- pos;\
-		}\
-	}\
-	used_ += type_size;\
-	wptr_ += type_size;\
+    int32_t type_size = sizeof(type);\
+    resize(used_ + type_size);\
+    uint8_t* pos = (uint8_t*)&data;\
+    if(big_endian) \
+    {\
+        ::memcpy(wptr_, pos, type_size);\
+    }\
+    else\
+    {\
+        pos = pos + type_size - 1;\
+        for(int32_t i = 0; i < type_size; ++i)\
+        {\
+            wptr_[i] = *pos;\
+            -- pos;\
+        }\
+    }\
+    used_ += type_size;\
+    wptr_ += type_size;\
 
 
 #define DECODE(data, type)\
-	int32_t type_size = sizeof(type);\
-	if(used_ >= rsize_ + type_size)\
-	{\
-		uint8_t* pos = (uint8_t*)&data;\
-		if(big_endian)\
-		{\
-			::memcpy(pos ,wptr_, type_size);\
-		}\
-		else\
-		{\
-			pos = pos + type_size - 1;\
-			for(int32_t i = 0; i < type_size; ++i)\
-			{\
-				*pos = rptr_[i];\
-				 -- pos; \
-			}\
-		}\
-		rsize_ += type_size;\
-		rptr_ += type_size;\
-	}\
-	else \
-	{\
-		memset(&data, 0x00, type_size);\
-	}
+    int32_t type_size = sizeof(type);\
+    if(used_ >= rsize_ + type_size)\
+    {\
+        uint8_t* pos = (uint8_t*)&data;\
+        if(big_endian)\
+        {\
+            ::memcpy(pos ,wptr_, type_size);\
+        }\
+        else\
+        {\
+            pos = pos + type_size - 1;\
+            for(int32_t i = 0; i < type_size; ++i)\
+            {\
+                *pos = rptr_[i];\
+                 -- pos; \
+            }\
+        }\
+        rsize_ += type_size;\
+        rptr_ += type_size;\
+    }\
+    else \
+    {\
+        memset(&data, 0x00, type_size);\
+    }
 
 template<class Elem, uint32_t CAPACITY>
 class BinStream_T
 {
 public:
-	typedef BinStream_T<Elem, CAPACITY> _MyBint;
+    typedef BinStream_T<Elem, CAPACITY> _MyBint;
 
-	BinStream_T();
-	virtual ~BinStream_T();
+    BinStream_T();
+    virtual ~BinStream_T();
 
-	//¸´Î»
-	void		rewind(bool reset = false);
-	void		resize(uint32_t new_size);
-	//ÊİÉí£¬Ö»ÓĞÔÚÏĞÖÃ×´Ì¬ÏÂµ÷ÓÃ
-	void		reduce();
-	void		set_used_size(uint32_t used)
-	{
-		used_ = used;
-	};
+    //å¤ä½
+    void		rewind(bool reset = false);
+    void		resize(uint32_t new_size);
+    //ç˜¦èº«ï¼Œåªæœ‰åœ¨é—²ç½®çŠ¶æ€ä¸‹è°ƒç”¨
+    void		reduce();
+    void        append_data(const uint8_t* data, uint32_t len);
+    void		set_used_size(uint32_t used)
+    {
+        used_ = used;
+    };
+    uint32_t    get_remain_size() {
+        return (used_ - rsize_);
+    }
 
-	const Elem* get_data_ptr() const
-	{
-		return data_;
-	};
+    const Elem* get_data_ptr() const
+    {
+        return data_;
+    };
 
-	uint8_t*	get_wptr()
-	{
-		return wptr_;
-	};
+    uint8_t*	get_wptr()
+    {
+        return wptr_;
+    };
 
-	const uint8_t* get_rptr() const
-	{
-		return rptr_;
-	};
+    const uint8_t* get_rptr() const
+    {
+        return rptr_;
+    };
 
-	//»ñÈ¡»º³åÇøµÄ´óĞ¡
-	uint32_t	size() const
-	{
-		return size_;
-	};
-	//»ñÈ¡Êı¾İÌî³äÇøµÄ´óĞ¡
-	uint32_t	data_size() const
-	{
-		return used_;
-	};
+    //è·å–ç¼“å†²åŒºçš„å¤§å°
+    uint32_t	size() const
+    {
+        return size_;
+    };
+    //è·å–æ•°æ®å¡«å……åŒºçš„å¤§å°
+    uint32_t	data_size() const
+    {
+        return used_;
+    };
 
-	_MyBint& operator<<(bool val)
-	{
-		ENCODE(val, bool);
-		return (*this);
-	};
+    _MyBint& operator<<(bool val)
+    {
+        ENCODE(val, bool);
+        return (*this);
+    };
 
-	_MyBint& operator>>(bool& val)
-	{
-		DECODE(val, bool);
-		return (*this);
-	};
+    _MyBint& operator>>(bool& val)
+    {
+        DECODE(val, bool);
+        return (*this);
+    };
 
-	_MyBint& operator<<(int8_t val)
-	{
-		ENCODE(val, int8_t);
-		return (*this);
-	};
+    _MyBint& operator<<(int8_t val)
+    {
+        ENCODE(val, int8_t);
+        return (*this);
+    };
 
-	_MyBint& operator>>(int8_t& val)
-	{
-		DECODE(val, int8_t);
-		return (*this);
-	};
+    _MyBint& operator>>(int8_t& val)
+    {
+        DECODE(val, int8_t);
+        return (*this);
+    };
 
-	_MyBint& operator<<(int16_t val)
-	{
-		ENCODE(val, int16_t);
-		return (*this);
-	};
+    _MyBint& operator<<(int16_t val)
+    {
+        ENCODE(val, int16_t);
+        return (*this);
+    };
 
-	_MyBint& operator>>(int16_t& val)
-	{
-		DECODE(val, int16_t);
-		return (*this);
-	};
+    _MyBint& operator>>(int16_t& val)
+    {
+        DECODE(val, int16_t);
+        return (*this);
+    };
 
-	_MyBint& operator<<(int32_t val)
-	{
-		ENCODE(val, int32_t);
-		return (*this);
-	};
-	_MyBint& operator>>(int32_t& val)
-	{
-		DECODE(val, int32_t);
-		return (*this);
-	};
+    _MyBint& operator<<(int32_t val)
+    {
+        ENCODE(val, int32_t);
+        return (*this);
+    };
+    _MyBint& operator>>(int32_t& val)
+    {
+        DECODE(val, int32_t);
+        return (*this);
+    };
 
-	_MyBint& operator<<(int64_t val)
-	{
-		ENCODE(val, int64_t);
-		return (*this);
-	};
+    _MyBint& operator<<(int64_t val)
+    {
+        ENCODE(val, int64_t);
+        return (*this);
+    };
 
-	_MyBint& operator>>(int64_t& val)
-	{
-		DECODE(val, int64_t);
-		return (*this);
-	};
+    _MyBint& operator>>(int64_t& val)
+    {
+        DECODE(val, int64_t);
+        return (*this);
+    };
 
-	_MyBint& operator<<(uint8_t val)
-	{
-		ENCODE(val, uint8_t);
-		return (*this);
-	};
+    _MyBint& operator<<(uint8_t val)
+    {
+        ENCODE(val, uint8_t);
+        return (*this);
+    };
 
-	_MyBint& operator>>(uint8_t& val)
-	{
-		DECODE(val, uint8_t);
-		return (*this);
-	};
+    _MyBint& operator>>(uint8_t& val)
+    {
+        DECODE(val, uint8_t);
+        return (*this);
+    };
 
-	_MyBint& operator<<(uint16_t val)
-	{
-		ENCODE(val, uint16_t);
-		return (*this);
-	};
+    _MyBint& operator<<(uint16_t val)
+    {
+        ENCODE(val, uint16_t);
+        return (*this);
+    };
 
-	_MyBint& operator>>(uint16_t& val)
-	{
-		DECODE(val, uint16_t);
-		return (*this);
-	};
+    _MyBint& operator>>(uint16_t& val)
+    {
+        DECODE(val, uint16_t);
+        return (*this);
+    };
 
-	_MyBint& operator<<(uint32_t val)
-	{
-		ENCODE(val, uint32_t);
-		return (*this);
-	};
+    _MyBint& operator<<(uint32_t val)
+    {
+        ENCODE(val, uint32_t);
+        return (*this);
+    };
 
-	_MyBint& operator>>(uint32_t& val)
-	{
-		DECODE(val, uint32_t);
-		return (*this);
-	};
+    _MyBint& operator>>(uint32_t& val)
+    {
+        DECODE(val, uint32_t);
+        return (*this);
+    };
 
-	_MyBint& operator<<(uint64_t val)
-	{
-		ENCODE(val, uint64_t);
-		return (*this);
-	};
+    _MyBint& operator<<(uint64_t val)
+    {
+        ENCODE(val, uint64_t);
+        return (*this);
+    };
 
-	_MyBint& operator>>(uint64_t& val)
-	{
-		DECODE(val, uint64_t);
-		return (*this);
-	};
-	
-	_MyBint& operator<<(const string& val)
-	{
-		uint32_t val_size = val.size();
-		ENCODE(val_size, uint32_t);
-	
-		resize(used_ + val_size);
-		::memcpy((void *)wptr_, (const void *)val.data(), (size_t)val_size);
-		wptr_ += val_size;
-		used_ += val_size;
+    _MyBint& operator>>(uint64_t& val)
+    {
+        DECODE(val, uint64_t);
+        return (*this);
+    };
+    
+    _MyBint& operator<<(const string& val)
+    {
+        uint32_t val_size = val.size();
+        ENCODE(val_size, uint32_t);
+    
+        resize(used_ + val_size);
+        ::memcpy((void *)wptr_, (const void *)val.data(), (size_t)val_size);
+        wptr_ += val_size;
+        used_ += val_size;
 
-		return (*this);
-	};
+        return (*this);
+    };
 
-	_MyBint& operator>>(string& val)
-	{
-		uint32_t val_size = 0;
-		DECODE(val_size, uint32_t);
+    _MyBint& operator>>(string& val)
+    {
+        uint32_t val_size = 0;
+        DECODE(val_size, uint32_t);
 
-		if(val_size + rsize_ > used_) //·ÀÖ¹Ô½½ç·ÃÎÊ
-		{			
-			throw 0;
-		}
-		else if(val_size == 0)
-		{
-			val = "";
-		}
-		else 
-		{
-			val.assign((char *)rptr_, val_size);
+        if(val_size + rsize_ > used_) //é˜²æ­¢è¶Šç•Œè®¿é—®
+        {			
+            throw 0;
+        }
+        else if(val_size == 0)
+        {
+            val = "";
+        }
+        else 
+        {
+            val.assign((char *)rptr_, val_size);
 
-			rptr_ += val_size;
-			rsize_ += val_size;
-		}
+            rptr_ += val_size;
+            rsize_ += val_size;
+        }
 
-		return (*this);
-	};
+        return (*this);
+    };
 
-	_MyBint& operator=(const _MyBint& strm)
-	{
-		resize(strm.size_);
-		::memcpy(data_, strm.data_, strm.size_);
-		used_ = strm.used_;
-		rsize_ = strm.rsize_;
-		rptr_ = data_ + rsize_;
-		wptr_ = data_ + used_;
+    _MyBint& operator=(const _MyBint& strm)
+    {
+        resize(strm.size_);
+        ::memcpy(data_, strm.data_, strm.size_);
+        used_ = strm.used_;
+        rsize_ = strm.rsize_;
+        rptr_ = data_ + rsize_;
+        wptr_ = data_ + used_;
 
-		return *this;
-	}
+        return *this;
+    }
 
-	_MyBint& operator=(const string& data)
-	{
-		rewind(true);
-		resize(data.size());
-		set_used_size(data.size());
+    _MyBint& operator=(const string& data)
+    {
+        rewind(true);
+        resize(data.size());
+        set_used_size(data.size());
 
-		::memcpy(get_wptr(), data.data(), data.size());
-		wptr_ = data_ + used_;
+        ::memcpy(get_wptr(), data.data(), data.size());
+        wptr_ = data_ + used_;
 
-		return *this;
-	}
+        return *this;
+    }
 
-	void push_data(const uint8_t *data, uint32_t data_len)
-	{
-		ENCODE(data_len, uint32_t);
+    void push_data(const uint8_t *data, uint32_t data_len)
+    {
+        ENCODE(data_len, uint32_t);
 
-		resize(used_ + data_len);
-		::memcpy((void *)wptr_, (const void *)data, (size_t)data_len);
-		wptr_ += data_len;
-		used_ += data_len;
-	}
+        resize(used_ + data_len);
+        ::memcpy((void *)wptr_, (const void *)data, (size_t)data_len);
+        wptr_ += data_len;
+        used_ += data_len;
+    }
 
-	void bin_to_string(string& data)
-	{
-		data.clear();
-		data.assign((char*)rptr_, data_size());
-	}
+    void bin_to_string(string& data)
+    {
+        data.clear();
+        data.assign((char*)rptr_, data_size());
+    }
 
-	const string to_string()
-	{
-		string text;
-		return bin2asc((uint8_t *)data_, used_);
-	}
+    const string to_string()
+    {
+        string text;
+        return bin2asc((uint8_t *)data_, used_);
+    }
 
 protected:
-	Elem*		data_;	//Êı¾İ»º³åÇø
-	uint8_t*	rptr_;	//µ±Ç°¶ÁÎ»ÖÃÖ¸Õë
-	uint8_t*	wptr_;	//µ±Ç°Ğ´Î»ÖÃÖ¸Õë
+    Elem*		data_;	//æ•°æ®ç¼“å†²åŒº
+    uint8_t*	rptr_;	//å½“å‰è¯»ä½ç½®æŒ‡é’ˆ
+    uint8_t*	wptr_;	//å½“å‰å†™ä½ç½®æŒ‡é’ˆ
 
-	size_t		size_;	//×î´ó»º³åÇø³ß´ç
-	size_t		used_;	//ÒÑ¾­Ê¹ÓÃµÄ»º³åÇø³ß´ç
-	size_t		rsize_;	//¶ÁÈ¡µÄ×Ö½ÚÊı
+    size_t		size_;	//æœ€å¤§ç¼“å†²åŒºå°ºå¯¸
+    size_t		used_;	//å·²ç»ä½¿ç”¨çš„ç¼“å†²åŒºå°ºå¯¸
+    size_t		rsize_;	//è¯»å–çš„å­—èŠ‚æ•°
 
-	bool		big_endian;//ÏµÍ³×Ö½ÚĞò±êÖ¾
+    bool		big_endian;//ç³»ç»Ÿå­—èŠ‚åºæ ‡å¿—
 };
 
 typedef BinStream_T<uint8_t, DEFAULT_PACKET_SIZE> BinStream;
