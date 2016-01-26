@@ -41,7 +41,7 @@ public:
     void			force_close();
     int32_t			send(CBasePacket& packet, bool no_delay = false);
     int32_t         send(const string& bin_stream);
-    int32_t			send(BinStream& strm);
+    int32_t			send(BinStream& strm, bool no_delay = false);
 
 public:
     void			reset();
@@ -58,6 +58,8 @@ public:
     const Inet_Addr& get_local_addr() const;
     void            set_local_addr(const Inet_Addr& addr) { local_addr_ = addr; }
     void			get_send_state(uint32_t& bw, uint32_t& cache_size);
+
+    BASE_HANDLER	get_handle() const { return rudp_sock_.get_handler(); }
 protected:
     void			process(CCorePacket& packet, BinStream& istrm);
     void			send_packet();

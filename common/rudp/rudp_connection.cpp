@@ -119,7 +119,7 @@ int32_t RudpConnection::send(CBasePacket& packet, bool no_delay /* = false */)
     GAIN_BINSTREAM(bin_strm);
     *bin_strm << packet;
 
-    send(*bin_strm);
+    send(*bin_strm, no_delay);
     //if (sbuffer_.remaining_length() < bin_strm->data_size() + sizeof(uint32_t))
     //{
     //    if (sbuffer_.length() < MAX_BUFFER_SIZE)//扩大TCP发送缓冲区,防止缓冲区太小造成发送包异常
@@ -171,7 +171,7 @@ int32_t RudpConnection::send(const string& bin_stream)
     return 0;
 }
 
-int32_t RudpConnection::send(BinStream& strm)
+int32_t RudpConnection::send(BinStream& strm, bool no_delay)
 {
     uint32_t ret = -1;
     if (sbuffer_.remaining_length() < strm.data_size() + sizeof(uint32_t))
@@ -271,6 +271,8 @@ int32_t RudpConnection::rudp_output_event(int32_t rudp_id)
 
         rudp_sock_.get_peer_addr(remote_addr_);
         rudp_sock_.get_local_addr(local_addr_);
+        //通知SESSION
+        MSG_PROCESSOR()->on_connect(server_id_, this);
     }
 
     if (sbuffer_.data_length() > 0)

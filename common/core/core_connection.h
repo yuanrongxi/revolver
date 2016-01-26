@@ -57,6 +57,7 @@ public:
     //发送数据
     int32_t			send(CBasePacket/*CCorePacket*/& packet, bool no_delay = false);
     int32_t			send(const string& bin_stream);
+    int32_t			send(BinStream& bin_stream, bool no_delay);
 
 protected:
     int32_t			process(CCorePacket &packet, BinStream& istrm);
