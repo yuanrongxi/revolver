@@ -110,6 +110,7 @@
     <ClCompile Include="..\revolver\lzo_object.cpp" />
     <ClCompile Include="..\revolver\md5c.c" />
     <ClCompile Include="..\revolver\minilzo.c" />
+    <ClCompile Include="..\revolver\sha2.cpp" />
     <ClCompile Include="..\revolver\timer_ring.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="..\revolver\md5.h" />
     <ClInclude Include="..\revolver\minilzo.h" />
     <ClInclude Include="..\revolver\object_pool.h" />
+    <ClInclude Include="..\revolver\sha2.h" />
     <ClInclude Include="..\revolver\timer_node_t.h" />
     <ClInclude Include="..\revolver\timer_queue_t.h" />
     <ClInclude Include="..\revolver\timer_ring.h" />

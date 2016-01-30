@@ -86,6 +86,9 @@
     <ClCompile Include="..\revolver\timer_ring.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\revolver\sha2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\revolver\aes.h">
@@ -215,6 +218,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\revolver\base_sock_acceptor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\sha2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

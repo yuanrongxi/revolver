@@ -156,6 +156,9 @@
     <ClCompile Include="..\core\core_connection_mananger.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\revolver\sha2.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\revolver\base_log.h">
@@ -334,6 +337,9 @@
     </ClInclude>
     <ClInclude Include="..\core\core_connection_manager.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\sha2.h">
+      <Filter>revolver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
