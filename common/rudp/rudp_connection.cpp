@@ -88,7 +88,7 @@ int32_t RudpConnection::connect(const Inet_Addr& dst_addr)
 
     //local_addr_ = src_addr;
 
-    rudp_setoption(rudp_sock_.get_handler(), RUDP_TIMEOUT_COUNT, 2); //6秒超时
+    //rudp_setoption(rudp_sock_.get_handler(), RUDP_TIMEOUT_COUNT, 2); //6秒超时
 
     //绑定一个事件器
     RUDP()->bind_event_handle(rudp_sock_.get_handler(), this);
