@@ -1,6 +1,28 @@
 #ifndef __BASE_TYPEDEF_H
 #define __BASE_TYPEDEF_H
 
+
+// OS definitions
+#if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
+#  define OS_DARWIN
+#  ifdef __LP64__
+#    define OS_DARWIN64
+#  else
+#    define OS_DARWIN32
+#  endif
+#elif defined(__linux__) || defined(__linux)
+#  define OS_LINUX
+#elif defined(WIN64) || defined(_WIN64) || defined(__WIN64__)
+#  define OS_WIN64
+#  define OS_WIN32
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#  define OS_WIN32
+#endif
+
+#if defined(OS_WIN32) || defined(OS_WIN64)
+#  define OS_WIN
+#endif
+
 #ifdef __GNUC__
 #include <stdint.h>
 #include <inttypes.h>
@@ -85,7 +107,7 @@ typedef unsigned long		uint64_t;
 #define NULL	0
 #endif
 
-//¶¨Òå³ØµÄ³õÊ¼»¯µÄ´óÐ¡
+//ï¿½ï¿½ï¿½ï¿½ØµÄ³ï¿½Ê¼ï¿½ï¿½ï¿½Ä´ï¿½Ð¡
 #ifdef WIN32
 
 #ifndef CONNECTION_POOL_SIZE

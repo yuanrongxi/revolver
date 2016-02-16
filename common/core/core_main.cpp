@@ -39,7 +39,7 @@ void handle_pipe(int sig)
 	//cout << "handler pipe OK!!" << endl;
 }
 
-void ignore_pipe() //ºöÂÔPIPEĞÅºÅ
+void ignore_pipe() //ï¿½ï¿½ï¿½ï¿½PIPEï¿½Åºï¿½
 {
 	struct sigaction action;
 	action.sa_handler = handle_pipe;
@@ -50,11 +50,13 @@ void ignore_pipe() //ºöÂÔPIPEĞÅºÅ
 
 int core_main()
 {
+#ifndef OS_DARWIN
 	if (signal(SIG_PROG_EXIT, sig_exit_proc) == SIG_ERR)
 	{
-		cout << "signal failed!!!" << endl;
+		cout << "signal failed!!!" << errno << endl;
 		return 1;
 	}
+#endif
 
 	while(!TERMINATE_OBJ)
 	{
