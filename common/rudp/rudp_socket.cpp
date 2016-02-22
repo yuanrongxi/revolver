@@ -906,8 +906,8 @@ void RUDPSocket::heartbeat()
     uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
 
     //心跳计数
-    RUDP_DEBUG("socket heartbeat, keepalive cnt: " << keeplive_count_
-        << "timeout cnt: " << timeout_count_);
+    RUDP_DEBUG("socket[" << rudp_id_ << "] heartbeat, keepalive cnt: " << keeplive_count_
+        << ", timeout cnt: " << timeout_count_);
     if(now_ts > heart_ts_ + keeplive_intnal_)
     {
         keeplive_count_ ++;

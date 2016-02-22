@@ -24,7 +24,7 @@ int32_t RUDPListenerHandler::rudp_accept_event(int32_t rudp_id)
 
     int buffer_size = RUDP_SEND_BUFFER;
     sock.set_option(RUDP_SEND_BUFF_SIZE, buffer_size);
-    sock.set_option(RUDP_TIMEOUT_COUNT, 2); //6秒超时
+    //sock.set_option(RUDP_TIMEOUT_COUNT, 2); //6秒超时
     //关联HANDLER
     RUDP()->bind_event_handle(sock.get_handler(), conn);
 
