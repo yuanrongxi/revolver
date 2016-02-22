@@ -15,6 +15,7 @@ RudpConnection::RudpConnection()
 {
     timer_id_ = 0;
     state_ = CONN_IDLE;
+    conn_type_ = CORE_CONN_RUDP;
 }
 
 RudpConnection::~RudpConnection()

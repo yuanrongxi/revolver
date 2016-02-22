@@ -45,6 +45,14 @@ typedef SBuffer_16K		SBuffer;
 
 class CBasePacket;
 
+enum 
+{
+    CORE_CONN_UNKNOWN,
+    CORE_CONN_TCP,
+    CORE_CONN_UDP,
+    CORE_CONN_RUDP,
+};
+
 class CConnection : public CEventHandler {
 public:
     enum
@@ -58,6 +66,7 @@ public:
         server_id_ = 0;
         server_type_ = 0;
         index_ = 0;
+        conn_type_ = CORE_CONN_UNKNOWN;
     }
     virtual ~CConnection() {}
 
@@ -83,6 +92,8 @@ public:
         CORE_DEBUG("CConnection, state = CONN_CONNECTING");
     }
 
+    uint16_t get_type() const { return conn_type_; }
+    void set_type(uint16_t type) { conn_type_ = type; }
     bool is_open() const
     {
         return (get_handle() != INVALID_HANDLER);
@@ -107,6 +118,7 @@ protected:
     void* conn_ptr_;  //连接的特征信息
 
     uint16_t state_;
+    uint16_t conn_type_;
 };
 
 BASE_NAMESPACE_END_DECL

@@ -36,6 +36,7 @@ CCoreConnection::CCoreConnection() : timer_id_(0)
     conn_name_ = "accept connection";
 
     send_flag_ = false;
+    conn_type_ = CORE_CONN_TCP;
 }
 
 CCoreConnection::~CCoreConnection()
