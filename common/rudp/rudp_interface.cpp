@@ -8,8 +8,7 @@
 #define RUDP_DEFAULT_POOL_SIZE	1024
 #define MAX_LOCAL_ADDR_SIZE		256
 
-//RUDP的心跳周期是5毫秒
-#define RUDP_TIMER_DELAY		10
+
 
 //消息解码宏
 #define PARSE_RUDP_HEAD(head, info) \

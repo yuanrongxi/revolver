@@ -210,7 +210,7 @@ uint32_t RUDPSendBuffer::get_threshold(uint32_t rtt)
 	uint32_t rtt_threshold = 10;
 	if (rtt < 10)
 		rtt_threshold = 3;
-	if(rtt < 30)
+	else if(rtt < 30)
 		rtt_threshold = rtt + ccc_->get_rtt_var() + 3;
 	else if (rtt < 100)
 		rtt_threshold = rtt + ccc_->get_rtt_var() + 10;

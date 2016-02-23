@@ -15,9 +15,13 @@
 #include "rudp/rudp_send_buffer.h"
 #include "revolver/base_inet_addr.h"
 #include "revolver/base_event_handler.h"
+#include "core/core_bandwidth_throttler.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 class RUDPEventHandler;
+
+//RUDP的心跳周期是5毫秒
+#define RUDP_TIMER_DELAY		10
 
 #define RUDP_VERSION	1
 enum RUDPOptionType
@@ -190,6 +194,9 @@ private:
 
     BinStream			strm_;
     void                *user_data_;
+
+    CoreThrottler  throttler_;
+    uint64_t  last_heatbeat_ts_;
 };
 
 BASE_NAMESPACE_END_DECL

@@ -47,6 +47,8 @@ RUDPSocket::RUDPSocket()
 
     check_sum_ = 0;
     user_data_ = 0;
+    throttler_.reset();
+    last_heatbeat_ts_ = 0;
 }
 
 RUDPSocket::~RUDPSocket()
@@ -87,7 +89,7 @@ void RUDPSocket::reset()
 
     send_buffer_.reset();
     recv_buffer_.reset();
-
+    throttler_.reset();
     check_sum_ = 0;
 }
 
@@ -372,7 +374,7 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
     strm_ << local_title_ << head << ack;
 
     //RUDP_DEBUG("send ack, rudp_id = " << rudp_id_ << ", seq = " << ack_seq_id);
-
+    throttler_.add_udp_packet(strm_.data_size(), true);
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
@@ -581,6 +583,8 @@ void RUDPSocket::on_exception()
 
 void RUDPSocket::process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, const Inet_Addr& remote_addr)
 {
+    throttler_.add_udp_packet(strm.size(), false);
+
     if(check_sum != check_sum_)
         return ;
 
@@ -904,6 +908,10 @@ void RUDPSocket::heartbeat()
         return ;
 
     uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
+
+    if (now_ts - last_heatbeat_ts_ < RUDP_TIMER_DELAY)
+        return;
+    last_heatbeat_ts_ = now_ts;
 
     //心跳计数
     RUDP_DEBUG("socket[" << rudp_id_ << "] heartbeat, keepalive cnt: " << keeplive_count_
