@@ -377,7 +377,7 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
     strm_.rewind(true);
     strm_ << local_title_ << head << ack;
 
-    RUDP_DEBUG("send ack, rudp_id = " << rudp_id_ << ", seq = " << ack_seq_id);
+    RUDP_DEBUG("rudp["<< rudp_id_ << "] send ack, seq = " << ack_seq_id);
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
@@ -600,7 +600,7 @@ void RUDPSocket::process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, co
         remote_addr_ = remote_addr;
     }
 
-    RUDP_DEBUG("recv rupd packet type: " << (int)msg_id << ", size: " << strm.data_size());
+    RUDP_DEBUG("recv rupd[" << rudp_id_ <<"] packet type: " << (int)msg_id << ", size: " << strm.data_size());
     switch(msg_id)
     {
     case RUDP_DATA:
@@ -659,7 +659,7 @@ void RUDPSocket::process_data(BinStream& strm, const Inet_Addr& remote_addr)
 
     uint32_t data_size = 0;
     strm >> data_size;
-    RUDP_DEBUG("receive data[" << data.cur_seq_id_ 
+    RUDP_DEBUG("rudp[" << rudp_id_ << "] receive data[" << data.cur_seq_id_ 
         <<"], data size: " << data_size << ", ack seq: " << data.ack_seq_id_);
     recv_buffer_.on_data(data.cur_seq_id_, (const uint8_t *)strm.get_rptr(), data_size);
 }
@@ -674,7 +674,7 @@ void RUDPSocket::process_data_ack(BinStream& strm, const Inet_Addr& remote_addr)
     
     RUDPDataAck ack;
     strm >> ack;
-    RUDP_DEBUG("on recv data ack[" << ack.ack_seq_id_ << "], remote_addr = " << remote_addr);
+    RUDP_DEBUG("rudp[" << rudp_id_ <<"] recv data ack[" << ack.ack_seq_id_ << "], remote_addr = " << remote_addr);
     ccc_.on_ack(ack.ack_seq_id_);
     send_buffer_.on_ack(ack.ack_seq_id_);
 }
