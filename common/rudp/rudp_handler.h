@@ -5,6 +5,7 @@
 #include "revolver/base_sock_dgram.h"
 #include "revolver/base_bin_stream.h"
 #include "rudp/rudp_adapter.h"
+#include "core/core_bandwidth_throttler.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 
@@ -30,12 +31,14 @@ public:
     virtual int32_t handle_close(BASE_HANDLER handle, ReactorMask close_mask);
     virtual int32_t handle_exception(BASE_HANDLER handle);
 
+    void get_net_stat(uint32_t &up_band, uint32_t &up_cnt, uint32_t &down_band, uint32_t &down_cnt);
+
 protected:
     BinStream bin_strm_;
     CSockDgram sock_dgram_;
     IRUDPAdapter *adapter_;
-
     Inet_Addr local_addr_;	//本地绑定的网卡地址
+    CoreThrottler throllter_;
 };
 
 BASE_NAMESPACE_END_DECL

@@ -47,8 +47,8 @@ RUDPSocket::RUDPSocket()
 
     check_sum_ = 0;
     user_data_ = 0;
-    throttler_.reset();
     last_heatbeat_ts_ = 0;
+    last_ack_seq_id_ = 0;
 }
 
 RUDPSocket::~RUDPSocket()
@@ -89,7 +89,6 @@ void RUDPSocket::reset()
 
     send_buffer_.reset();
     recv_buffer_.reset();
-    throttler_.reset();
     check_sum_ = 0;
 }
 
@@ -362,6 +361,11 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
         return ;
     }
 
+    if (last_ack_seq_id_ >= ack_seq_id)
+        return;
+
+    last_ack_seq_id_ = ack_seq_id;
+
     RUDPHeadPacket head;
     head.msg_id_ = RUDP_DATA_ACK;
     head.remote_rudp_id_ = remote_rudp_id_;
@@ -373,8 +377,7 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
     strm_.rewind(true);
     strm_ << local_title_ << head << ack;
 
-    //RUDP_DEBUG("send ack, rudp_id = " << rudp_id_ << ", seq = " << ack_seq_id);
-    throttler_.add_udp_packet(strm_.data_size(), true);
+    RUDP_DEBUG("send ack, rudp_id = " << rudp_id_ << ", seq = " << ack_seq_id);
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
@@ -420,7 +423,9 @@ void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8
     //body.data_.assign((const char*)data, data_size); //todo:减少一次拷贝
 
     //设置一个最后发送ACK的时刻
-    recv_buffer_.set_send_last_ack_ts(now_ts);
+    if (ack_seq_id)
+        recv_buffer_.set_send_last_ack_ts(now_ts);
+    RUDP_DEBUG("send data seq[" << cur_seq_id << "], size: " << data_size <<"ack seq: " << ack_seq_id);
 
     strm_.rewind(true);
     strm_ << local_title_ << head << body;
@@ -583,8 +588,6 @@ void RUDPSocket::on_exception()
 
 void RUDPSocket::process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, const Inet_Addr& remote_addr)
 {
-    throttler_.add_udp_packet(strm.size(), false);
-
     if(check_sum != check_sum_)
         return ;
 
@@ -597,6 +600,7 @@ void RUDPSocket::process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, co
         remote_addr_ = remote_addr;
     }
 
+    RUDP_DEBUG("recv rupd packet type: " << (int)msg_id << ", size: " << strm.data_size());
     switch(msg_id)
     {
     case RUDP_DATA:
@@ -655,7 +659,8 @@ void RUDPSocket::process_data(BinStream& strm, const Inet_Addr& remote_addr)
 
     uint32_t data_size = 0;
     strm >> data_size;
-
+    RUDP_DEBUG("receive data[" << data.cur_seq_id_ 
+        <<"], data size: " << data_size << ", ack seq: " << data.ack_seq_id_);
     recv_buffer_.on_data(data.cur_seq_id_, (const uint8_t *)strm.get_rptr(), data_size);
 }
 
@@ -666,11 +671,10 @@ void RUDPSocket::process_data_ack(BinStream& strm, const Inet_Addr& remote_addr)
         RUDP_WARNING("process_data_ack, state_ != RUDP_CONNECTED");
         return ;
     }
-
-    //RUDP_DEBUG("on recv data ack, remote_addr = " << remote_addr);
+    
     RUDPDataAck ack;
     strm >> ack;
-
+    RUDP_DEBUG("on recv data ack[" << ack.ack_seq_id_ << "], remote_addr = " << remote_addr);
     ccc_.on_ack(ack.ack_seq_id_);
     send_buffer_.on_ack(ack.ack_seq_id_);
 }
@@ -914,8 +918,8 @@ void RUDPSocket::heartbeat()
     last_heatbeat_ts_ = now_ts;
 
     //心跳计数
-    RUDP_DEBUG("socket[" << rudp_id_ << "] heartbeat, keepalive cnt: " << keeplive_count_
-        << ", timeout cnt: " << timeout_count_);
+    /*RUDP_DEBUG("socket[" << rudp_id_ << "] heartbeat, keepalive cnt: " << keeplive_count_
+        << ", timeout cnt: " << timeout_count_);*/
     if(now_ts > heart_ts_ + keeplive_intnal_)
     {
         keeplive_count_ ++;

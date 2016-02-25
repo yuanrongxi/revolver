@@ -26,7 +26,6 @@ RUDPObject::RUDPObject()
 {
     listener_ = NULL;
     timer_id_ = 0;
-
     init();
 }
 
@@ -62,6 +61,8 @@ int32_t RUDPObject::handle_timeout(const void *act, uint32_t timer_id)
         heartbeat();
 
         timer_id_ = REACTOR_INSTANCE()->set_timer(this, NULL, RUDP_TIMER_DELAY);
+        
+        uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
     }
 
     return 0;
@@ -100,7 +101,6 @@ void RUDPObject::init()
     }
 
     alloc_sockets();
-
     set_timer();
 }
 
@@ -287,7 +287,6 @@ int32_t RUDPObject::send(int32_t rudp_id, const uint8_t* data, int32_t data_size
         RUDP_FATAL("rudp_session is NULL, rudp socket id = " << rudp_id);
         return -1;
     }
-
     return rudp_session->send(data, data_size);
 }
 

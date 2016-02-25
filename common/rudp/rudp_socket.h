@@ -15,7 +15,6 @@
 #include "rudp/rudp_send_buffer.h"
 #include "revolver/base_inet_addr.h"
 #include "revolver/base_event_handler.h"
-#include "core/core_bandwidth_throttler.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 class RUDPEventHandler;
@@ -195,8 +194,8 @@ private:
     BinStream			strm_;
     void                *user_data_;
 
-    CoreThrottler  throttler_;
     uint64_t  last_heatbeat_ts_;
+    uint64_t  last_ack_seq_id_;
 };
 
 BASE_NAMESPACE_END_DECL

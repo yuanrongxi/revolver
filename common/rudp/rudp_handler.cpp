@@ -11,6 +11,7 @@ BASE_NAMESPACE_BEGIN_DECL
 
 RudpHandler::RudpHandler() : adapter_(0) {
     bin_strm_.resize(MAX_UDP_PACKET);
+    throllter_.reset();
 }
 
 RudpHandler::~RudpHandler() {
@@ -96,6 +97,8 @@ int32_t RudpHandler::send(BinStream& bin_strm, const Inet_Addr& remote_addr)
             return -1;
         }
     }
+    throllter_.add_udp_packet(rc, true);
+
     RUDP_SEND_DEBUG("send raw data: " << rc);
     return rc;
 }
@@ -105,12 +108,13 @@ int32_t RudpHandler::handle_input(BASE_HANDLER handle)
     Inet_Addr remote_addr;
     while (true)
     {
-        bin_strm_.rewind(true);
+        bin_strm_.rewind(false);
         int32_t rc = sock_dgram_.recv(bin_strm_.get_wptr(), MAX_UDP_PACKET, remote_addr);
         
         if (rc > 0)
         {
             RUDP_RECV_DEBUG("recv raw data: " << rc);
+            throllter_.add_udp_packet(rc, false);
             bin_strm_.set_used_size(rc);
             uint8_t packet_type = 0;
             bin_strm_ >> packet_type;
@@ -146,6 +150,14 @@ int32_t RudpHandler::handle_close(BASE_HANDLER handle, ReactorMask close_mask)
 int32_t RudpHandler::handle_exception(BASE_HANDLER handle)
 {
     return 0;
+}
+
+void RudpHandler::get_net_stat(uint32_t &up_band, uint32_t &up_cnt, uint32_t &down_band, uint32_t &down_cnt) {
+    up_cnt = throllter_.get_up_udp_count();
+    up_band = throllter_.get_up_bandwidth();
+    down_cnt = throllter_.get_down_udp_count();
+    down_band = throllter_.get_down_bandwidth();
+    throllter_.reset();
 }
 
 BASE_NAMESPACE_END_DECL
