@@ -12,7 +12,8 @@
 #include "core/core_message_processor.h"
 #include "core/core_event_message.h"
 
-#include "cli_gateway.h"
+#include "../defs/client_msg.h"
+//#include "cli_gateway.h"
 
 using namespace BASE;
 using namespace BASE_NAMEPSACE_DECL;

@@ -378,7 +378,9 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
     strm_ << local_title_ << head << ack;
 
     RUDP_DEBUG("rudp["<< rudp_id_ << "] send ack, seq = " << ack_seq_id);
-    RUDP()->send_udp(local_index_, strm_, remote_addr_);
+    if (RUDP()->send_udp(local_index_, strm_, remote_addr_)) {
+        RUDP_WARNING("failed to send ack, seq: " << ack_seq_id);
+    }
 }
 
 void RUDPSocket::send_nack(uint64_t base_seq_id, const LossIDArray& ids)
@@ -886,7 +888,7 @@ void RUDPSocket::process_keeplive(BinStream& strm, const Inet_Addr& remote_addr)
 
 void RUDPSocket::process_keeplive_ack(BinStream& strm, const Inet_Addr& remote_addr)
 {
-    RUDP_INFO("keeplive ack from " << remote_addr << ", rudp id = " << rudp_id_);
+    //RUDP_INFO("keeplive ack from " << remote_addr << ", rudp id = " << rudp_id_);
 
     if(state_ != RUDP_CONNECTED)
     {
@@ -903,7 +905,7 @@ void RUDPSocket::process_keeplive_ack(BinStream& strm, const Inet_Addr& remote_a
     uint32_t rtt = static_cast<uint32_t>(now_ts > ack.timestamp_ ? (now_ts - ack.timestamp_) : 5);
     ccc_.set_rtt(rtt);
 
-    RUDP_INFO("rtt = " << rtt << ", rudp socket id = " << rudp_id_);
+    //RUDP_INFO("rtt = " << rtt << ", rudp socket id = " << rudp_id_);
 }
 
 void RUDPSocket::heartbeat()

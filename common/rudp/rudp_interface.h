@@ -77,7 +77,7 @@ public:
     //处理来自网络的UDP报文
     void				process(IRUDPAdapter* adapter, BinStream& strm, const Inet_Addr& remote_addr);
     //向外发送UDP报文
-    void				send_udp(uint8_t index, BinStream& strm, const Inet_Addr& remote_addr);
+    int32_t			send_udp(uint8_t index, BinStream& strm, const Inet_Addr& remote_addr);
 
     void				attach(IRUDPAdapter* adapter);
     void				unattach(IRUDPAdapter* adapter);

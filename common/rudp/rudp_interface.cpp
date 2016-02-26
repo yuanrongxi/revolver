@@ -517,10 +517,15 @@ RUDPSocket* RUDPObject::find_by_peer_id(int32_t peer_rudp_id, const Inet_Addr& p
     return ret;
 }
 
-void RUDPObject::send_udp(uint8_t index, BinStream& strm, const Inet_Addr& remote_addr)
+int32_t RUDPObject::send_udp(uint8_t index, BinStream& strm, const Inet_Addr& remote_addr)
 {
-    if(adapter_array_[index] != NULL)
+    if (adapter_array_[index] != NULL) {
         adapter_array_[index]->send(strm, remote_addr);
+    }
+    else {
+        return -1;
+    }
+    return 0;
 }
 
 void RUDPObject::attach(IRUDPAdapter* adapter)
