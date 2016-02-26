@@ -49,6 +49,7 @@ RUDPSocket::RUDPSocket()
     user_data_ = 0;
     last_heatbeat_ts_ = 0;
     last_ack_seq_id_ = 0;
+    recv_data_cnt_ = 0;
 }
 
 RUDPSocket::~RUDPSocket()
@@ -90,6 +91,9 @@ void RUDPSocket::reset()
     send_buffer_.reset();
     recv_buffer_.reset();
     check_sum_ = 0;
+
+    last_ack_seq_id_ = 0;
+    recv_data_cnt_ = 0;
 }
 
 void RUDPSocket::set_state(uint16_t state)
@@ -365,6 +369,7 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
         return;
 
     last_ack_seq_id_ = ack_seq_id;
+    recv_data_cnt_ = 0;
 
     RUDPHeadPacket head;
     head.msg_id_ = RUDP_DATA_ACK;
@@ -427,7 +432,7 @@ void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8
     //设置一个最后发送ACK的时刻
     if (ack_seq_id)
         recv_buffer_.set_send_last_ack_ts(now_ts);
-    RUDP_DEBUG("send data seq[" << cur_seq_id << "], size: " << data_size <<" ack seq: " << ack_seq_id);
+    RUDP_DEBUG("send data seq[" << cur_seq_id << "], size: " << data_size <<" ack seq: " << body.ack_seq_id_);
 
     strm_.rewind(true);
     strm_ << local_title_ << head << body;
@@ -664,6 +669,9 @@ void RUDPSocket::process_data(BinStream& strm, const Inet_Addr& remote_addr)
     RUDP_DEBUG("rudp[" << rudp_id_ << "] receive data[" << data.cur_seq_id_ 
         <<"], data size: " << data_size << ", ack seq: " << data.ack_seq_id_);
     recv_buffer_.on_data(data.cur_seq_id_, (const uint8_t *)strm.get_rptr(), data_size);
+    recv_data_cnt_++;
+    if (recv_data_cnt_ >= 10)
+        send_ack(recv_buffer_.get_ack_id());
 }
 
 void RUDPSocket::process_data_ack(BinStream& strm, const Inet_Addr& remote_addr)

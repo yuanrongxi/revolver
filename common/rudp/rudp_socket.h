@@ -202,6 +202,7 @@ private:
 
     uint64_t  last_heatbeat_ts_;
     uint64_t  last_ack_seq_id_;
+    uint32_t  recv_data_cnt_;
 };
 
 BASE_NAMESPACE_END_DECL
