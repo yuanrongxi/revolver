@@ -267,7 +267,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
             if (send_packet_number >= ccc_cwnd_size || seg->push_ts_ + rtt_threshold/3 > now_timer)
                 break;
              
-            if (ccc_->get_rtt() > 30 && min_seq + ccc_cwnd_size / 3 > seg->seq_ && seg->last_send_ts_ + lead_ts < now_timer
+            if (ccc_->get_rtt() > 30 && min_seq + ccc_cwnd_size / 3 - 2 > seg->seq_ && seg->last_send_ts_ + lead_ts < now_timer
                 || seg->last_send_ts_ + resend_threshold < now_timer)
             {
                 now_timer = CBaseTimeValue::get_time_value().msec();
