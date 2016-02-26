@@ -425,7 +425,7 @@ void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8
     //设置一个最后发送ACK的时刻
     if (ack_seq_id)
         recv_buffer_.set_send_last_ack_ts(now_ts);
-    RUDP_DEBUG("send data seq[" << cur_seq_id << "], size: " << data_size <<"ack seq: " << ack_seq_id);
+    RUDP_DEBUG("send data seq[" << cur_seq_id << "], size: " << data_size <<" ack seq: " << ack_seq_id);
 
     strm_.rewind(true);
     strm_ << local_title_ << head << body;
