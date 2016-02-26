@@ -19,53 +19,55 @@ BASE_NAMESPACE_BEGIN_DECL
 class RUDPCCCObject
 {
 public:
-	RUDPCCCObject();
-	virtual ~RUDPCCCObject();
+    RUDPCCCObject();
+    virtual ~RUDPCCCObject();
 
-	void				init(uint64_t last_ack_id);
-	void				reset();
+    void				init(uint64_t last_ack_id);
+    void				reset();
 
-	void				on_ack(uint64_t ack_seq);
-	void				on_loss(uint64_t base_seq, const LossIDArray& loss_ids);
-	void				on_timer(uint64_t now_ts);
+    void				on_ack(uint64_t ack_seq);
+    void				on_loss(uint64_t base_seq, const LossIDArray& loss_ids);
+    void				on_timer(uint64_t now_ts);
 
 public:
-	uint32_t			get_send_window_size() const {return snd_cwnd_;};
-	void				set_max_segment_size(uint16_t mss);
+    uint32_t			get_send_window_size() const {return snd_cwnd_;};
+    void				set_max_segment_size(uint16_t mss);
 
-	void				set_rtt(uint32_t keep_live_rtt);
-	uint32_t			get_rtt() const {return rtt_;};
+    void				set_rtt(uint32_t keep_live_rtt);
+    uint32_t			get_rtt() const {return rtt_;};
 
-	uint32_t			get_rtt_var() const {return rtt_var_;};
+    uint32_t			get_rtt_var() const {return rtt_var_;};
 
-	void				add_resend();
-	void				add_recv(uint32_t count);
+    void				add_resend();
+    uint32_t         get_resend() { return resend_count_; }
+
+    void				add_recv(uint32_t count);
 
 protected:
-	void				set_max_cwnd(uint32_t rtt);
+    void				set_max_cwnd(uint32_t rtt);
 private:
-	//当前发送窗口
-	uint32_t			snd_cwnd_;
+    //当前发送窗口
+    uint32_t			snd_cwnd_;
 
-	uint32_t			rtt_;
-	uint32_t			rtt_var_;
+    uint32_t			rtt_;
+    uint32_t			rtt_var_;
 
-	uint64_t			last_ack_id_;
+    uint64_t			last_ack_id_;
 
-	uint64_t			prev_on_ts_;
+    uint64_t			prev_on_ts_;
 
-	bool				slow_start_;
-	bool				loss_flag_;
+    bool				slow_start_;
+    bool				loss_flag_;
 
-	//第一次设置RTT
-	bool				rtt_first_;
-	uint32_t			resend_count_;
-	uint32_t			recv_count_;
+    //第一次设置RTT
+    bool				rtt_first_;
+    uint32_t			resend_count_;
+    uint32_t			recv_count_;
 
-	uint16_t			max_cwnd_;
-	uint16_t			min_cwnd_;
+    uint16_t			max_cwnd_;
+    uint16_t			min_cwnd_;
 
-	uint32_t			print_count_;
+    uint32_t			print_count_;
 };
 
 BASE_NAMESPACE_END_DECL

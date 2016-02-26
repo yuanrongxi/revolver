@@ -112,6 +112,11 @@ public:
     int32_t				send(const uint8_t* data, int32_t data_size);
     int32_t				recv(uint8_t* data, int32_t data_size);
 
+    void              get_net_stat(uint32_t &send_wnd, uint32_t &resend) {
+        send_wnd = send_buffer_.get_send_widnow_size();
+        resend = ccc_.get_resend();
+    }
+
 public:
     //BUFFER报文发送接口
     virtual void		send_ack(uint64_t ack_seq_id);
@@ -158,6 +163,7 @@ protected:
     void				send_keeplive(uint64_t now_ts);
     void				send_keeplive_ack(uint64_t ts);
 
+    
 private:
     //连接信息
     int32_t				rudp_id_;

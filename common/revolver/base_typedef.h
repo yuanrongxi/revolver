@@ -107,7 +107,7 @@ typedef unsigned long		uint64_t;
 #define NULL	0
 #endif
 
-//����صĳ�ʼ���Ĵ�С
+//定义池的初始化的大小
 #ifdef WIN32
 
 #ifndef CONNECTION_POOL_SIZE
