@@ -367,10 +367,14 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
         return ;
     }
 
-    if (last_ack_seq_id_ > ack_seq_id)
-        return;
+    if (last_ack_seq_id_ > ack_seq_id) {
+        if (last_ack_send_cnt_ < 5 && last_ack_seq_id_ - 1 == ack_seq_id)
+            return;
+    }
 
-    if (5 == last_ack_send_cnt_ && last_ack_seq_id_ + 1 == ack_seq_id)
+    /*if (5 <= last_ack_send_cnt_ && last_ack_seq_id_ + 1 == ack_seq_id)
+        last_ack_send_cnt_ = 0;*/
+    if (last_ack_seq_id_ != ack_seq_id)
         last_ack_send_cnt_ = 0;
 
     last_ack_seq_id_ = ack_seq_id;
@@ -392,10 +396,15 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
         RUDP_WARNING("failed to send ack, seq: " << ack_seq_id);
     }
 
-    if (ack_seq_id == last_ack_send_cnt_)
+    if (ack_seq_id == last_ack_seq_id_)
         ++ last_ack_send_cnt_;
     else
         last_ack_send_cnt_ = 0;
+    if (last_ack_send_cnt_ >= 5) {
+        ++last_ack_seq_id_;
+        //last_ack_send_cnt_ = 0;
+    }
+        
 }
 
 void RUDPSocket::send_nack(uint64_t base_seq_id, const LossIDArray& ids)
