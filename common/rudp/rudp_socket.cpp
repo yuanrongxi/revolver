@@ -50,6 +50,7 @@ RUDPSocket::RUDPSocket()
     last_heatbeat_ts_ = 0;
     last_ack_seq_id_ = 0;
     recv_data_cnt_ = 0;
+    last_ack_send_cnt_ = 0;
 }
 
 RUDPSocket::~RUDPSocket()
@@ -94,6 +95,7 @@ void RUDPSocket::reset()
 
     last_ack_seq_id_ = 0;
     recv_data_cnt_ = 0;
+    last_ack_send_cnt_ = 0;
 }
 
 void RUDPSocket::set_state(uint16_t state)
@@ -365,8 +367,11 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
         return ;
     }
 
-    if (last_ack_seq_id_ >= ack_seq_id)
+    if (last_ack_seq_id_ > ack_seq_id)
         return;
+
+    if (5 == last_ack_send_cnt_ && last_ack_seq_id_ + 1 == ack_seq_id)
+        last_ack_send_cnt_ = 0;
 
     last_ack_seq_id_ = ack_seq_id;
     recv_data_cnt_ = 0;
@@ -386,6 +391,11 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
     if (RUDP()->send_udp(local_index_, strm_, remote_addr_)) {
         RUDP_WARNING("failed to send ack, seq: " << ack_seq_id);
     }
+
+    if (ack_seq_id == last_ack_send_cnt_)
+        ++ last_ack_send_cnt_;
+    else
+        last_ack_send_cnt_ = 0;
 }
 
 void RUDPSocket::send_nack(uint64_t base_seq_id, const LossIDArray& ids)
