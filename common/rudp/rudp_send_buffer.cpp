@@ -121,11 +121,15 @@ int32_t RUDPSendBuffer::send(const uint8_t* data, int32_t data_size)
 void RUDPSendBuffer::on_ack(uint64_t seq)
 {
     //ID错误
-    if(cwnd_max_seq_ < seq)
-        return ;
+    if (cwnd_max_seq_ < seq) {
+        RUDP_WARNING("seq["<<seq <<"] id error, cwnd_max_seq: " << cwnd_max_seq_);
+        return;
+    }
+        
 
     if(!send_window_.empty())
     {
+        RUDP_DEBUG("try to remove segment, latest seq[" << seq <<"] send windows size: " << send_window_.size());
         //删除窗口的数据片
         SendWindowMap::iterator it = send_window_.begin();
         while(it != send_window_.end() && it->first <= seq)
