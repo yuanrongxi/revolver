@@ -64,6 +64,7 @@ private:
 
 	uint16_t			max_cwnd_;
 	uint16_t			min_cwnd_;
+	uint16_t			limit_cwnd_;
 
 	uint32_t			print_count_;
 };

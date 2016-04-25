@@ -937,7 +937,7 @@ void RUDPSocket::heartbeat()
 
     //Ä£¿éĞÄÌø
     ccc_.on_timer(now_ts);
-    recv_buffer_.on_timer(now_ts, ccc_.get_rtt_var());
+    recv_buffer_.on_timer(now_ts, ccc_.get_rtt_var(), ccc_.get_rtt());
     send_buffer_.on_timer(now_ts);
 }
 

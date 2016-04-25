@@ -33,7 +33,7 @@ public:
 	//来自网络中的数据
 	int32_t				on_data(uint64_t seq, const uint8_t* data, int32_t data_size);
 	//定时
-	void				on_timer(uint64_t now_timer, uint32_t rtc);
+	void				on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt);
 
 	//读取BUFFER中的数据
 	int32_t				read(uint8_t* data, int32_t data_size);
@@ -52,7 +52,7 @@ public:
 
 protected:
 	void				check_recv_window();
-	bool				check_loss(uint64_t now_timer, uint32_t rtc);
+	bool				check_loss();
 
 protected:
 	IRUDPNetChannel*	net_channel_;

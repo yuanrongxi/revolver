@@ -36,6 +36,7 @@ void RUDPCCCObject::reset()
 {
 	max_cwnd_ = DEFAULT_CWND_SIZE;
 	min_cwnd_ = DEFAULT_CWND_SIZE;
+	limit_cwnd_ = DEFAULT_CWND_SIZE;
 
 	snd_cwnd_ = DEFAULT_CWND_SIZE;
 	rtt_ = DEFAULT_RTT;
@@ -77,7 +78,7 @@ void RUDPCCCObject::on_ack(uint64_t ack_seq)
 	}
 	else //平衡状态
 	{
-		if (recv_count_ < snd_cwnd_ * rtt_var_ * 5 / (rtt_ * 8)) //出现丢包，不做加速
+		if (recv_count_ < snd_cwnd_ * rtt_var_ * 5 / (rtt_ * 8) || resend_count_ > rtt_ / 6) //出现丢包，不做加速
 			loss_flag_ = false;
 		else //加速，快速恢复
 		{
@@ -103,19 +104,18 @@ void RUDPCCCObject::set_max_cwnd(uint32_t rtt)
 { 
 	if (rtt < 10) //吞吐量上限设置
 		max_cwnd_ = 512;
-	else if (rtt < 30)
-		max_cwnd_ = 1024;
 	else if (rtt < 50)
-		max_cwnd_ = 1024 +256;
+		max_cwnd_ = 1024;
 	else if (rtt < 100)
 		max_cwnd_ = 1024 + 256;
 	else if (rtt <= 200)
 		max_cwnd_ = 1024 + 512;
 	else{
-		max_cwnd_ = 1024;
+		max_cwnd_ = 720;
 	}
 
-	min_cwnd_ = max_cwnd_ - 512 + 16;
+	limit_cwnd_ = max_cwnd_ - 512 + DEFAULT_CWND_SIZE;
+	max_cwnd_ = 2 * max_cwnd_;
 }   
 
 void RUDPCCCObject::add_resend()
@@ -130,7 +130,7 @@ void RUDPCCCObject::add_recv(uint32_t count)
 
 void RUDPCCCObject::on_timer(uint64_t now_ts)
 {
-	uint32_t delay = core_max(rtt_ / 8, 50);
+	uint32_t delay = core_max(rtt_, 50);
 	if (now_ts >= prev_on_ts_ + delay) //10个RTT决策一次
 	{
 		print_count_ ++;
@@ -155,24 +155,25 @@ void RUDPCCCObject::on_timer(uint64_t now_ts)
 			{
 				snd_cwnd_ = (uint32_t)(snd_cwnd_ + core_max(8,(snd_cwnd_ / 8)));
 				snd_cwnd_ = core_min(max_cwnd_, snd_cwnd_);
-				loss_flag_ = false;
+				if (snd_cwnd_ > limit_cwnd_)
+					min_cwnd_ = limit_cwnd_;
 			}
-			else if (recv_count_ < snd_cwnd_ * delay * 5 / (rtt_ * 8)){
+			else if (recv_count_ < snd_cwnd_ * delay * 3 / (rtt_ * 4)){
 				snd_cwnd_ = (uint32_t)(snd_cwnd_ - (snd_cwnd_ / 16));
 				snd_cwnd_ = core_max(min_cwnd_, snd_cwnd_);
 				loss_flag_ = true;
 			}
-			else if (rtt_var_ > 30 && resend_count_ >= core_max(8, snd_cwnd_ * delay * 3 / (8 * rtt_))){
-				snd_cwnd_ = (uint32_t)(snd_cwnd_ - (snd_cwnd_ / 10));
+			else if (resend_count_ >= core_max(8, snd_cwnd_ * delay * 3 / (8 * rtt_))){
+				snd_cwnd_ = (uint32_t)(snd_cwnd_ - (snd_cwnd_ / 8));
 				snd_cwnd_ = core_max(min_cwnd_, snd_cwnd_);
 				loss_flag_ = true;
 			}
-
+			
 			resend_count_ = 0;
 		}
-
 		recv_count_ = 0;
 		prev_on_ts_ = now_ts;
+		loss_flag_ = false;
 	} 
 }
 

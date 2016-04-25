@@ -1,11 +1,10 @@
 /*************************************************************************************
 *filename:	base_epoll_reactor.h
 *
-*to do:		����LINUXϵͳ�µ�EPOLL��Ӧ��
+*to do:		linux epoll
 *Create on: 2012-05
 *Author:	zerok
-*check list: EPOLL REACTOR����������������HANDLER�Ĳ����ɾ������ͨ���ڲ�����Ϣ����������
-			 ���Խ�ֹ���̲߳���EPOLL ��Ӧ�������ɾ��������	
+
 *************************************************************************************/
 #ifndef __BASE_EPOLL_REACTOR_H
 #define __BASE_EPOLL_REACTOR_H
@@ -69,7 +68,7 @@ private:
 
 	BASE_HANDLER				epfd_;
 	epoll_event*				events_;
-	int32_t						nevent_;		//������EVENT����
+	int32_t						nevent_;	
 
 	uint64_t					prev_ts_;
 };

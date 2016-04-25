@@ -143,7 +143,6 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 
 			RETURN_SEND_SEG(it->second);
 			send_window_.erase(it ++);
-
 			ccc_->add_recv(1);
 		}
 	}
@@ -174,13 +173,16 @@ void RUDPSendBuffer::on_nack(uint64_t base_seq, const LossIDArray& loss_ids)
 
 				RETURN_SEND_SEG(it->second);
 				send_window_.erase(it);
-
 				ccc_->add_recv(1);
+				RUDP_SEND_DEBUG("del, seq = " << k << "%u\n");
 			}
 		}
 
 		seq = loss_ids[i] + base_seq;
 	}
+
+	if (loss_ids.size() > 0)
+		ccc_->on_loss(base_seq, loss_ids);
 
 	on_ack(base_seq);
 }
@@ -208,16 +210,17 @@ void RUDPSendBuffer::clear_loss()
 uint32_t RUDPSendBuffer::get_threshold(uint32_t rtt)
 {
 	uint32_t rtt_threshold = 10;
+	uint32_t var_rtt = core_max(ccc_->get_rtt_var(), rtt / 8);
 	if (rtt < 10)
 		rtt_threshold = 3;
 	if(rtt < 30)
-		rtt_threshold = rtt + ccc_->get_rtt_var() + 3;
+		rtt_threshold = rtt + var_rtt + 3;
 	else if (rtt < 100)
-		rtt_threshold = rtt + ccc_->get_rtt_var() + 10;
+		rtt_threshold = rtt + var_rtt + 10;
 	else if (rtt < 300)
-		rtt_threshold = rtt + ccc_->get_rtt_var();
+		rtt_threshold = rtt + var_rtt;
 	else 
-		rtt_threshold = (uint32_t)(rtt + ccc_->get_rtt_var() - rtt / 8);
+		rtt_threshold = (uint32_t)(rtt + var_rtt - rtt / 8);
 
 	if (ccc_->get_rtt_var() > 50)
 		rtt_threshold += ccc_->get_rtt_var();
@@ -245,15 +248,14 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	uint32_t cwnd_size;
 	uint32_t rtt_threshold = get_threshold(ccc_->get_rtt());
 	uint32_t ccc_cwnd_size = ccc_->get_send_window_size();
+	uint32_t ccc_delay_size = ccc_cwnd_size / 8;
 	RUDPSendSegment* seg = NULL;
 	SendWindowMap::iterator map_it;
-	uint32_t lead_ts = core_min(100, rtt_threshold / 4);
+	uint32_t lead_ts = core_min(ccc_->get_rtt() / 4, rtt_threshold / 4);
 	uint32_t send_packet_number  = 0;
 
 	cwnd_size = send_window_.size();
 
-	if (calculate_snd_size(now_timer) == 0)
-		return;
 
 	if (cwnd_size > 0 && send_packet_number < ccc_cwnd_size)//丢包队列为空，重发所有窗口中超时的分片
 	{ 
@@ -266,7 +268,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 			if (send_packet_number >= ccc_cwnd_size || seg->push_ts_ + rtt_threshold/3 > now_timer)
 				break;
 			 
-			if (ccc_->get_rtt() > 30 && min_seq + ccc_cwnd_size / 3 > seg->seq_ && seg->last_send_ts_ + lead_ts < now_timer
+			if (ccc_->get_rtt() > 30 && min_seq + core_max(ccc_delay_size, 8) > seg->seq_ && seg->last_send_ts_ + lead_ts < now_timer
 				|| seg->last_send_ts_ + rtt_threshold < now_timer)
 			{
 				now_timer = CBaseTimeValue::get_time_value().msec();

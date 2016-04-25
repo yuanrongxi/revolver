@@ -96,20 +96,25 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 			memcpy(seg->data_, data, data_size);
 
 			recv_window_[seq] = seg;
-			loss_map_[seq] = seq;
 		}
 
 		ok_count_++;
 	}
 
-	if (ok_count_ > 64){
-		net_channel_->send_ack(first_seq_);
-		ok_count_ = 0;
-		//set_send_last_ack_ts(CBaseTimeValue::get_time_value().msec());
+	if (max_seq_ < seq){
+		if (max_seq_ > 0){
+			for (uint64_t i = max_seq_ + 1; i < seq; i++)
+				loss_map_[i] = i;
+		}
+		max_seq_ = seq;
 	}
 
-	if(max_seq_ < seq)
-		max_seq_ = seq;
+	if (ok_count_ >= 128){
+		if (!check_loss())
+			net_channel_->send_ack(first_seq_);
+
+		ok_count_ = 0;
+	}
 
 	return 0;
 }
@@ -137,16 +142,19 @@ void RUDPRecvBuffer::check_recv_window()
 	}
 }
 
-bool RUDPRecvBuffer::check_loss(uint64_t now_timer, uint32_t rtc)
+bool RUDPRecvBuffer::check_loss()
 {
 	bool ret = false;
 
 	LossIDArray ids;
-	for (LossIDTSMap::iterator it = loss_map_.begin(); it != loss_map_.end();)
+	int count = 0;
+	for (LossIDTSMap::iterator it = loss_map_.begin(); it != loss_map_.end(); it++)
 	{
 		if (it->first < first_seq_ + 2048){
 			ids.push_back(static_cast<uint32_t>(it->first - first_seq_));
 			ret = true;
+			if (count++ > 150)
+				break;
 		}
 		else
 			break;
@@ -158,24 +166,20 @@ bool RUDPRecvBuffer::check_loss(uint64_t now_timer, uint32_t rtc)
 	return ret;
 } 
 
-void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc)
+void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt)
 {
-	if(check_loss(now_timer, rtc))
-	{
-		ok_count_ = 0;
-		recv_new_packet_ = false;
-	}
-	else{
 
-		uint32_t rtc_threshold = core_min(30, rtc);
-		if (last_ack_ts_ + rtc_threshold <= now_timer)
-		{
+	if (last_ack_ts_ + rtc + 10 < now_timer){
+		if (check_loss()){
+			ok_count_ = 0;
+			recv_new_packet_ = false;
+		}
+		else{
 			net_channel_->send_ack(first_seq_);
-			set_send_last_ack_ts(now_timer);
 			ok_count_ = 0;
 		}
+		set_send_last_ack_ts(now_timer);
 	}
-
 	//ÅÐ¶ÏÊÇ·ñ¿ÉÒÔ¶Á
 	if(!recv_data_.empty() && net_channel_ != NULL)
 		net_channel_->on_read();
