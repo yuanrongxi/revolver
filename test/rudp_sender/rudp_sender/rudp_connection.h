@@ -91,6 +91,8 @@ public:
 	int32_t			rudp_close_event(int32_t rudp_id);
 	int32_t			rudp_exception_event(int32_t rudp_id);
 
+	void			send_packet();
+
 public:
 	int32_t			connect(const Inet_Addr& src_addr, const Inet_Addr& dst_addr);
 	void			close();
@@ -106,7 +108,6 @@ public:
 
 protected:
 	void			process(RUDPTestPacket* packet);
-	void			send_packet();
 
 protected:
 	RUDPStream		rudp_sock_;
