@@ -53,6 +53,9 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 {
 	recv_new_packet_ = true;
 
+	//删除丢包
+	loss_map_.erase(seq);
+
 	if(seq > first_seq_ + MAX_SEQ_INTNAL || data_size > MAX_SEGMENT_SIZE)
 	{
 		//报告异常
@@ -79,8 +82,6 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 		//报告可读
 		net_channel_->on_read();
 
-		//删除丢包
-		loss_map_.erase(seq);
 		ok_count_++;
 	}
 	else if(seq > first_seq_ + 1)
@@ -146,7 +147,6 @@ bool RUDPRecvBuffer::check_loss(uint64_t now_timer, uint32_t rtc)
 		if (it->first < first_seq_ + 2048){
 			ids.push_back(static_cast<uint32_t>(it->first - first_seq_));
 			ret = true;
-			loss_map_.erase(it++);
 		}
 		else
 			break;

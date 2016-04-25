@@ -4,7 +4,7 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 
-RUDPStream::RUDPStream() : handler_(INVALID_RUDP_HANDLE)
+RUDPStream::RUDPStream() : handler_(INVALID_RUDP_HANDLE), user_data_(0)
 {
 
 }

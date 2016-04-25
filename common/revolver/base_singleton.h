@@ -10,10 +10,10 @@ class CSingleton
 public:
 	static T* instance()
 	{
-#ifndef WIN32
+#if defined(__linux__) || defined(__APPLE__)
 		pthread_once(&ponce_, &CSingleton::init);
 #else
-		if(obj_ == NULL)		/*WINDOWS下不支持多线程单例*/
+		if(obj_ == NULL)		/*WINDOWS锟铰诧拷支锟街讹拷锟竭程碉拷锟斤拷*/
 			obj_ = new T();
 #endif
 
@@ -60,7 +60,7 @@ private:
 	};
 };
 
-#ifndef WIN32
+#if defined(__linux__) || defined(__APPLE__)
 template <class T> pthread_once_t CSingleton<T>::ponce_ = PTHREAD_ONCE_INIT;
 #endif
 

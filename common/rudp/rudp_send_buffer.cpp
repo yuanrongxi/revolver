@@ -160,12 +160,10 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 void RUDPSendBuffer::on_nack(uint64_t base_seq, const LossIDArray& loss_ids)
 {
 	uint64_t seq = base_seq;
-	//增加丢包信息
-	if (ccc_->get_rtt() > 20){
-		uint32_t sz = loss_ids.size();
-		for (size_t i = 0; i < sz; ++i)
-		{
-			SendWindowMap::iterator it = send_window_.find(loss_ids[i] + base_seq);
+	uint32_t sz = loss_ids.size();
+	for (size_t i = 0; i < sz; ++i){
+		for(uint64_t k = seq + 1; k < loss_ids[i] + base_seq; k ++){
+			SendWindowMap::iterator it = send_window_.find(k);
 			if (it != send_window_.end()){
 				if (buffer_data_size_ >  it->second->data_size_)
 					buffer_data_size_ = buffer_data_size_ - it->second->data_size_;
@@ -175,11 +173,13 @@ void RUDPSendBuffer::on_nack(uint64_t base_seq, const LossIDArray& loss_ids)
 				bandwidth_ += it->second->data_size_;
 
 				RETURN_SEND_SEG(it->second);
-				send_window_.erase(it++);
+				send_window_.erase(it);
 
 				ccc_->add_recv(1);
 			}
 		}
+
+		seq = loss_ids[i] + base_seq;
 	}
 
 	on_ack(base_seq);
