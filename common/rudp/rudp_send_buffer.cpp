@@ -210,17 +210,15 @@ void RUDPSendBuffer::clear_loss()
 uint32_t RUDPSendBuffer::get_threshold(uint32_t rtt)
 {
 	uint32_t rtt_threshold = 10;
-	uint32_t var_rtt = core_max(ccc_->get_rtt_var(), rtt / 8);
+	uint32_t var_rtt = core_max(ccc_->get_rtt_var(), rtt / 16);
 	if (rtt < 10)
 		rtt_threshold = 3;
 	if(rtt < 30)
 		rtt_threshold = rtt + var_rtt + 3;
 	else if (rtt < 100)
 		rtt_threshold = rtt + var_rtt + 10;
-	else if (rtt < 300)
-		rtt_threshold = rtt + var_rtt;
 	else 
-		rtt_threshold = (uint32_t)(rtt + var_rtt - rtt / 8);
+		rtt_threshold = rtt + var_rtt;
 
 	if (ccc_->get_rtt_var() > 50)
 		rtt_threshold += ccc_->get_rtt_var();
@@ -251,7 +249,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	uint32_t ccc_delay_size = ccc_cwnd_size / 8;
 	RUDPSendSegment* seg = NULL;
 	SendWindowMap::iterator map_it;
-	uint32_t lead_ts = core_min(ccc_->get_rtt() / 4, rtt_threshold / 4);
+	uint32_t lead_ts = rtt_threshold / 4;
 	uint32_t send_packet_number  = 0;
 
 	cwnd_size = send_window_.size();

@@ -78,9 +78,9 @@ void RUDPCCCObject::on_ack(uint64_t ack_seq)
 	}
 	else //平衡状态
 	{
-		if (recv_count_ < snd_cwnd_ * rtt_var_ * 5 / (rtt_ * 8) || resend_count_ > rtt_ / 6) //出现丢包，不做加速
+		if (recv_count_ / 2 < resend_count_) //出现丢包，不做加速
 			loss_flag_ = false;
-		else //加速，快速恢复
+		else if(resend_count_ == 0) //加速，快速恢复
 		{
 			snd_cwnd_ = (uint32_t)(snd_cwnd_ + (snd_cwnd_ >> 3));
 			snd_cwnd_ = core_min(max_cwnd_, snd_cwnd_);
