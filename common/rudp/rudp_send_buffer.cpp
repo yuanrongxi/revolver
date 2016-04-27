@@ -158,11 +158,12 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 
 void RUDPSendBuffer::on_nack(uint64_t base_seq, const LossIDArray& loss_ids)
 {
+	SendWindowMap::iterator it;
 	uint64_t seq = base_seq;
 	uint32_t sz = loss_ids.size();
 	for (size_t i = 0; i < sz; ++i){
 		for(uint64_t k = seq + 1; k < loss_ids[i] + base_seq; k ++){
-			SendWindowMap::iterator it = send_window_.find(k);
+			it = send_window_.find(k);
 			if (it != send_window_.end()){
 				if (buffer_data_size_ >  it->second->data_size_)
 					buffer_data_size_ = buffer_data_size_ - it->second->data_size_;
@@ -178,6 +179,7 @@ void RUDPSendBuffer::on_nack(uint64_t base_seq, const LossIDArray& loss_ids)
 			}
 		}
 
+		/*设置成立即重发*/
 		seq = loss_ids[i] + base_seq;
 	}
 
@@ -253,17 +255,16 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	uint32_t send_packet_number  = 0;
 
 	cwnd_size = send_window_.size();
+	uint32_t min_seq = send_window_.begin()->first;
+	SendWindowMap::iterator end_it = send_window_.end();
 
 
-	if (cwnd_size > 0 && send_packet_number < ccc_cwnd_size)//丢包队列为空，重发所有窗口中超时的分片
+	if (cwnd_size > 0)//丢包队列为空，重发所有窗口中超时的分片
 	{ 
-		uint32_t min_seq = send_window_.begin()->first;
-
-		SendWindowMap::iterator end_it = send_window_.end();
 		for (map_it = send_window_.begin(); map_it != end_it; ++map_it)
 		{
 			seg = map_it->second;
-			if (send_packet_number >= ccc_cwnd_size || seg->push_ts_ + rtt_threshold/3 > now_timer)
+			if (send_packet_number >= ccc_cwnd_size)
 				break;
 			 
 			if (ccc_->get_rtt() > 30 && min_seq + core_max(ccc_delay_size, 8) > seg->seq_ && seg->last_send_ts_ + lead_ts < now_timer

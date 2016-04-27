@@ -170,14 +170,13 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt)
 {
 
 	if (last_ack_ts_ + rtc + 10 < now_timer){
-		if (check_loss()){
-			ok_count_ = 0;
-			recv_new_packet_ = false;
+		if (ok_count_ > 0){
+			if (check_loss())
+				recv_new_packet_ = false;
+			else
+				net_channel_->send_ack(first_seq_);
 		}
-		else{
-			net_channel_->send_ack(first_seq_);
-			ok_count_ = 0;
-		}
+		ok_count_ = 0;
 		set_send_last_ack_ts(now_timer);
 	}
 	//еп╤ойг╥Я©ирт╤а
