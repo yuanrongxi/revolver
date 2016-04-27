@@ -5,7 +5,7 @@
 #include "rudp/rudp_socket.h"
 #include <math.h>
  
-#define PACKET_NUM	10 
+#define PACKET_NUM	100 
 #define SEND_DELAY  100
 
 RUDPConnection::RUDPConnection()
@@ -249,6 +249,7 @@ int32_t RUDPConnection::rudp_output_event(int32_t rudp_id)
 
 int32_t RUDPConnection::rudp_close_event(int32_t rudp_id)
 {
+	std::cout << "close rudp !!" << std::endl;
 	if(state_ != RUDP_CONN_IDLE)
 	{
 		reset();
@@ -265,6 +266,7 @@ int32_t RUDPConnection::rudp_close_event(int32_t rudp_id)
 
 int32_t RUDPConnection::rudp_exception_event(int32_t rudp_id)
 {
+	std::cout << "exception rudp !!" << std::endl;
 	if(state_ != RUDP_CONN_IDLE)
 	{
 		reset();

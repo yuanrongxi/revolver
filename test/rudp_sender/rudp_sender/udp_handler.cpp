@@ -30,7 +30,7 @@ int32_t RecvUDPHandler::open(const Inet_Addr& local_addr)
 	if(ret == 0)
 	{
 		//设置缓冲区大小
-		int32_t buf_size = 10 * 1024 * 1024; //10M
+		int32_t buf_size = 20 * 1024 * 1024; //10M
 		sock_dgram_.set_option(SOL_SOCKET, SO_RCVBUF, (void *)&buf_size, sizeof(int32_t));
 		sock_dgram_.set_option(SOL_SOCKET, SO_SNDBUF, (void *)&buf_size, sizeof(int32_t));
 
