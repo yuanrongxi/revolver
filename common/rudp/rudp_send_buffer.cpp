@@ -255,12 +255,13 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	uint32_t send_packet_number  = 0;
 
 	cwnd_size = send_window_.size();
-	uint32_t min_seq = send_window_.begin()->first;
+	uint32_t min_seq = 0;
 	SendWindowMap::iterator end_it = send_window_.end();
 
 
 	if (cwnd_size > 0)//丢包队列为空，重发所有窗口中超时的分片
 	{ 
+		min_seq = send_window_.begin()->first;
 		for (map_it = send_window_.begin(); map_it != end_it; ++map_it)
 		{
 			seg = map_it->second;
