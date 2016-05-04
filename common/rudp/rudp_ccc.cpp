@@ -6,7 +6,7 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 //默认窗口大小
-#define DEFAULT_CWND_SIZE	16
+#define DEFAULT_CWND_SIZE	32
 //最小窗口
 #define MIN_CWND_SIZE		128
 

@@ -248,7 +248,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	uint32_t cwnd_size;
 	uint32_t rtt_threshold = get_threshold(ccc_->get_rtt());
 	uint32_t ccc_cwnd_size = ccc_->get_send_window_size();
-	uint32_t ccc_delay_size = ccc_cwnd_size / 8;
+	uint32_t ccc_delay_size = ccc_cwnd_size / 16;
 	RUDPSendSegment* seg = NULL;
 	SendWindowMap::iterator map_it;
 	uint32_t lead_ts = rtt_threshold / 4;
@@ -268,7 +268,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 			if (send_packet_number >= ccc_cwnd_size)
 				break;
 			 
-			if (ccc_->get_rtt() > 30 && min_seq + core_max(ccc_delay_size, 8) > seg->seq_ && seg->last_send_ts_ + lead_ts < now_timer
+			if (ccc_->get_rtt() > 30 && min_seq + ccc_delay_size > seg->seq_ && seg->last_send_ts_ + lead_ts < now_timer
 				|| seg->last_send_ts_ + rtt_threshold < now_timer)
 			{
 				now_timer = CBaseTimeValue::get_time_value().msec();
@@ -291,7 +291,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 	}
 
 	//判断是否可以发送新的报文
-	if (ccc_cwnd_size > send_packet_number && cwnd_size < ccc_cwnd_size)
+	if (send_packet_number < ccc_cwnd_size &&  cwnd_size < ccc_cwnd_size)
 	{
 		while(!send_data_.empty())
 		{
@@ -301,7 +301,7 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 				break;
 
 			//判断发送窗口
-			if(cwnd_size < ccc_cwnd_size)
+			if (cwnd_size < ccc_cwnd_size || send_packet_number > ccc_cwnd_size)
 			{
 				send_data_.pop_front();
 				send_window_.insert(SendWindowMap::value_type(seg->seq_, seg));
@@ -316,6 +316,8 @@ void RUDPSendBuffer::attempt_send(uint64_t now_timer)
 				net_channel_->send_data(0, seg->seq_, seg->data_, seg->data_size_, now_timer);
 				if(cwnd_max_seq_ < seg->seq_)
 					cwnd_max_seq_ = seg->seq_;
+
+				send_packet_number++;
 
 				/*RUDP_SEND_DEBUG("send seq = " << seg->seq_);*/
 			}

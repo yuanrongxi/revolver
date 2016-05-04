@@ -7,7 +7,7 @@
 BASE_NAMESPACE_BEGIN_DECL
 
 //每6秒发送一次KEEPLIVE
-#define DEFAULT_KEEPLIVE			200
+#define DEFAULT_KEEPLIVE			1000
 //默认2分钟心跳未收到就断开
 #define DEFAULT_TIMEOUT_COUNT		40
 #define CONNECT_DELAY				1000
@@ -309,7 +309,7 @@ int32_t RUDPSocket::setoption(int32_t op_type, int32_t op_value)
         break;
 
     case RUDP_TIMEOUT_COUNT:
-        timeout_count_ = op_value > 2 ? op_value : 2;
+        timeout_count_ = op_value > 4 ? op_value : 4;
         RUDP_INFO("set rudp timeout delay = " << timeout_count_ * 6 << "s");
         break;
 
@@ -863,13 +863,11 @@ void RUDPSocket::process_fin2(BinStream& strm, const Inet_Addr& remote_addr)
 void RUDPSocket::process_keeplive(BinStream& strm, const Inet_Addr& remote_addr)
 {
     RUDP_INFO("keeplive from " << remote_addr << ", rudp id = " << rudp_id_);
-
+	keeplive_count_ = 0;
     if(state_ != RUDP_CONNECTED)
     {
         return ;
     }
-    
-    keeplive_count_ = 0;
 
     PARSE_RUDP_MESSAGE(strm, RDUPKeepLive, body, "parse keeplive failed!");
 
@@ -906,8 +904,9 @@ void RUDPSocket::heartbeat()
     uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
 
     //心跳计数
-    if(now_ts > heart_ts_ + keeplive_intnal_)
+	if (now_ts > heart_ts_ + core_max(ccc_.get_rtt() + ccc_.get_rtt_var(), keeplive_intnal_))
     {
+		heart_ts_ = now_ts;
         keeplive_count_ ++;
         if(keeplive_count_ > timeout_count_) //超时
         {
