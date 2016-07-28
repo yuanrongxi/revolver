@@ -1,8 +1,8 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	core_daemon_event.h
 *
-*to do:		¶¨ÒåDAEMONÊÂ¼şÍ¨Öª½Ó¿Ú
-¹ÜÀí
+*to do:		å®šä¹‰DAEMONäº‹ä»¶é€šçŸ¥æ¥å£
+ç®¡ç†
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -21,22 +21,22 @@ public:
 	IDaemonEvent(){};
 	virtual ~IDaemonEvent(){};
 
-	//ÆäËû·şÎñÆ÷ÉÏÏßÍ¨Öª
+	//å…¶ä»–æœåŠ¡å™¨ä¸Šçº¿é€šçŸ¥
 	virtual void on_add_server(uint32_t sid, uint8_t stype, uint16_t net_type, const Inet_Addr& tel_addr, const Inet_Addr& cnc_addr){};
-	//ÆäËû·şÎñÆ÷µôÏßÍ¨Öª
+	//å…¶ä»–æœåŠ¡å™¨æ‰çº¿é€šçŸ¥
 	virtual void on_del_server(uint32_t sid, uint8_t stype){};
-	//±¾µØ×¢²áÏìÓ¦£¬Ö÷ÒªÊÇ»ñµÃSIDºÍÓëDAEMONÍ¨ĞÅµÄµØÖ·¡¢¼àÌı¶Ë¿Ú
+	//æœ¬åœ°æ³¨å†Œå“åº”ï¼Œä¸»è¦æ˜¯è·å¾—SIDå’Œä¸DAEMONé€šä¿¡çš„åœ°å€ã€ç›‘å¬ç«¯å£
 	virtual void on_register(uint32_t sid, uint8_t stype, uint16_t net_type, const Inet_Addr& tel_addr, const Inet_Addr& cnc_addr){};
 };
 
-//·şÎñÆ÷ÅäÖÃ½Ó¿Ú£¬¿Í»§¶Ë¿ÉÒÔ²»ÊµÏÖ,±¾½Ó¿ÚÖ÷ÒªÊÇÊµÏÖ¶ÔSERVER ID, SERVER TYPE, SERVER IPµÄ¶ÁÈ¡ºÍ±£´æ,Ö÷ÒªÓÃÓÚ±£´æDAEMONÍÆËÍ¹ıÀ´µÄĞÅÏ¢
+//æœåŠ¡å™¨é…ç½®æ¥å£ï¼Œå®¢æˆ·ç«¯å¯ä»¥ä¸å®ç°,æœ¬æ¥å£ä¸»è¦æ˜¯å®ç°å¯¹SERVER ID, SERVER TYPE, SERVER IPçš„è¯»å–å’Œä¿å­˜,ä¸»è¦ç”¨äºä¿å­˜DAEMONæ¨é€è¿‡æ¥çš„ä¿¡æ¯
 class IDaemonConfig
 {
 public:
 	IDaemonConfig() {};
 	virtual ~IDaemonConfig(){};
 
-	//´ÓÅäÖÃ³ö¶ÁÈ¡SERVER ID, SERVER TYPE, SERVER IP±£´æµ½SERVER_ID SERVER_TYPEµÈºêÉÏ
+	//ä»é…ç½®å‡ºè¯»å–SERVER ID, SERVER TYPE, SERVER IPä¿å­˜åˆ°SERVER_ID SERVER_TYPEç­‰å®ä¸Š
 	virtual void read(){}; 
 	virtual void write(){};
 };

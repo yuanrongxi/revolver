@@ -1,10 +1,10 @@
 /*************************************************************************************
 *filename:	base_cache_buffer.h
 *
-*to do:		ÊµÏÖÒ»¸ö»º³åµ¥ÔªµÄ»º³åÇø£¬ÎªÁË¿ÉÒÔ½øĞĞ¶ÔÓ¦µÄ²éÕÒºÍ¸üĞÂ¡¢Ìæ»»²Ù×÷£¬Ö÷ÒªÓÃ»§
-			×öÃ½Ìå±¨ÎÄµÄ»º³åÇø
+*to do:		å®ç°ä¸€ä¸ªç¼“å†²å•å…ƒçš„ç¼“å†²åŒºï¼Œä¸ºäº†å¯ä»¥è¿›è¡Œå¯¹åº”çš„æŸ¥æ‰¾å’Œæ›´æ–°ã€æ›¿æ¢æ“ä½œï¼Œä¸»è¦ç”¨æˆ·
+			åšåª’ä½“æŠ¥æ–‡çš„ç¼“å†²åŒº
 *Create on: 2013-03
-			2013-03 ÊµÏÖ»ù±¾µÄ»º³åÇøÊı×é
+			2013-03 å®ç°åŸºæœ¬çš„ç¼“å†²åŒºæ•°ç»„
 *Author:	zerok
 *check list:
 *************************************************************************************/
@@ -17,7 +17,7 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 
-//TÀàĞÍÒ»¶¨ÒªÊÇÖ¸ÕëÀàĞÍ!!!!
+//Tç±»å‹ä¸€å®šè¦æ˜¯æŒ‡é’ˆç±»å‹!!!!
 template<typename T, int32_t CAPACITY>
 class CacheBuffer_T
 {
@@ -59,7 +59,7 @@ public:
 		return ret;
 	}
 
-	//²åÈëÒ»¸öµ¥Ôª
+	//æ’å…¥ä¸€ä¸ªå•å…ƒ
 	bool insert(uint32_t key, const T& data)
 	{
 		bool ret = false;
@@ -79,7 +79,7 @@ public:
 			for(uint32_t i = 0; i < key_space; ++i)
 			{
 				max_index_ ++;
-				if(max_index_ == min_index_) //ÍùÇ°ÒÆ¶¯
+				if(max_index_ == min_index_) //å¾€å‰ç§»åŠ¨
 				{
 					min_index_ ++;
 					min_index_ = min_index_ % CAPACITY;
@@ -103,7 +103,7 @@ public:
 		return ret;
 	}
 
-	//É¾³ı×îÇ°ÃæµÄµ¥Ôª
+	//åˆ é™¤æœ€å‰é¢çš„å•å…ƒ
 	T erase()
 	{
 		T ret = NULL;
@@ -141,11 +141,11 @@ public:
 private:
 	T*			buffer_;
 
-	uint32_t	min_index_;		//×îĞ¡ĞòºÅµÄÎ»ÖÃ
-	uint32_t	max_index_;		//×î´óĞòºÅµÄÎ»ÖÃ
+	uint32_t	min_index_;		//æœ€å°åºå·çš„ä½ç½®
+	uint32_t	max_index_;		//æœ€å¤§åºå·çš„ä½ç½®
 
-	uint32_t	min_key_;		//×îĞ¡ĞòºÅ
-	uint32_t	max_key_;		//×î´óĞòºÅ
+	uint32_t	min_key_;		//æœ€å°åºå·
+	uint32_t	max_key_;		//æœ€å¤§åºå·
 };
 
 BASE_NAMESPACE_END_DECL

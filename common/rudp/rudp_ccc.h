@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	rudp_ccc.h
 *
-*to do:		RUDP·¢ËÍÂëÂÊ¿ØÖÆÆ÷£¬ÊµÏÖ´ø¿íÆÀ¹À¡¢·¢ËÍ´°¿Ú¾ö²ß¡¢RTT¼ÆËãµÈ
+*to do:		RUDPå‘é€ç ç‡æ§åˆ¶å™¨ï¼Œå®ç°å¸¦å®½è¯„ä¼°ã€å‘é€çª—å£å†³ç­–ã€RTTè®¡ç®—ç­‰
 *Create on: 2013-04
 *Author:	zerok
 *check list:
@@ -15,7 +15,7 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 
-//CCCÏŞËÙ¿ØÖÆÆ÷
+//CCCé™é€Ÿæ§åˆ¶å™¨
 class RUDPCCCObject
 {
 public:
@@ -46,7 +46,7 @@ public:
 protected:
     void				set_max_cwnd(uint32_t rtt);
 private:
-    //µ±Ç°·¢ËÍ´°¿Ú
+    //å½“å‰å‘é€çª—å£
     uint32_t			snd_cwnd_;
 
     uint32_t			rtt_;
@@ -59,13 +59,14 @@ private:
     bool				slow_start_;
     bool				loss_flag_;
 
-    //µÚÒ»´ÎÉèÖÃRTT
+    //ç¬¬ä¸€æ¬¡è®¾ç½®RTT
     bool				rtt_first_;
     uint32_t			resend_count_;
     uint32_t			recv_count_;
 
     uint16_t			max_cwnd_;
     uint16_t			min_cwnd_;
+    uint16_t			limit_cwnd_;
 
     uint32_t			print_count_;
 };

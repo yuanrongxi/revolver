@@ -7,8 +7,9 @@
 
 CVarHandler::CVarHandler()
 {
-	//ÉèÖÃ´¦Àí¹Ø¼ü×ÖvarµÄ¿é
-	if (!GET_KEYWORDSET()->IsKeyWord(string(VAR)))
+	//ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½varï¿½Ä¿ï¿½
+	string val = VAR;
+	if (!GET_KEYWORDSET()->IsKeyWord(val))
 	{
 		std::cerr << "CVarHandler:bind wrong key word" << std::endl;
 		abort();
@@ -48,6 +49,6 @@ void CVarHandler::AnalysisBlockContent(string& str_line, int line_num)
 		THROW_ERROR(line_num, "Error:bad syntax, expected '='");
 	}
 
-	//to do:½«±äÁ¿ÃûºÍÖµ¼ÓÈë±äÁ¿ÃèÊö±í
+	//to do:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	GET_VARDEFMAP()->AddVarDef(v_elem[1], v_elem[3]);
 }

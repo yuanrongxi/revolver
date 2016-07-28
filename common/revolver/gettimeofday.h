@@ -1,7 +1,7 @@
 #ifndef __GETTIMEOFDAY_H
 #define __GETTIMEOFDAY_H
 #ifdef WIN32
-//ÉêÃ÷ÒıÓÃ
+//ç”³æ˜å¼•ç”¨
 int gettimeofday (struct timeval *tv, void *tz);
 #endif
 #endif

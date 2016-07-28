@@ -8,7 +8,8 @@
 
 CDatatypeHandler::CDatatypeHandler()
 {
-	if (!GET_KEYWORDSET()->IsKeyWord(string(DATA_TYPE)))
+	string val = DATA_TYPE;
+	if (!GET_KEYWORDSET()->IsKeyWord(val))
 	{
 		std::cerr << "CDatatypeHandler:bind wrong key word" << std::endl;
 		abort();

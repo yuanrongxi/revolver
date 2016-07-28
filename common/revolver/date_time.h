@@ -30,43 +30,43 @@ public:
 	DateTime(time_t seconds);
 	DateTime(int year, int month, int day);
 	DateTime(int year, int month, int day, int hour, int minute, int second);
-	DateTime(std::string datetimeStr); //ÈÕÆÚ×Ö·û´®¸ñÊ½ Äê/ÔÂ/ÈÕ Ê±:·Ö:Ãë Àı:2008/02/03 9:30:20 ³ö´í·µ»Ø 01/01/1970 00:00:00
+	DateTime(std::string datetimeStr); //æ—¥æœŸå­—ç¬¦ä¸²æ ¼å¼ å¹´/æœˆ/æ—¥ æ—¶:åˆ†:ç§’ ä¾‹:2008/02/03 9:30:20 å‡ºé”™è¿”å› 01/01/1970 00:00:00
 	DateTime(std::string datetimeStr, std::string formaterStr);
 public:
 	~DateTime(void);
 public:
-	void AddYears(const time_t years); //½«Ö¸¶¨µÄÄê·İÊı¼Óµ½´ËÊµÀıµÄÖµÉÏ¡£
-	void AddMonths(const time_t Months); //½«Ö¸¶¨µÄÔÂ·İÊı¼Óµ½´ËÊµÀıµÄÖµÉÏ¡£
-	void AddDays(const time_t days); //½«Ö¸¶¨µÄÌìÊı¼Óµ½´ËÊµÀıµÄÖµÉÏ¡£
-	void AddHours(const time_t hours); //½«Ö¸¶¨µÄĞ¡Ê±Êı¼Óµ½´ËÊµÀıµÄÖµÉÏ¡£
-	void AddMinutes(const time_t minutes); //½«Ö¸¶¨µÄ·ÖÖÓÊı¼Óµ½´ËÊµÀıµÄÖµÉÏ¡£
-	void AddSeconds(const time_t seconds); //½«Ö¸¶¨µÄÃëÊı¼Óµ½´ËÊµÀıµÄÖµÉÏ¡£
-	void AddWeeks(const time_t weeks); //½«Ö¸¶¨µÄÖÜÊı¼Óµ½Ğ©ÊµÉÏµÄÖµÉÏ¡£
-	static int Compare(const DateTime *value1, const DateTime *value2); //¶ÔÁ½¸ö DateTime µÄÊµÀı½øĞĞ±È½Ï£¬²¢·µ»ØÒ»¸öÖ¸Ê¾µÚÒ»¸öÊµÀıÊÇÔçÓÚ¡¢µÈÓÚ»¹ÊÇÍíÓÚµÚ¶ş¸öÊµÀıµÄÕûÊı¡£  ·µ»ØÖµ£ºĞ¡ÓÚÁã value1 Ğ¡ÓÚ value2¡£ Áã value1 µÈÓÚ value2¡£ ´óÓÚÁã value1 ´óÓÚ value2¡£
-	int CompareTo(const Object *value); //ÒÑÖØÔØ¡£ ½«´ËÊµÀıµÄÖµÓëÖ¸¶¨µÄ DateTime ÖµÏà±È½Ï£¬²¢Ö¸Ê¾´ËÊµÀıÊÇÔçÓÚ¡¢µÈÓÚ»¹ÊÇÍíÓÚÖ¸¶¨µÄ DateTime Öµ¡£
-	int CompareTo(const DateTime *value); //Ğ¡ÓÚÁã ´ËÊµÀıĞ¡ÓÚ value¡£ Áã ´ËÊµÀıµÈÓÚ value¡£ ´óÓÚÁã ´ËÊµÀı´óÓÚ value¡£
+	void AddYears(const time_t years); //å°†æŒ‡å®šçš„å¹´ä»½æ•°åŠ åˆ°æ­¤å®ä¾‹çš„å€¼ä¸Šã€‚
+	void AddMonths(const time_t Months); //å°†æŒ‡å®šçš„æœˆä»½æ•°åŠ åˆ°æ­¤å®ä¾‹çš„å€¼ä¸Šã€‚
+	void AddDays(const time_t days); //å°†æŒ‡å®šçš„å¤©æ•°åŠ åˆ°æ­¤å®ä¾‹çš„å€¼ä¸Šã€‚
+	void AddHours(const time_t hours); //å°†æŒ‡å®šçš„å°æ—¶æ•°åŠ åˆ°æ­¤å®ä¾‹çš„å€¼ä¸Šã€‚
+	void AddMinutes(const time_t minutes); //å°†æŒ‡å®šçš„åˆ†é’Ÿæ•°åŠ åˆ°æ­¤å®ä¾‹çš„å€¼ä¸Šã€‚
+	void AddSeconds(const time_t seconds); //å°†æŒ‡å®šçš„ç§’æ•°åŠ åˆ°æ­¤å®ä¾‹çš„å€¼ä¸Šã€‚
+	void AddWeeks(const time_t weeks); //å°†æŒ‡å®šçš„å‘¨æ•°åŠ åˆ°äº›å®ä¸Šçš„å€¼ä¸Šã€‚
+	static int Compare(const DateTime *value1, const DateTime *value2); //å¯¹ä¸¤ä¸ª DateTime çš„å®ä¾‹è¿›è¡Œæ¯”è¾ƒï¼Œå¹¶è¿”å›ä¸€ä¸ªæŒ‡ç¤ºç¬¬ä¸€ä¸ªå®ä¾‹æ˜¯æ—©äºã€ç­‰äºè¿˜æ˜¯æ™šäºç¬¬äºŒä¸ªå®ä¾‹çš„æ•´æ•°ã€‚  è¿”å›å€¼ï¼šå°äºé›¶ value1 å°äº value2ã€‚ é›¶ value1 ç­‰äº value2ã€‚ å¤§äºé›¶ value1 å¤§äº value2ã€‚
+	int CompareTo(const Object *value); //å·²é‡è½½ã€‚ å°†æ­¤å®ä¾‹çš„å€¼ä¸æŒ‡å®šçš„ DateTime å€¼ç›¸æ¯”è¾ƒï¼Œå¹¶æŒ‡ç¤ºæ­¤å®ä¾‹æ˜¯æ—©äºã€ç­‰äºè¿˜æ˜¯æ™šäºæŒ‡å®šçš„ DateTime å€¼ã€‚
+	int CompareTo(const DateTime *value); //å°äºé›¶ æ­¤å®ä¾‹å°äº valueã€‚ é›¶ æ­¤å®ä¾‹ç­‰äº valueã€‚ å¤§äºé›¶ æ­¤å®ä¾‹å¤§äº valueã€‚
 
-	int DaysInMonth(const int year, const int months); //·µ»ØÖ¸¶¨ÄêºÍÔÂÖĞµÄÌìÊı¡£
+	int DaysInMonth(const int year, const int months); //è¿”å›æŒ‡å®šå¹´å’Œæœˆä¸­çš„å¤©æ•°ã€‚
 	bool Equals(const Object *object);
 	bool Equals(const DateTime *dateTime);
 	static bool Equals(const DateTime *value1, const DateTime *value2);
-	static DateTime Parse(std::string datetimeStr); //ÈÕÆÚ×Ö·û´®¸ñÊ½ ÔÂ/ÈÕ/Äê Ê±:·Ö:Ãë Àı:02/03/2008 9:30:20 ³ö´í·µ»Ø 01/01/1970 00:00:00
+	static DateTime Parse(std::string datetimeStr); //æ—¥æœŸå­—ç¬¦ä¸²æ ¼å¼ æœˆ/æ—¥/å¹´ æ—¶:åˆ†:ç§’ ä¾‹:02/03/2008 9:30:20 å‡ºé”™è¿”å› 01/01/1970 00:00:00
 	static DateTime Parse(std::string dateTimeStr, std::string formaterStr);
-	std::string ToShortDateString(); //½«µ±Ç° DateTime ¶ÔÏóµÄÖµ×ª»»ÎªÆäµÈĞ§µÄ¶ÌÈÕÆÚ×Ö·û´®±íÊ¾ĞÎÊ½¡£
+	std::string ToShortDateString(); //å°†å½“å‰ DateTime å¯¹è±¡çš„å€¼è½¬æ¢ä¸ºå…¶ç­‰æ•ˆçš„çŸ­æ—¥æœŸå­—ç¬¦ä¸²è¡¨ç¤ºå½¢å¼ã€‚
 	std::string ToString();
-	std::string ToString(const std::string formaterStr); //formaterStr = "%Y-%m-%d %H:%M:%S" %Y=Äê %m=ÔÂ %d=ÈÕ %H=Ê± %M=·Ö %S=Ãë
+	std::string ToString(const std::string formaterStr); //formaterStr = "%Y-%m-%d %H:%M:%S" %Y=å¹´ %m=æœˆ %d=æ—¥ %H=æ—¶ %M=åˆ† %S=ç§’
 public:
-	int GetYear(); //»ñÈ¡´ËÊµÀıËù±íÊ¾ÈÕÆÚµÄÄê·İ²¿·Ö¡£
-	int GetMonth(); //»ñÈ¡´ËÊµÀıËù±íÊ¾ÈÕÆÚµÄÄê·İ²¿·Ö¡£
-	int GetDay(); // »ñÈ¡´ËÊµÀıËù±íÊ¾µÄÈÕÆÚÎª¸ÃÔÂÖĞµÄµÚ¼¸Ìì¡£
-	int GetHour(); //»ñÈ¡´ËÊµÀıËù±íÊ¾ÈÕÆÚµÄĞ¡Ê±²¿·Ö¡£
-	int GetMinute(); //»ñÈ¡´ËÊµÀıËù±íÊ¾ÈÕÆÚµÄ·ÖÖÓ²¿·Ö
-	int GetSecond(); //»ñÈ¡´ËÊµÀıËù±íÊ¾ÈÕÆÚµÄÃë²¿·Ö¡£
-	int DayOfWeek(); //»ñÈ¡´ËÊµÀıËù±íÊ¾µÄÈÕÆÚÊÇĞÇÆÚ¼¸¡£
-	int DayOfYear(); //¼ÇÂ¼½ñÌìÊÇÒ»ÄêÀïÃæµÄµÚ¼¸Ìì,´Ó1ÔÂ1ÈÕÆğ,0-365
+	int GetYear(); //è·å–æ­¤å®ä¾‹æ‰€è¡¨ç¤ºæ—¥æœŸçš„å¹´ä»½éƒ¨åˆ†ã€‚
+	int GetMonth(); //è·å–æ­¤å®ä¾‹æ‰€è¡¨ç¤ºæ—¥æœŸçš„å¹´ä»½éƒ¨åˆ†ã€‚
+	int GetDay(); // è·å–æ­¤å®ä¾‹æ‰€è¡¨ç¤ºçš„æ—¥æœŸä¸ºè¯¥æœˆä¸­çš„ç¬¬å‡ å¤©ã€‚
+	int GetHour(); //è·å–æ­¤å®ä¾‹æ‰€è¡¨ç¤ºæ—¥æœŸçš„å°æ—¶éƒ¨åˆ†ã€‚
+	int GetMinute(); //è·å–æ­¤å®ä¾‹æ‰€è¡¨ç¤ºæ—¥æœŸçš„åˆ†é’Ÿéƒ¨åˆ†
+	int GetSecond(); //è·å–æ­¤å®ä¾‹æ‰€è¡¨ç¤ºæ—¥æœŸçš„ç§’éƒ¨åˆ†ã€‚
+	int DayOfWeek(); //è·å–æ­¤å®ä¾‹æ‰€è¡¨ç¤ºçš„æ—¥æœŸæ˜¯æ˜ŸæœŸå‡ ã€‚
+	int DayOfYear(); //è®°å½•ä»Šå¤©æ˜¯ä¸€å¹´é‡Œé¢çš„ç¬¬å‡ å¤©,ä»1æœˆ1æ—¥èµ·,0-365
 
 	int64_t	GetSeconds(){return seconds;}
-	static DateTime GetNow(); //·µ»Øµ±Ç°ÈÕÆÚÊÇ¼ä
+	static DateTime GetNow(); //è¿”å›å½“å‰æ—¥æœŸæ˜¯é—´
 public:
 	bool operator ==(DateTime &dateTime);
 	bool operator >(DateTime &dateTime);
@@ -79,7 +79,7 @@ private:
 	void InitByStr(std::string dateTimeStr, std::string formaterStr);
 
 private:
-	time_t seconds; //×Ô1970ÆğµÄÃëÊı
+	time_t seconds; //è‡ª1970èµ·çš„ç§’æ•°
 	tm date;
 };
 

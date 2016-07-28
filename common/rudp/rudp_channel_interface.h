@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	rudp_channel_interface.h
 *
-*to do:		RUDP BUFFERµÄÍøÂçÍ¨µÀ½Ó¿Ú
+*to do:		RUDP BUFFERçš„ç½‘ç»œé€šé“æ¥å£
 *Create on: 2013-04
 *Author:	zerok
 *check list:
@@ -20,16 +20,16 @@ public:
 	IRUDPNetChannel() {};
 	virtual ~IRUDPNetChannel() {};
 
-	//BUFFER±¨ÎÄ·¢ËÍ½Ó¿Ú
+	//BUFFERæŠ¥æ–‡å‘é€æ¥å£
 	virtual void send_ack(uint64_t ack_seq_id) = 0;
 	virtual void send_nack(uint64_t base_seq_id, const LossIDArray& ids) = 0;
 	virtual	void send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8_t* data, uint16_t data_size, uint64_t now_ts) = 0;
 
-	//BUFFER×´Ì¬½Ó¿Ú,BUFFER¿ÉÒÔ½øĞĞÊı¾İ·¢ËÍÍ¨¸æ
+	//BUFFERçŠ¶æ€æ¥å£,BUFFERå¯ä»¥è¿›è¡Œæ•°æ®å‘é€é€šå‘Š
 	virtual void on_write() = 0;
-	//buffer¿ÉÒÔ½øĞĞÊı¾İ¶ÁÈ¡
+	//bufferå¯ä»¥è¿›è¡Œæ•°æ®è¯»å–
 	virtual void on_read() = 0;
-	//´íÎóÍ¨¸æ
+	//é”™è¯¯é€šå‘Š
 	virtual void on_exception() = 0;
 };
 

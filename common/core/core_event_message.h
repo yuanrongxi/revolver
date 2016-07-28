@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	core_event_message.h
 *
-*to do:		¶¨ÒåTCP¶Ï¿ªºÍÁ¬½ÓÍ¨ÖªÏûÏ¢
+*to do:		å®šä¹‰TCPæ–­å¼€å’Œè¿æ¥é€šçŸ¥æ¶ˆæ¯
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -34,12 +34,12 @@ public:
 	}
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 	};
@@ -58,19 +58,19 @@ public:
 	}
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 	};
 };
 
 
-//ÏûÏ¢ÌåÓ³Éä¹ØÏµ
+//æ¶ˆæ¯ä½“æ˜ å°„å…³ç³»
 MESSAGEMAP_DECL_BEGIN(TCP_EVENT)
 MESSAGEMAP_REGISTER(TCP_CONNECT_EVENT, new TCP_Connect_Message())
 MESSAGEMAP_REGISTER(TCP_CLOSE_EVENT, new TCP_Close_Message())

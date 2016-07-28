@@ -19,20 +19,20 @@ int32_t CSockStream::open(const Inet_Addr& local_addr, bool nonblocking /* = fal
 		return -1;
 	}
 
-	if(nonblocking) //ÉèÖÃÒì²½SOCKET
+	if(nonblocking) //è®¾ç½®å¼‚æ­¥SOCKET
 	{
 		set_socket_nonblocking(get_handler());
 	}
 
-	//ÉèÖÃÊÕ·¢»º³åÇø
+	//è®¾ç½®æ”¶å‘ç¼“å†²åŒº
 	int32_t buf_size = 64 * 1024;
 	set_option(SOL_SOCKET, SO_RCVBUF, (void *)&buf_size, sizeof(int32_t));
 	set_option(SOL_SOCKET, SO_SNDBUF, (void *)&buf_size, sizeof(int32_t));
 
-	//½¨Á¢Ò»¸ö¼àÌý·þÎñ
+	//å»ºç«‹ä¸€ä¸ªç›‘å¬æœåŠ¡
 	if(!local_addr.is_null())
 	{
-		//ÉèÖÃ¶Ë¿Ú¸´ÓÃ
+		//è®¾ç½®ç«¯å£å¤ç”¨
 		if(resue)
 		{
 			int32_t val = 1;
@@ -45,10 +45,10 @@ int32_t CSockStream::open(const Inet_Addr& local_addr, bool nonblocking /* = fal
 		{
 			uint16_t port = local_addr_.get_port();
 			uint32_t count = 0;
-			while(this->bind(local_addr_) != 0) //Ò»Ö±°ó¶¨£¬Ö±ÖÁ³É¹¦
+			while(this->bind(local_addr_) != 0) //ä¸€ç›´ç»‘å®šï¼Œç›´è‡³æˆåŠŸ
 			{
 				count ++;
-				if(count > 20000) //×î¶àÔö¼Ó1000´Î
+				if(count > 20000) //æœ€å¤šå¢žåŠ 1000æ¬¡
 				{
 					CBaseSocket::close();
 					return -1;

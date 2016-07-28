@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	core_udp_hander.h
 *
-*to do:		UDPhandler类，主要是实现UDP的监听、数据收发、处理控制等
+*to do:		UDPhandler绫伙紝涓昏鏄疄鐜癠DP鐨勭洃鍚�佹暟鎹敹鍙戙�佸鐞嗘帶鍒剁瓑
 *Create on: 2012-05
 *Author:	zerok
 *check list:

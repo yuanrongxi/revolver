@@ -1,4 +1,4 @@
-#ifndef __CORE_CONNECTION_BASE_H__
+﻿#ifndef __CORE_CONNECTION_BASE_H__
 #define __CORE_CONNECTION_BASE_H__
 
 #include "revolver/base_namespace.h"

@@ -13,7 +13,7 @@ class IRUDPAdapter;
 
 typedef vector<IRUDPAdapter *>		RUDPAdapterArray;
 
-//RUDPÁ¬½ÓÊÜÀíÀà,Ö÷Òª¹¦ÄÜÊÇÊÜÀíÀ´Ö®ÍøÂçµÄ±¨ÎÄºÍ·¢ËÍ±¾µØ±¨ÎÄ
+//RUDPè¿žæŽ¥å—ç†ç±»,ä¸»è¦åŠŸèƒ½æ˜¯å—ç†æ¥ä¹‹ç½‘ç»œçš„æŠ¥æ–‡å’Œå‘é€æœ¬åœ°æŠ¥æ–‡
 class RUDPAcceptor
 {
 public:

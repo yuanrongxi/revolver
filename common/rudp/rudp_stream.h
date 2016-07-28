@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	rudp_stream.h
 *
-*to do:		¶¨ÒåÒ»¸öRUDPµÄÁ÷¿ØÖÆ¶ÔÏó
+*to do:		å®šä¹‰ä¸€ä¸ªRUDPçš„æµæ§åˆ¶å¯¹è±¡
 *Create on: 2013-05
 *Author:	zerok
 *check list:
@@ -32,10 +32,10 @@ public:
 
     bool			isopen() const;
     void            set_userdata(void* data) { user_data_ = data; }
-    //ÊôĞÔÉèÖÃ
+    //å±æ€§è®¾ç½®
     int32_t			set_option(int32_t op_type, int32_t op_value) const;
 
-    //»ñÈ¡SOCKET°ó¶¨µÄµØÖ·
+    //è·å–SOCKETç»‘å®šçš„åœ°å€
     int32_t			get_local_addr (Inet_Addr& local_addr) const;
     int32_t			get_peer_addr(Inet_Addr& remote_addr) const;
 

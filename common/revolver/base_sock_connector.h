@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	base_sock_connector.h
 *
-*to do:		定义TCP SOCKET的连接发起类，主要用于TCP CLIENT
+*to do:		瀹氫箟TCP SOCKET鐨勮繛鎺ュ彂璧风被锛屼富瑕佺敤浜嶵CP CLIENT
 *Create on: 2012-05
 *Author:	zerok
 *check list:

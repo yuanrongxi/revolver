@@ -20,7 +20,7 @@ int32_t CSockDgram::open(const Inet_Addr& local_addr, bool nonblocking, bool res
 		return -1;
 	}
 
-#ifdef WIN32 //½â¾öWINSOCK2 µÄUDP¶Ë¿ÚICMPµÄÎÊÌâ
+#ifdef WIN32 //è§£å†³WINSOCK2 çš„UDPç«¯å£ICMPçš„é—®é¢˜
 	int32_t byte_retruned = 0;
 	bool new_be = false;  
 
@@ -28,13 +28,13 @@ int32_t CSockDgram::open(const Inet_Addr& local_addr, bool nonblocking, bool res
 		&new_be, sizeof(new_be), NULL, 0, (LPDWORD)&byte_retruned, NULL, NULL);  
 #endif
 
-	//ÉèÖÃÒì²½Ä£Ê½
+	//è®¾ç½®å¼‚æ­¥æ¨¡å¼
 	if(nonblocking)
 		set_socket_nonblocking(get_handler());
 
 	if(resue)
 	{
-		//ÉèÖÃ¶Ë¿Ú¸´ÓÃ
+		//è®¾ç½®ç«¯å£å¤ç”¨
 		int32_t val = 1;
 		set_option(SOL_SOCKET, SO_REUSEADDR, &val, sizeof(int32_t));
 	}
@@ -46,7 +46,7 @@ int32_t CSockDgram::open(const Inet_Addr& local_addr, bool nonblocking, bool res
 		return ret;
 	}
 
-	//64K buffer,ÉèÖÃÊÕ·¢»º³åÇø
+	//64K buffer,è®¾ç½®æ”¶å‘ç¼“å†²åŒº
 	int32_t buf_size = 64 * 1024;
 	set_option(SOL_SOCKET, SO_RCVBUF, (void *)&buf_size, sizeof(int32_t));
 	set_option(SOL_SOCKET, SO_SNDBUF, (void *)&buf_size, sizeof(int32_t));

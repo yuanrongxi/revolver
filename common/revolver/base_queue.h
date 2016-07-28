@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	base_queue.h
 *
-*to do:		¶¨Òå¶ÓÁÐÀà
+*to do:		å®šä¹‰é˜Ÿåˆ—ç±»
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -33,13 +33,13 @@ public:
 
 	bool put(const T& element)
 	{
-		//¶ÓÁÐÂú
+		//é˜Ÿåˆ—æ»¡
 		if(rindex_ == 0 && windex_ + 1 == CAPACITY)
 		{
 			return false;
 		}
 
-		//¶ÓÁÐÂú
+		//é˜Ÿåˆ—æ»¡
 		if(windex_ + 1 == rindex_)
 		{
 			return false;

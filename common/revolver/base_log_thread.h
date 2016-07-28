@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	base_log_thread.h
 *
-*to do:		¶¨ÒåLOG Ïß³ÌÀà
+*to do:		å®šä¹‰LOG çº¿ç¨‹ç±»
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -48,7 +48,7 @@ public:
 
 	void clear();
 	
-	//ÓÃÓÚ·ÇÕı³£ÍË³ö£¡£¡£¡
+	//ç”¨äºéæ­£å¸¸é€€å‡ºï¼ï¼ï¼
 	void stop();
 
 private:
@@ -63,7 +63,7 @@ private:
 #define LOG_THREAD_INSTANCE		CSingleton<BaseLogThread>::instance
 #define LOG_THREAD_DESTROY		CSingleton<BaseLogThread>::destroy
 
-//¶ÓÁĞÏûÏ¢³Ø
+//é˜Ÿåˆ—æ¶ˆæ¯æ± 
 extern ObjectMutexPool<LogInfoData, BaseThreadMutex, LOG_POOL_SIZE>	LOGPOOL;
 
 #endif

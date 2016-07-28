@@ -1,9 +1,9 @@
-/*************************************************************************************
-*filename:	rudp_send_buffer.h
+ï»¿/*************************************************************************************
+*filename:  rudp_send_buffer.h
 *
-*to do:		¶¨ÒåRUDPµÄ·¢ËÍ»º³åBUFFERºÍ·¢ËÍ´°¿Ú
+*to do:     å®šä¹‰RUDPçš„å‘é€ç¼“å†²BUFFERå’Œå‘é€çª—å£
 *Create on: 2013-04
-*Author:	zerok
+*Author:    zerok
 *check list:
 *************************************************************************************/
 
@@ -23,76 +23,82 @@ typedef list<RUDPSendSegment*> SendDataList;
 
 class RUDPCCCObject;
 
-class RUDPSendBuffer
-{
-public:
+class RUDPSendBuffer {
+  public:
     RUDPSendBuffer();
     virtual ~RUDPSendBuffer();
-    
-    void				reset();
-    //·¢ËÍÊı¾İ½Ó¿Ú
-    int32_t				send(const uint8_t* data, int32_t data_size);
-    //ACK´¦Àí
-    void				on_ack(uint64_t ack_seq);
-    //NACK´¦Àí
-    void				on_nack(uint64_t base_seq, const LossIDArray& loss_ids);
-    //¶¨Ê±Æ÷½Ó¿Ú
-    void				on_timer(uint64_t now_ts);
 
-    void				check_buffer();
+    void                reset();
+    //å‘é€æ•°æ®æ¥å£
+    int32_t             send(const uint8_t* data, int32_t data_size);
+    //ACKå¤„ç†
+    void                on_ack(uint64_t ack_seq);
+    //NACKå¤„ç†
+    void                on_nack(uint64_t base_seq, const LossIDArray& loss_ids);
+    //å®šæ—¶å™¨æ¥å£
+    void                on_timer(uint64_t now_ts);
 
-public:
-    uint64_t			get_buffer_seq() {return buffer_seq_;};
-    //ÉèÖÃNAGLEËã·¨	
-    void				set_nagle(bool nagle = true){nagle_ = nagle;};
-    bool				get_nagle() const {return nagle_;};
-    //ÉèÖÃ·¢ËÍ»º³åÇøµÄ´óĞ¡
-    void				set_buffer_size(int32_t buffer_size){buffer_size_ = buffer_size;};
-    int32_t				get_buffer_size() const {return buffer_size_;};
+    void                check_buffer();
+    void                check_segment();
+  public:
+    uint64_t            get_buffer_seq() {return buffer_seq_;};
+    //è®¾ç½®NAGLEç®—æ³•
+    void                set_nagle(bool nagle = true) {nagle_ = nagle;};
+    bool                get_nagle() const {return nagle_;};
 
-    void				set_net_channel(IRUDPNetChannel *channel) {net_channel_ = channel;};
-    void				set_ccc(RUDPCCCObject* ccc) {ccc_ = ccc;};
+    void              set_passive(int8_t passive) { passive_mode_ = passive; }
+    int8_t            get_passive() const { return passive_mode_; }
+    //è®¾ç½®å‘é€ç¼“å†²åŒºçš„å¤§å°
+    void                set_buffer_size(int32_t buffer_size) {buffer_size_ = buffer_size;};
+    int32_t             get_buffer_size() const {return buffer_size_;};
 
-    uint32_t			get_bandwidth();
-    int32_t				get_buffer_data_size() const {return buffer_data_size_;};
+    void                set_net_channel(IRUDPNetChannel* channel) {net_channel_ = channel;};
+    void                set_ccc(RUDPCCCObject* ccc) {ccc_ = ccc;};
 
-    void				clear_loss();
+    uint32_t            get_bandwidth();
+    int32_t             get_buffer_data_size() const {return buffer_data_size_;};
+
+    void                clear_loss();
     uint32_t         get_send_widnow_size() const { return send_window_.size(); }
-protected:
-    //ÊÔÍ¼·¢ËÍ
-    void				attempt_send(uint64_t now_timer);
-    uint32_t			calculate_snd_size(uint64_t now_timer);
-    uint32_t			get_threshold(uint32_t rtt);
-protected:
-    IRUDPNetChannel*	net_channel_;
 
-    //ÕıÔÚ·¢ËÍµÄÊı¾İÆ¬
-    SendWindowMap		send_window_;
-    //ÕıÔÚ·¢ËÍµÄ±¨ÎÄµÄ¶ª°ü¼¯ºÏ
-    LossIDSet			loss_set_;
-    //µÈ´ı·¢ËÍµÄÊı¾İÆ¬
-    SendDataList		send_data_;
+    void set_rudp_id(int32_t id) { rudp_id_ = id; }
+  protected:
+    //è¯•å›¾å‘é€
+    void                attempt_send(uint64_t now_timer);
+    uint32_t            calculate_snd_size(uint64_t now_timer);
+    uint32_t            get_threshold(uint32_t rtt);
+  protected:
+    IRUDPNetChannel*    net_channel_;
 
-    //·¢ËÍ»º³åÇøµÄ´óĞ¡
-    int32_t				buffer_size_;
-    //µ±Ç°»º³åÊı¾İµÄ´óĞ¡
-    int32_t				buffer_data_size_;
-    //µ±Ç°BUFFERÖĞ×î´óµÄSEQ
-    uint64_t			buffer_seq_;
-    //µ±Ç°WINDOWÖĞ×î´óµÄSEQ
-    uint64_t			cwnd_max_seq_;
-    //½ÓÊÕ¶Ë×î´óµÄSEQ
-    uint64_t			dest_max_seq_;
-    //½ÓÊÕ¶Ë×î´ó¶ªÊ§µÄ±¨ÎÄSEQ
-    uint64_t			max_loss_seq_;
-    uint64_t			send_ts_;
-    //ËÙ¶È¿ØÖÆÆ÷
-    RUDPCCCObject*		ccc_;
-    //ÊÇ·ñÆô¶¯NAGLEËã·¨
-    bool				nagle_;
+    //æ­£åœ¨å‘é€çš„æ•°æ®ç‰‡
+    SendWindowMap       send_window_;
+    //æ­£åœ¨å‘é€çš„æŠ¥æ–‡çš„ä¸¢åŒ…é›†åˆ
+    LossIDSet           loss_set_;
+    //ç­‰å¾…å‘é€çš„æ•°æ®ç‰‡
+    SendDataList        send_data_;
 
-    uint32_t			bandwidth_;
-    uint64_t			bandwidth_ts_;
+    //å‘é€ç¼“å†²åŒºçš„å¤§å°
+    uint32_t                buffer_size_;
+    //å½“å‰ç¼“å†²æ•°æ®çš„å¤§å°
+    uint32_t                buffer_data_size_;
+    //å½“å‰BUFFERä¸­æœ€å¤§çš„SEQ
+    uint64_t            buffer_seq_;
+    //å½“å‰WINDOWä¸­æœ€å¤§çš„SEQ
+    uint64_t            cwnd_max_seq_;
+    //æ¥æ”¶ç«¯æœ€å¤§çš„SEQ
+    uint64_t            dest_max_seq_;
+    //æ¥æ”¶ç«¯æœ€å¤§ä¸¢å¤±çš„æŠ¥æ–‡SEQ
+    uint64_t            max_loss_seq_;
+    uint64_t            send_ts_;
+    //é€Ÿåº¦æ§åˆ¶å™¨
+    RUDPCCCObject*      ccc_;
+    //æ˜¯å¦å¯åŠ¨NAGLEç®—æ³•
+    bool                nagle_;
+    uint8_t          passive_mode_;
+
+    uint32_t            bandwidth_;
+    uint64_t            bandwidth_ts_;
+    int32_t      rudp_id_;
 };
 
 BASE_NAMESPACE_END_DECL

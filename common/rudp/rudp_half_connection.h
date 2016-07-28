@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	rudp_half_connection.h
 *
-*to do:		定义RUDP半开连接数据接口
+*to do:		瀹氫箟RUDP鍗婂紑杩炴帴鏁版嵁鎺ュ彛
 *Create on: 2013-04
 *Author:	zerok
 *check list:

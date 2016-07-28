@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	base_socket.h
 *
-*to do:		¶¨ÒåSOCKET²Ù×÷»ùÀà
+*to do:		å®šä¹‰SOCKETæ“ä½œåŸºç±»
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -28,11 +28,11 @@ public:
 
 	bool			isopen() const;
 
-	//ÊôĞÔÉèÖÃ
+	//å±æ€§è®¾ç½®
 	int32_t			set_option(int level, int option, void *optval, int optlen) const;
 	int32_t			get_option(int level, int option, void *optval,int *optlen) const;
 
-	//»ñÈ¡SOCKET°ó¶¨µÄµØÖ·
+	//è·å–SOCKETç»‘å®šçš„åœ°å€
 	int32_t			get_local_addr (Inet_Addr &local_addr) const;
 
 	int32_t			recv(void* buf, uint32_t buf_size, Inet_Addr& remote_addr);

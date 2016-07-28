@@ -2,7 +2,7 @@
 #include "file_handler.h"
 #include "cpp_translator.h"
 #include "base_error.h"
-#include "Shlwapi.h"
+//#include "Shlwapi.h"
 
 void About();
 void TestParam(string& argv);
@@ -30,7 +30,8 @@ int main(int argc, char* argv[])
 	case 3:
 		try
 		{
-			TestParam(string(argv[2]));
+			string val = argv[2];
+			TestParam(val);
 			file_path = argv[1];
 		}
 		catch(const string& e)
@@ -53,7 +54,8 @@ int main(int argc, char* argv[])
 
 	if (!filehandler.IsOccurError())
 	{
-		CBaseTranslator* p_Translate = GenerateTranslator(string(argv[2]));
+		string val = argv[2];
+		CBaseTranslator* p_Translate = GenerateTranslator(val);
 		p_Translate->TranslateProtocol();
 		delete p_Translate;
 		cout << "complete!" << endl;

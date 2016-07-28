@@ -1,4 +1,4 @@
-#include "core/core_cli_frame.h"
+﻿#include "core/core_cli_frame.h"
 #include "core/core_udp_handler.h"
 #include "core/core_connection.h"
 #include "core/core_tcp_listener.h"
@@ -65,8 +65,9 @@ void ICoreClientFrame::init()
 {
     init_socket();
     //屏蔽信号
+#ifndef OS_DARWIN
     ignore_pipe();
-
+#endif
     //创建LZO压缩对象
     LZO_CREATE();
     //启动LOG系统
@@ -233,20 +234,20 @@ void ICoreClientFrame::attach_server_notify(ICoreServerNotify* notify)
 
 void ICoreClientFrame::frame_run()
 {
-    if(single_thread_) //单线程模式
-    {
-        while(true)
-        {
-            REACTOR_INSTANCE()->event_loop();	
-            wait_pid();
-        }
+    //if(single_thread_) //单线程模式
+    //{
+    //    while(true)
+    //    {
+    //        REACTOR_INSTANCE()->event_loop();	
+    //        wait_pid();
+    //    }
 
-        REACTOR_INSTANCE()->stop_event_loop();
-    }
-    else
-    {
-        core_main();
-    }
+    //    REACTOR_INSTANCE()->stop_event_loop();
+    //}
+    //else
+    //{
+    //    core_main();
+    //}
 }
 
 uint32_t ICoreClientFrame::post_read_php(uint32_t dc_sid, CoreDCParam* param, const string& php, const string& php_param, bool ack /* = true */)

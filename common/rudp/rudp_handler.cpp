@@ -1,4 +1,4 @@
-#include "rudp_handler.h"
+﻿#include "rudp_handler.h"
 
 #include "revolver/base_reactor_instance.h"
 
@@ -97,9 +97,9 @@ int32_t RudpHandler::send(BinStream& bin_strm, const Inet_Addr& remote_addr)
             return -1;
         }
     }
-    throllter_.add_udp_packet(rc, true);
+    throllter_.add_udp_packet(bin_strm.data_size(), true);
 
-    RUDP_SEND_DEBUG("send raw data: " << rc);
+    //RUDP_SEND_DEBUG("send raw data: " << rc);
     return rc;
 }
 
@@ -113,7 +113,8 @@ int32_t RudpHandler::handle_input(BASE_HANDLER handle)
         
         if (rc > 0)
         {
-            RUDP_RECV_DEBUG("recv raw data: " << rc);
+            //RUDP_RECV_DEBUG("recv raw data: " << rc);
+            
             throllter_.add_udp_packet(rc, false);
             bin_strm_.set_used_size(rc);
             uint8_t packet_type = 0;

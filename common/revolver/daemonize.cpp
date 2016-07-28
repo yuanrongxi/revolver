@@ -1,7 +1,9 @@
 #include "revolver/base_typedef.h"
 #include "revolver/daemonize.h"
 #include <stdlib.h>
+#if (defined(OS_DARWIN) || (defined(OS_LINUX)))
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 

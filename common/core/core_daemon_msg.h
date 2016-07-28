@@ -1,4 +1,4 @@
-#ifndef __CORE_DAEMON_MSG_H
+ï»¿#ifndef __CORE_DAEMON_MSG_H
 #define __CORE_DAEMON_MSG_H
 
 #include "revolver/base_packet.h"
@@ -29,13 +29,13 @@ public:
 	};
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 		strm << stype_ << net_type_ << sid_ << tel_addr_ << cnc_addr_;
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 		strm >> stype_ >> net_type_ >> sid_ >> tel_addr_ >> cnc_addr_;
@@ -81,13 +81,13 @@ public:
 		delete this;
 	};
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 		strm << stype_ << net_type_ << sid_ << tel_addr_ << cnc_addr_;
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 		strm >> stype_ >> net_type_ >> sid_ >> tel_addr_ >> cnc_addr_;
@@ -133,13 +133,13 @@ public:
 	};
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 		strm << stype_ << net_type_ << sid_ << tel_addr_ << cnc_addr_;
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 		strm >> stype_ >> net_type_ >> sid_ >> tel_addr_ >> cnc_addr_;
@@ -185,13 +185,13 @@ public:
 	};
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 		strm << stype_ << sid_;
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 		strm >> stype_ >> sid_;
@@ -231,13 +231,13 @@ public:
 	};
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 		strm << optype_;
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 		strm >> optype_;
@@ -251,7 +251,7 @@ protected:
 	}
 
 public:
-	uint8_t		optype_;	//ÒªÇóµÄ·µ»ØÀàĞÍ£¬ÔİÊ±¶¨Îª¹«ÍøÔ´µØÖ·
+	uint8_t		optype_;	//è¦æ±‚çš„è¿”å›ç±»å‹ï¼Œæš‚æ—¶å®šä¸ºå…¬ç½‘æºåœ°å€
 };
 
 #define DAEMON_STUN_PONG	0x0100006
@@ -274,13 +274,13 @@ public:
 	};
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 		strm << wan_addr_.get_ip() << wan_addr_.get_port();
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 		uint32_t ip;
@@ -322,13 +322,13 @@ public:
 	};
 
 protected:
-	//±àÂë½âÂëº¯Êı
+	//ç¼–ç è§£ç å‡½æ•°
 	virtual void	Pack(BinStream& strm) const
 	{
 		strm << node_state_;
 	};
 
-	//½âÂëº¯Êı
+	//è§£ç å‡½æ•°
 	virtual void	UnPack(BinStream& strm)
 	{
 		strm >> node_state_;
@@ -347,7 +347,7 @@ public:
 };
 
 
-//ÏûÏ¢ÌåÓ³Éä¹ØÏµ
+//æ¶ˆæ¯ä½“æ˜ å°„å…³ç³»
 MESSAGEMAP_DECL_BEGIN(DAEMON)
 MESSAGEMAP_REGISTER(DAEMON_REGISTER_REQ, new Daemon_Register_Req())
 MESSAGEMAP_REGISTER(DAEMON_REGISTER_RES, new Daemon_Register_Res())

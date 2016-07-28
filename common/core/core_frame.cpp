@@ -65,12 +65,12 @@ void ICoreFrame::release_handler()
 void ICoreFrame::init()
 {
 	init_socket();
-	//�����ź�
+	//屏蔽信号
 	ignore_pipe();
 
-	//����LZOѹ������
+	//创建LZO压缩对象
 	LZO_CREATE();
-	//����LOGϵͳ
+	//启动LOG系统
 	LOG_CREATE();
 	LOG_THREAD_CREATE();
 
@@ -81,19 +81,19 @@ void ICoreFrame::init()
 
 	CREATE_REACTOR_THREAD();
 
-	//������Ϣӳ���ϵ
+	//建立消息映射关系
 	CREATE_MSG_PROCESSOR();
 
-	//�������ӹ�����
+	//创建连接管理器
 	CREATE_CONN_MANAGER();
 
-	//����TCPͨ����Ϣ��ӳ��
+	//建立TCP通告消息体映射
 	LOAD_MESSAGEMAP_DECL(TCP_EVENT);
 	
 	CREATE_THROTTLER();
-	//�����ϲ��ʼ���ӿ�
+	//调用上层初始化接口
 	on_init();
-	//����SELECT�߳�
+	//启动SELECT线程
 	if(!single_thread_)
 	{
 		REACTOR_THREAD()->start();
@@ -109,40 +109,40 @@ void ICoreFrame::destroy()
 	
 	usleep(50000);
 
-	//ֹͣ���з���
+	//停止所有服务
 	stop();
 
-	//ֹͣ�߳�
+	//停止线程
 	if(!single_thread_)
 	{
 		LOG_THREAD_INSTANCE()->terminate();
 	}
 
-	//ɾ��REACTOR
+	//删除REACTOR
 	REACTOR_INSTANCE()->close_reactor();
 
-	//������Ϣ����
+	//销毁消息关联
 	DESTROY_MESSAGE_MAP_DECL();
-	//�ͷŲ�����
+	//释放插件句柄
 	release_handler();
 	on_destroy();
 
 	DESTROY_THROTTLER();
 
-	//ɾ�����ӹ���
+	//删除连接管理
 	DESTROY_CONN_MANAGER();
-	//ɾ���̶߳���
+	//删除线程对象
 	DESTROY_REACTOR_THREAD();
-	//ɾ��MSG_������
+	//删除MSG_处理器
 	DESTROY_MSG_PROCESSOR();
-	//ɾ��ȫ�ֽڵ���Ϣ
+	//删除全局节点信息
 	DESTROY_LOCAL_SERVER();
-	//�ر�LOGϵͳ
+	//关闭LOG系统
 	LOG_THREAD_DESTROY();
 	LOG_DESTROY();
 	
 	REACTOR_DESTROY();
-	//�ͷ�ѹ������
+	//释放压缩对象
 	LZO_DESTROY();
 
 	destroy_socket();
@@ -234,7 +234,7 @@ void ICoreFrame::attach_server_notify(ICoreServerNotify* notify)
 
 void ICoreFrame::frame_run()
 {
-	if(single_thread_) //���߳�ģʽ
+	if(single_thread_) //单线程模式
 	{
 		while(true)
 		{

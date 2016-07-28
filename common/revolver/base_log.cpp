@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
@@ -24,7 +24,8 @@ const char* title_str[] = {
             "[error]",
             "[warning]",
             "[info]",
-            "[debug]"
+            "[debug]",
+            "[trace]",
 };
 
 const char* get_time_str(char *date_str)
@@ -40,13 +41,14 @@ const char* get_time_str(char *date_str)
     ::localtime_r(&now, &tm_now);
 #endif
 
-    sprintf(date_str, "%04d-%02d-%02d %02d:%02d:%02d.%3ld", tm_now.tm_year + 1900, tm_now.tm_mon + 1, tm_now.tm_mday,
-        tm_now.tm_hour, tm_now.tm_min, tm_now.tm_sec, tv.tv_usec /1000);
+    sprintf(date_str, "%04d-%02d-%02d %02d:%02d:%02d.%03d", tm_now.tm_year + 1900, tm_now.tm_mon + 1, tm_now.tm_mday,
+        tm_now.tm_hour, tm_now.tm_min, tm_now.tm_sec, tv.tv_usec / 1000);
 
     return date_str;
 }
 
-BaseLog::BaseLog(const char* log_path, const char* log_name) :m_line_count(0), m_file_count(0), wait_flush_(false)
+BaseLog::BaseLog(const char* log_path, const char* log_name)
+  :m_line_count(0), m_file_count(0), wait_flush_(false), m_max_log_line_cnt(_MAX_LOGLINE)
 {
     string str_exepath = log_path;
 #ifdef WIN32
@@ -72,7 +74,8 @@ BaseLog::BaseLog(const char* log_path, const char* log_name) :m_line_count(0), m
     init_trace_file();
 }
 
-BaseLog::BaseLog(const char *_pfile_name) :m_line_count(0), m_file_count(0), wait_flush_(false) 
+BaseLog::BaseLog(const char *_pfile_name)
+:m_line_count(0), m_file_count(0), wait_flush_(false), m_max_log_line_cnt(_MAX_LOGLINE)
 {
     string str_exepath;
 
@@ -136,7 +139,7 @@ void BaseLog::write_log(const string& str_log)
     if (m_of_file.is_open())
     {
         m_line_count ++;
-        if (m_line_count > _MAX_LOGLINE || day_ != DateTime::GetNow().GetDay()) //过了晚上12点，换文件
+        if (m_line_count > m_max_log_line_cnt || day_ != DateTime::GetNow().GetDay()) //过了晚上12点，换文件
         {
             this->flush();
             init_trace_file();
@@ -223,9 +226,8 @@ void BaseLog::change_path(const std::string& _str_path)
     if (m_of_file.is_open())
         m_of_file.close();
 
-    m_file_path = _str_path;
-
     create_tracedir("/log", _str_path.c_str());
+    m_file_path = _str_path + "/log";
 #ifdef WIN32
     m_file_path +=  "\\";
 #else
@@ -246,6 +248,54 @@ void BaseLog::change_log_file(const string& filename)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
+void BaseRotatedLog::init_trace_file() {
+    char newFile[1024] = {0};
+
+    string rename_path = m_file_path + m_filename;
+
+    sprintf(newFile, "%s.log.%d", rename_path.data(), m_file_count++);
+    if (m_of_file.is_open())
+    {
+        m_of_file.close();
+    }
+
+    string str_logfile_path = m_file_path + get_log_name(true);
+    if(m_line_count > m_max_log_line_cnt || day_ != DateTime::GetNow().GetDay()) //文件满，清空文件
+    {
+        //rename(str_logfile_path.data(), rename_filename.c_str());
+        rename_files();
+        m_of_file.open(str_logfile_path.c_str(), std::ios_base::trunc|std::ios_base::out);
+    }
+    else //刚开始，直接追加到后面
+    {
+        m_of_file.open(str_logfile_path.c_str(), std::ios_base::app|std::ios_base::out);
+    }
+
+    rename_filename = newFile;
+
+    m_line_count = 0;
+}
+
+void BaseRotatedLog::rename_files() {
+    char new_filename[1024] = "";
+    string rename_path = m_file_path + m_filename;
+    
+    sprintf(new_filename, "%s.log.%d", rename_path.data(), _max_file_cnt);
+    remove(new_filename);
+
+    char cur_filename[1024] = "";
+    for(int i = _max_file_cnt; i > 1;  --i) {
+        sprintf(cur_filename, "%s.log.%d", rename_path.data(), i - 1);
+        sprintf(new_filename, "%s.log.%d", rename_path.data(), i);
+        rename(cur_filename, new_filename);
+    }
+
+    sprintf(new_filename, "%s.log.%d", rename_path.data(), 1);
+    string str_logfile_path = m_file_path + get_log_name(true);
+    rename(str_logfile_path.c_str(), new_filename);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
 BaseLogManager::BaseLogManager()
 {
     flush_ts_ = CBaseTimeValue::get_time_value().msec();
@@ -260,22 +310,31 @@ BaseLogManager::~BaseLogManager()
     }
 }
 
-int32_t BaseLogManager::create_base_log(const char *pfile_name)
+int32_t BaseLogManager::create_base_log(const char* pfile_name, bool rotated /* = false */)
 {
     int32_t index = -1;
     
-    BaseLog *file_log = new BaseLog(pfile_name);
+    BaseLog *file_log = 0;
+    if (rotated)
+        file_log = new BaseRotatedLog(pfile_name);
+    else
+        file_log = new BaseLog(pfile_name);
     index = m_log_vector.size();
     m_log_vector.push_back(file_log);
 
     return index;
 }
 
-int32_t BaseLogManager::create_base_log(const char *path, const char *pfile_name)
+int32_t BaseLogManager::create_base_log(const char* path, const char* pfile_name, bool rotated /* = false */)
 {
     int32_t index = -1;
 
-    BaseLog *file_log = new BaseLog(path, pfile_name);
+    BaseLog *file_log = 0;
+    if (rotated)
+        file_log = new BaseRotatedLog(path, pfile_name);
+    else
+        file_log = new BaseLog(path, pfile_name);
+
     index = m_log_vector.size();
     m_log_vector.push_back(file_log);
 
@@ -324,7 +383,7 @@ BaseLogStream::~BaseLogStream()
 
 ostream& BaseLogStream::dump_trace(int32_t _level)
 {	 
-    if(_level > 0 && _level < 5)
+    if(_level > 0 && _level < 6)
     {
         m_strm << title_str[_level] << "\t";
     }
@@ -353,6 +412,69 @@ void BaseLogStream::put_log(int32_t level)
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+BaseRotatedLogStream::BaseRotatedLogStream(const char* pfile_name, int32_t level)
+{
+    m_level = level;
+    m_log_index = LOG_INSTANCE()->create_base_log(pfile_name, true);
+    m_strFileName = pfile_name;
+}
+
+BaseRotatedLogStream::BaseRotatedLogStream(const char* log_path, const char* pfile_name, int32_t level)
+{
+    m_level = level;
+    m_log_index = LOG_INSTANCE()->create_base_log(log_path, pfile_name, true);
+    m_strFileName = pfile_name;
+}
+
+BaseRotatedLogStream::~BaseRotatedLogStream()
+{
+
+}
+
+ostream& BaseRotatedLogStream::dump_trace(int32_t _level)
+{
+    if (_level > 0 && _level < 6)
+    {
+        m_strm << title_str[_level] << "\t";
+    }
+
+    return m_strm;
+}
+
+std::ostream& BaseRotatedLogStream::get_ostream()
+{
+    return m_strm;
+}
+
+void BaseRotatedLogStream::put_log(int32_t level)
+{
+    //写入LOG线程
+    LogInfoData* data = LOGPOOL.pop_obj();
+    if (data != NULL)
+    {
+        data->index = m_log_index;
+        data->level = level;
+        data->str_log = m_strm.str();
+
+        LOG_THREAD_INSTANCE()->put_log(data);
+
+        m_strm.str("");
+    }
+}
+
+void BaseRotatedLogStream::set_max_file_cnt(uint32_t cnt) {
+    BaseRotatedLog* log = (BaseRotatedLog*)LOG_INSTANCE()->get_log_handler(m_log_index);
+    if (log)
+        log->set_max_file_cnt(cnt);
+}
+
+void BaseRotatedLogStream::set_max_line_cnt(uint32_t cnt) {
+    BaseRotatedLog* log = (BaseRotatedLog*)LOG_INSTANCE()->get_log_handler(m_log_index);
+    if (log)
+        log->set_max_line_cnt(cnt);
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 SingleLogStream::SingleLogStream(const char* pfile_name, int32_t level) : BaseLog(pfile_name)
 {
@@ -373,7 +495,7 @@ SingleLogStream::~SingleLogStream()
 
 std::ostream& SingleLogStream::dump_trace(int32_t _level)
 {
-    if(_level > 0 && _level < 5)
+    if(_level > 0 && _level < 6)
     {
         write_log(title_str[_level]);
         m_of_file << "\t";
@@ -389,6 +511,46 @@ std::ostream& SingleLogStream::get_ostream()
 
 
 void SingleLogStream::put_log(int32_t level)
+{
+    flush();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+SingleRotatedLogStream::SingleRotatedLogStream(const char* pfile_name, int32_t level)
+: BaseRotatedLog(pfile_name)
+{
+    m_level = level;
+}
+
+SingleRotatedLogStream::SingleRotatedLogStream(const char* log_path, const char* pfile_name, int32_t level)
+: BaseRotatedLog(log_path, pfile_name)
+{
+    m_level = level;
+}
+
+SingleRotatedLogStream::~SingleRotatedLogStream()
+{
+    
+}
+
+std::ostream& SingleRotatedLogStream::dump_trace(int32_t _level)
+{
+    if(_level > 0 && _level < 6)
+    {
+        write_log(title_str[_level]);
+        m_of_file << "\t";
+    }
+    
+    return m_of_file;
+}
+
+std::ostream& SingleRotatedLogStream::get_ostream()
+{
+    return m_of_file;
+}
+
+void SingleRotatedLogStream::put_log(int32_t level)
 {
     flush();
 }

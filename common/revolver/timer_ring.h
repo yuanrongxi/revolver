@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	timer_ring.h
 *
-*to do:		¶¨Òå¶¨Ê±Æ÷ÂÖ×ªÀà£¬ÊµÏÖ¿Ì¶ÈÍÆ½øºÍÂÖÇĞ»»
+*to do:		å®šä¹‰å®šæ—¶å™¨è½®è½¬ç±»ï¼Œå®ç°åˆ»åº¦æ¨è¿›å’Œè½®åˆ‡æ¢
 *Create on: 2012-04
 *Author:	zerok
 *check list:
@@ -25,11 +25,11 @@ typedef std::vector<ElementSet>	RingVector;
 class IRingEvent
 {
 public:
-	//ÂÖµÄÔ­×Ó´¦ÀíÊÂ¼ş
+	//è½®çš„åŸå­å¤„ç†äº‹ä»¶
 	virtual void ring_event(uint8_t ring_id, uint32_t timer_id) = 0;
 };
 
-//Ê±¼ä¼ÆÊı»·¶ÔÏó£¬Ä¬ÈÏÊÇ256¸öÂÖµ¥Ôª£¬
+//æ—¶é—´è®¡æ•°ç¯å¯¹è±¡ï¼Œé»˜è®¤æ˜¯256ä¸ªè½®å•å…ƒï¼Œ
 class CTimerRing
 {
 public:
@@ -41,7 +41,7 @@ public:
 	bool add_element(uint8_t pos, uint32_t timer_id);
 	void delete_element(uint8_t pos, uint32_t timer_id);
 
-	//scaleÊÇÂÖ×ªµÄ¿Ì¶È£¬ring_handlerÊÇÔ­×Ó´¦Àí¾ä±ú,Èç¹û·µ»ØÖµÎªTRUE£¬ËµÃ÷±¾ÂÖµ½ÁË×îÄ©¶Ë£¬ĞèÒªÇĞ»»ÂÖ
+	//scaleæ˜¯è½®è½¬çš„åˆ»åº¦ï¼Œring_handleræ˜¯åŸå­å¤„ç†å¥æŸ„,å¦‚æœè¿”å›å€¼ä¸ºTRUEï¼Œè¯´æ˜æœ¬è½®åˆ°äº†æœ€æœ«ç«¯ï¼Œéœ€è¦åˆ‡æ¢è½®
 	bool cycle(uint32_t& scale, IRingEvent* ring_handler);
 
 	uint32_t get_pos() const {return pos_;};
@@ -52,10 +52,10 @@ private:
 	void		clear();
 
 private:
-	uint8_t		ring_id_;		//ÂÖ×ÓID
-	uint32_t	pos_;			//ÂÖ×ÓÖ¸ÕëÎ»ÖÃ
+	uint8_t		ring_id_;		//è½®å­ID
+	uint32_t	pos_;			//è½®å­æŒ‡é’ˆä½ç½®
 
-	RingVector	ring_;			//ÂÖ×Ó
+	RingVector	ring_;			//è½®å­
 };
 
 BASE_NAMESPACE_END_DECL

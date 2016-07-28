@@ -8,7 +8,8 @@
 
 CMessageDefHandler::CMessageDefHandler()
 {
-	if (!GET_KEYWORDSET()->IsKeyWord(string(MESSAGE)))
+	string val = MESSAGE;
+	if (!GET_KEYWORDSET()->IsKeyWord(val))
 	{
 		std::cerr << "CMessageHandler:bind wrong key word" << std::endl;
 		abort();

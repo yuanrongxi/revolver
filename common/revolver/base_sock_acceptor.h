@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	base_sock_acceptor.h
 *
-*to do:		定义TCP SOCKET的连接接受类
+*to do:		瀹氫箟TCP SOCKET鐨勮繛鎺ユ帴鍙楃被
 *Create on: 2012-05
 *Author:	zerok
 *check list:

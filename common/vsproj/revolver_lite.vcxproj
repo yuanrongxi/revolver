@@ -46,6 +46,7 @@
     <ClCompile Include="..\revolver\md5c.c" />
     <ClCompile Include="..\revolver\minilzo.c" />
     <ClCompile Include="..\revolver\sha2.cpp" />
+    <ClCompile Include="..\revolver\stat_utils.cpp" />
     <ClCompile Include="..\revolver\timer_ring.cpp" />
     <ClCompile Include="..\rudp\rudp_adapter.cpp" />
     <ClCompile Include="..\rudp\rudp_ccc.cpp" />
@@ -100,9 +101,11 @@
     <ClInclude Include="..\revolver\md5.h" />
     <ClInclude Include="..\revolver\minilzo.h" />
     <ClInclude Include="..\revolver\sha2.h" />
+    <ClInclude Include="..\revolver\stat_utils.h" />
     <ClInclude Include="..\revolver\timer_node_t.h" />
     <ClInclude Include="..\revolver\timer_queue_t.h" />
     <ClInclude Include="..\revolver\timer_ring.h" />
+    <ClInclude Include="..\rudp\net_stat.h" />
     <ClInclude Include="..\rudp\rudp_acceptor.h" />
     <ClInclude Include="..\rudp\rudp_adapter.h" />
     <ClInclude Include="..\rudp\rudp_adapter_interface.h" />
@@ -167,7 +170,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4819</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

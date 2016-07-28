@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	rudp_segment.h
 *
-*to do:		¶¨ÒåRUDPµÄ·ÖÆ¬¶ÔÏó¼°¶ÔÏó³Ø£¬RUDP×î´ó·ÖÆ¬Î»1280×Ö½Ú
+*to do:		å®šä¹‰RUDPçš„åˆ†ç‰‡å¯¹è±¡åŠå¯¹è±¡æ± ï¼ŒRUDPæœ€å¤§åˆ†ç‰‡ä½1280å­—èŠ‚
 *Create on: 2013-04
 *Author:	zerok
 *check list:
@@ -23,13 +23,13 @@ BASE_NAMESPACE_BEGIN_DECL
 
 typedef set<uint64_t>		LossIDSet;
 
-//·¢ËÍÊı¾İÆ¬
+//å‘é€æ•°æ®ç‰‡
 typedef struct tagRUDPSendSegment
 {
 	uint64_t	seq_;
-	uint64_t	push_ts_;			//½øÈë·¢ËÍ¶ÓÁĞµÄÊ±¿Ì
-	uint64_t	last_send_ts_;		//×îºóÒ»´Î·¢ËÍµÄÊ±¿Ì
-	uint16_t	send_count_;		//·¢ËÍµÄ´ÎÊı
+	uint64_t	push_ts_;			//è¿›å…¥å‘é€é˜Ÿåˆ—çš„æ—¶åˆ»
+	uint64_t	last_send_ts_;		//æœ€åä¸€æ¬¡å‘é€çš„æ—¶åˆ»
+	uint16_t	send_count_;		//å‘é€çš„æ¬¡æ•°
 	uint8_t		data_[MAX_SEGMENT_SIZE];	
 	uint16_t	data_size_;			
 
@@ -47,7 +47,7 @@ typedef struct tagRUDPSendSegment
 		data_size_ = 0;
 	};
 }RUDPSendSegment;
-//½ÓÊÕÊı¾İÆ¬
+//æ¥æ”¶æ•°æ®ç‰‡
 typedef struct tagRUDPRecvSegment
 {
 	uint64_t	seq_;

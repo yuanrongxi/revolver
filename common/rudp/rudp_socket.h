@@ -1,9 +1,9 @@
-/*************************************************************************************
-*filename:	rudp_socket.h
+ï»¿/*************************************************************************************
+*filename:  rudp_socket.h
 *
-*to do:		¶¨ÒåRUDP SOCKET¶ÔÏó£¬ÊµÏÖRUDPµÄÁ¬½Ó¡¢×´Ì¬×ª»»¡¢Á´Â·Òì³£¼ì²âµÈµÈ
+*to do:     å®šä¹‰RUDP SOCKETå¯¹è±¡ï¼Œå®ç°RUDPçš„è¿æ¥ã€çŠ¶æ€è½¬æ¢ã€é“¾è·¯å¼‚å¸¸æ£€æµ‹ç­‰ç­‰
 *Create on: 2013-04
-*Author:	zerok
+*Author:    zerok
 *check list:
 *************************************************************************************/
 
@@ -15,195 +15,199 @@
 #include "rudp/rudp_send_buffer.h"
 #include "revolver/base_inet_addr.h"
 #include "revolver/base_event_handler.h"
+#include "revolver/net_stat.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 class RUDPEventHandler;
 
-//RUDPµÄĞÄÌøÖÜÆÚÊÇ5ºÁÃë
-#define RUDP_TIMER_DELAY		10
+//RUDPçš„å¿ƒè·³å‘¨æœŸæ˜¯5æ¯«ç§’
+#define RUDP_TIMER_DELAY        10
 
-#define RUDP_VERSION	1
-enum RUDPOptionType
-{
-    //ĞÄÌøµÄÊ±¼äÖÜÆÚ£¬ÒÔºÁÃëÎªµ¥Î»
-    RUDP_KEEPLIVE			= 1,
-    //NAGLEËã·¨¿ª¹Ø
+#define RUDP_VERSION    1
+enum RUDPOptionType {
+    //å¿ƒè·³çš„æ—¶é—´å‘¨æœŸï¼Œä»¥æ¯«ç§’ä¸ºå•ä½
+    RUDP_KEEPLIVE           = 1,
+    //NAGLEç®—æ³•å¼€å…³
     RUDP_NAGLE,
-    //½ÓÊÜ»º³åÇø´óĞ¡
+    //æ¥å—ç¼“å†²åŒºå¤§å°
     RUDP_RECV_BUFF_SIZE,
-    //·¢ËÍ»º³åÇø´óĞ¡
+    //å‘é€ç¼“å†²åŒºå¤§å°
     RUDP_SEND_BUFF_SIZE,
-    //RUDPÁ¬½Ó³¬Ê±¶Ï¿ªµÄKEEPLIVEÖÜÆÚÊı
+    //RUDPè¿æ¥è¶…æ—¶æ–­å¼€çš„KEEPLIVEå‘¨æœŸæ•°
     RUDP_TIMEOUT_COUNT,
+    //
+    RUDP_MODE,
 };
 
-enum RUDPSessionState
-{
-    RUDP_IDLE				= 1,
-    RUDP_CONNECTING			= 2,
-    RUDP_CONNECTED			= 3,
-    RUDP_FIN_STATE			= 4,
-    RUDP_FIN2_STATE			= 5,
-    RUDP_CLOSE				= 6
+enum RUDPSessionState {
+    RUDP_IDLE               = 1,
+    RUDP_CONNECTING         = 2,
+    RUDP_CONNECTED          = 3,
+    RUDP_FIN_STATE          = 4,
+    RUDP_FIN2_STATE         = 5,
+    RUDP_CLOSE              = 6
 
 };
 
-enum RUDPErrorCode
-{
-    RUDP_SUCCESS			= 0,
-    RUDP_BIND_FAIL			= 1,
-    RUDP_CONNECT_FAIL		= 2,
-    RUDP_SEND_ERROR			= 3,
-    RUDP_SEND_EAGIN			= 4,
+enum RUDPErrorCode {
+    RUDP_SUCCESS            = 0,
+    RUDP_BIND_FAIL          = 1,
+    RUDP_CONNECT_FAIL       = 2,
+    RUDP_SEND_ERROR         = 3,
+    RUDP_SEND_EAGIN         = 4,
 };
 
 class RUDPSocket : public IRUDPNetChannel,
-                   public CEventHandler
-{
-public:
+    public CEventHandler {
+  public:
     RUDPSocket();
     virtual ~RUDPSocket();
 
-    //ÊôĞÔ·½·¨
-public:
+    //å±æ€§æ–¹æ³•
+  public:
     void                set_userdata(void* data) { user_data_ = data; }
     void*               get_userdata() const { return user_data_; }
-    int32_t				get_rudp_id() const {return rudp_id_;};
-    void				set_rudp_id(int32_t rudp_id) {rudp_id_ = rudp_id;};
-    
-    int32_t				get_remote_rudp_id() const {return remote_rudp_id_;};
-    void				set_remote_rudp_id(int32_t rudp_id){remote_rudp_id_ = rudp_id;};
+    int32_t             get_rudp_id() const {return rudp_id_;};
+    void                set_rudp_id(int32_t rudp_id) {rudp_id_ = rudp_id;};
 
-    uint8_t				get_local_index() const {return local_index_;};
-    void				set_local_index(uint8_t index) {local_index_ = index;};
+    int32_t             get_remote_rudp_id() const {return remote_rudp_id_;};
+    void                set_remote_rudp_id(int32_t rudp_id) {remote_rudp_id_ = rudp_id;};
 
-    uint32_t			get_check_sum() const {return check_sum_;};
-    void				set_check_sum(uint16_t sum) {check_sum_ = sum;};
+    uint8_t             get_local_index() const {return local_index_;};
+    void                set_local_index(uint8_t index) {local_index_ = index;};
 
-    const Inet_Addr&	get_peer_addr() const {return remote_addr_;};
+    uint32_t            get_check_sum() const {return check_sum_;};
+    void                set_check_sum(uint16_t sum) {check_sum_ = sum;};
 
-    RUDPEventHandler*	get_event_handler() {return event_handler_;};
-    void				set_event_handler(RUDPEventHandler* event_handler) {event_handler_ = event_handler;};
+    const Inet_Addr&    get_peer_addr() const {return remote_addr_;};
+    void                set_peer_addr(const Inet_Addr& addr) { remote_addr_ = addr; }
 
-    uint16_t			get_state() const {return state_;};
-    void				set_state(uint16_t state);
+    RUDPEventHandler*   get_event_handler() {return event_handler_;};
+    void                set_event_handler(RUDPEventHandler* event_handler) {event_handler_ = event_handler;};
 
-    int32_t				get_error() const {return error_code_;};
-    
-    //¼ì²éÊÇ·ñ¿É¶ÁĞ´
-    void				register_event(uint32_t marks);
+    uint16_t            get_state() const {return state_;};
+    void                set_state(uint16_t state);
 
-    uint32_t			recv_bandwidth() {return recv_buffer_.get_bandwidth();};
-    uint32_t			send_bandwidth() {return send_buffer_.get_bandwidth();};
+    int32_t             get_error() const {return error_code_;};
 
-    int32_t				get_send_cache_size() {return send_buffer_.get_buffer_data_size();};
-    int32_t				get_recv_cache_size() {return recv_buffer_.get_buffer_data_size();};
-    //Íâ²¿¿ØÖÆ·½·¨
-public:
-    int32_t				open(int32_t rudp_id_);
-    void				close();
-    void				force_close();
-    void				reset();
+    //æ£€æŸ¥æ˜¯å¦å¯è¯»å†™
+    void                register_event(uint32_t marks);
 
-    int32_t				setoption(int32_t op_type, int32_t op_value);
-    int32_t				bind(uint8_t index, uint8_t title);
-    int32_t				connect(const Inet_Addr& remote_addr);
+    uint32_t            recv_bandwidth() {return recv_buffer_.get_bandwidth();};
+    uint32_t            send_bandwidth() {return send_buffer_.get_bandwidth();};
 
-    int32_t				send(const uint8_t* data, int32_t data_size);
-    int32_t				recv(uint8_t* data, int32_t data_size);
+    int32_t             get_send_cache_size() {return send_buffer_.get_buffer_data_size();};
+    int32_t             get_recv_cache_size() {return recv_buffer_.get_buffer_data_size();};
+    //å¤–éƒ¨æ§åˆ¶æ–¹æ³•
+  public:
+    int32_t             open(int32_t rudp_id_);
+    void                close();
+    void                force_close();
+    void                reset();
 
-    void              get_net_stat(uint32_t &send_wnd, uint32_t &resend) {
+    int32_t             setoption(int32_t op_type, int32_t op_value);
+    int32_t             bind(uint8_t index, uint8_t title);
+    int32_t             connect(const Inet_Addr& remote_addr);
+
+    int32_t             send(const uint8_t* data, int32_t data_size);
+    int32_t             recv(uint8_t* data, int32_t data_size);
+
+    void              get_net_stat(uint32_t& send_wnd, uint32_t& resend) {
         send_wnd = send_buffer_.get_send_widnow_size();
         resend = ccc_.get_resend();
     }
 
-public:
-    //BUFFER±¨ÎÄ·¢ËÍ½Ó¿Ú
-    virtual void		send_ack(uint64_t ack_seq_id);
-    virtual void		send_nack(uint64_t base_seq_id, const LossIDArray& ids);
-    virtual	void		send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8_t* data, uint16_t data_size, uint64_t now_ts);
+  public:
+    //BUFFERæŠ¥æ–‡å‘é€æ¥å£
+    virtual void        send_ack(uint64_t ack_seq_id);
+    virtual void        send_nack(uint64_t base_seq_id, const LossIDArray& ids);
+    virtual void        send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8_t* data, uint16_t data_size, uint64_t now_ts);
 
-public:
-    //BUFFER×´Ì¬½Ó¿Ú,BUFFER¿ÉÒÔ½øĞĞÊı¾İ·¢ËÍÍ¨¸æ
-    virtual void		on_write();
-    //buffer¿ÉÒÔ½øĞĞÊı¾İ¶ÁÈ¡
-    virtual void		on_read();
-    //´íÎóÍ¨¸æ
-    virtual void		on_exception();
+  public:
+    //BUFFERçŠ¶æ€æ¥å£,BUFFERå¯ä»¥è¿›è¡Œæ•°æ®å‘é€é€šå‘Š
+    virtual void        on_write();
+    //bufferå¯ä»¥è¿›è¡Œæ•°æ®è¯»å–
+    virtual void        on_read();
+    //é”™è¯¯é€šå‘Š
+    virtual void        on_exception();
 
-public:
-    void				heartbeat();
-    void				process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, const Inet_Addr& remote_addr);
-    //¿ØÖÆÏûÏ¢´¦Àíº¯Êı
-    void				process_syn(RUDPSynPacket& syn, const Inet_Addr& remote_addr);
+  public:
+    void                heartbeat();
+    void                process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, const Inet_Addr& remote_addr);
+    //æ§åˆ¶æ¶ˆæ¯å¤„ç†å‡½æ•°
+    void                process_syn(RUDPSynPacket& syn, const Inet_Addr& remote_addr);
 
-    int32_t				handle_timeout(const void *act, uint32_t timer_id);		
+    int32_t             handle_timeout(const void* act, uint32_t timer_id);
 
-protected:
-    void				set_timer(uint32_t delay);
-    void				cancel_timer();
+  protected:
+    void                set_timer(uint32_t delay);
+    void                cancel_timer();
 
-    void				process_syn2(BinStream& strm, const Inet_Addr& remote_addr);
-    void				process_syn_ack(BinStream& strm, const Inet_Addr& remote_addr);
-    void				process_fin(BinStream& strm, const Inet_Addr& remote_addr);
-    void				process_fin2(BinStream& strm, const Inet_Addr& remote_addr);
-    void				process_keeplive(BinStream& strm, const Inet_Addr& remote_addr);
-    void				process_keeplive_ack(BinStream& strm, const Inet_Addr& remote_addr);
-    //Êı¾İÏûÏ¢´¦Àíº¯Êı
-    void				process_data(BinStream& strm, const Inet_Addr& remote_addr);
-    void				process_data_ack(BinStream& strm, const Inet_Addr& remote_addr);
-    void				process_data_nack(BinStream& strm, const Inet_Addr& remote_addr);
+    void                process_syn2(BinStream& strm, const Inet_Addr& remote_addr);
+    void                process_syn_ack(BinStream& strm, const Inet_Addr& remote_addr);
+    void                process_fin(BinStream& strm, const Inet_Addr& remote_addr);
+    void                process_fin2(BinStream& strm, const Inet_Addr& remote_addr);
+    void                process_keeplive(BinStream& strm, const Inet_Addr& remote_addr);
+    void                process_keeplive_ack(BinStream& strm, const Inet_Addr& remote_addr);
+    //æ•°æ®æ¶ˆæ¯å¤„ç†å‡½æ•°
+    void                process_data(BinStream& strm, const Inet_Addr& remote_addr);
+    void                process_data_ack(BinStream& strm, const Inet_Addr& remote_addr);
+    void                process_data_nack(BinStream& strm, const Inet_Addr& remote_addr);
 
-    //·¢ËÍº¯Êı
-    void				send_syn();
-    void				send_syn2(uint8_t result, uint64_t remote_ts);
-    void				send_syn_ack(uint8_t result , uint64_t remote_ts);
-    void				send_fin();
-    void				send_fin2();
-    void				send_keeplive(uint64_t now_ts);
-    void				send_keeplive_ack(uint64_t ts);
+    //å‘é€å‡½æ•°
+    void                send_syn();
+    void                send_syn2(uint8_t result, uint64_t remote_ts);
+    void                send_syn_ack(uint8_t result , uint64_t remote_ts);
+    void                send_fin();
+    void                send_fin2();
+    void                send_keeplive(uint64_t now_ts);
+    void                send_keeplive_ack(uint64_t ts);
 
-    
-private:
-    //Á¬½ÓĞÅÏ¢
-    int32_t				rudp_id_;
-    uint8_t				local_index_;
-    uint8_t				local_title_;
+    void                reset_stat();
+  private:
+    //è¿æ¥ä¿¡æ¯
+    int32_t             rudp_id_;
+    uint8_t             local_index_;
+    uint8_t             local_title_;
 
-    uint16_t			check_sum_;
-    //Ô¶¶ËµØÖ·
-    int32_t				remote_rudp_id_;
-    Inet_Addr			remote_addr_;
-    //»º³åÇø
-    RUDPCCCObject		ccc_;
-    RUDPSendBuffer		send_buffer_;
-    RUDPRecvBuffer		recv_buffer_;
+    uint16_t            check_sum_;
+    //è¿œç«¯åœ°å€
+    int32_t             remote_rudp_id_;
+    Inet_Addr           remote_addr_;
+    //ç¼“å†²åŒº
+    RUDPCCCObject       ccc_;
+    RUDPSendBuffer      send_buffer_;
+    RUDPRecvBuffer      recv_buffer_;
 
-    uint64_t			heart_ts_;
-    //KEEP LIVEÖÜÆÚ,Ã¿¸ö¼ÆÊı5MS
-    uint16_t			keeplive_intnal_;
-    uint32_t			keeplive_count_;
-    //³¬Ê±µÄKEEP LIVEÖÜÆÚÊı
-    uint16_t			timeout_count_;
+    uint64_t            heart_ts_;
+    //KEEP LIVEå‘¨æœŸ,æ¯ä¸ªè®¡æ•°5MS
+    uint16_t            keeplive_intnal_;
+    uint32_t            keeplive_count_;
+    //è¶…æ—¶çš„KEEP LIVEå‘¨æœŸæ•°
+    uint16_t            timeout_count_;
 
-    //»Øµ÷½Ó¿Ú
-    RUDPEventHandler*	event_handler_;
-    //RUDPµÄ×´Ì¬
-    uint16_t			state_;
-    //µ±Ç°´íÎóÂë
-    int32_t				error_code_;
-    //¶¨Ê±Æ÷ID
-    uint32_t			timer_id_;
+    //å›è°ƒæ¥å£
+    RUDPEventHandler*   event_handler_;
+    //RUDPçš„çŠ¶æ€
+    uint16_t            state_;
+    //å½“å‰é”™è¯¯ç 
+    int32_t             error_code_;
+    //å®šæ—¶å™¨ID
+    uint32_t            timer_id_;
 
-    uint8_t				send_count_;
+    uint8_t             send_count_;
 
-    BinStream			strm_;
-    void                *user_data_;
+    BinStream           strm_;
+    void*                user_data_;
 
-    uint64_t  last_heatbeat_ts_;
     uint64_t  last_ack_seq_id_;
     uint32_t  last_ack_send_cnt_;
     uint32_t  recv_data_cnt_;
+    uint8_t    mode_;
+
+    uint32_t stat_lost_pkt_cnt_, stat_resend_pkt_cnt_;
+    NetStat net_stat_;
+
 };
 
 BASE_NAMESPACE_END_DECL

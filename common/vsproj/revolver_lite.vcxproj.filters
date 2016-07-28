@@ -159,6 +159,9 @@
     <ClCompile Include="..\revolver\sha2.cpp">
       <Filter>revolver</Filter>
     </ClCompile>
+    <ClCompile Include="..\revolver\stat_utils.cpp">
+      <Filter>revolver</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\revolver\base_log.h">
@@ -339,6 +342,12 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\revolver\sha2.h">
+      <Filter>revolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rudp\net_stat.h">
+      <Filter>rudp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\stat_utils.h">
       <Filter>revolver</Filter>
     </ClInclude>
   </ItemGroup>

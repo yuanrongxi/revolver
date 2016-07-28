@@ -1,9 +1,9 @@
 /*************************************************************************************
 *filename:	base_thread.h
 *
-*to do:		¶¨ÒåÏß³Ì»ùÀà
+*to do:		å®šä¹‰çº¿ç¨‹åŸºç±»
 *Create on: 2012-05
-*Author:	À´Ô´ÓÚVDC LIBFRAME¿â
+*Author:	æ¥æºäºVDC LIBFRAMEåº“
 *check list:
 *************************************************************************************/
 #ifndef __BASE_THREAD_H
@@ -12,7 +12,7 @@
 #include "revolver/base_namespace.h"
 #include "revolver/base_os.h"
 
-//°üº¬PTHREAD¿â
+//åŒ…å«PTHREADåº“
 #ifndef WIN32
 #include <pthread.h>
 #endif

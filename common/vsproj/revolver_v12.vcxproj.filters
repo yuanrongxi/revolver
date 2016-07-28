@@ -89,6 +89,9 @@
     <ClCompile Include="..\revolver\sha2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\revolver\daemonize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\revolver\aes.h">
@@ -221,6 +224,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\revolver\sha2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\revolver\daemonize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,8 +1,8 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	core_frame.h
 *
-*to do:		¶¨ÒåCOREµÄ¿ò¼Ü£¬Ö÷ÒªÊÇ±¾µØ½ÚµãĞÅÏ¢¹ÜÀí¡¢UDP/TCP¼àÌı¹ÜÀí¡¢Daemon ClientÆô¶¯
-			¹ÜÀí
+*to do:		å®šä¹‰COREçš„æ¡†æ¶ï¼Œä¸»è¦æ˜¯æœ¬åœ°èŠ‚ç‚¹ä¿¡æ¯ç®¡ç†ã€UDP/TCPç›‘å¬ç®¡ç†ã€Daemon Clientå¯åŠ¨
+			ç®¡ç†
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -35,13 +35,13 @@ public:
 
 	void				release_handler();
 
-	//CORE¿âµÄÔËĞĞº¯Êı
+	//COREåº“çš„è¿è¡Œå‡½æ•°
 	void				frame_run();
 	
-	//DAEMON CLIENT·µ»Ø·ÖÅäºÃµÄµØÖ·£¬½øĞĞÍøÂç°ó¶¨£¬Èç¹ûÊÇDAEMON
+	//DAEMON CLIENTè¿”å›åˆ†é…å¥½çš„åœ°å€ï¼Œè¿›è¡Œç½‘ç»œç»‘å®šï¼Œå¦‚æœæ˜¯DAEMON
 	void				bind_port(uint16_t port);
 
-	//×é¼şÉèÖÃ
+	//ç»„ä»¶è®¾ç½®
 	void				create_udp();
 	void				create_tcp_listener();
 	void				create_daemon_client(IDaemonEvent* daemon_event, IDaemonConfig* config = NULL);
@@ -54,17 +54,17 @@ public:
 	uint32_t			post_read_php(uint32_t dc_sid, CoreDCParam* param, const string& php, const string& php_param, bool ack = true);
 
 	CoreDCParam*		cancel_dc_request(uint32_t exc_id);
-	//±¨¸æ½Úµã×´Ì¬µ½daemond·şÎñÉÏ
+	//æŠ¥å‘ŠèŠ‚ç‚¹çŠ¶æ€åˆ°daemondæœåŠ¡ä¸Š
 	int32_t				post_node_state(const string& node_info);
 
-	//Ìá¹©¸øÉÏ²ãµÄÊÂ¼ş
+	//æä¾›ç»™ä¸Šå±‚çš„äº‹ä»¶
 	virtual void		on_init() = 0;
 	virtual void		on_destroy() = 0;
 	
 	virtual void		on_start() = 0;
 	virtual void		on_stop() = 0;
 	
-	//¼ì²é×Ó½ø³ÌÊÇ·ñ±»ÍË³ö
+	//æ£€æŸ¥å­è¿›ç¨‹æ˜¯å¦è¢«é€€å‡º
 	virtual void		wait_pid(){};
 
 protected:
@@ -72,7 +72,7 @@ protected:
 	CCoreTCPListener*	listener_;
 	CoreUDPHandler*		udp_handler_;
 	CCoreDCClient*		dc_client_;
-	bool				single_thread_; //	È«µ¥Ïß³ÌÉè¼Æ
+	bool				single_thread_; //	å…¨å•çº¿ç¨‹è®¾è®¡
 };
 
 BASE_NAMESPACE_END_DECL

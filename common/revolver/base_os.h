@@ -141,7 +141,7 @@ inline const char* get_file_name(const char* pathname)
 	if(pathname == NULL)
 		return pathname;
 
-	int32_t size = strlen(pathname);
+	size_t size = strlen(pathname);
 
 	char *pos = (char *)pathname + size;
 

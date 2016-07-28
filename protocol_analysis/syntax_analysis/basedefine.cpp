@@ -90,7 +90,7 @@ void CBlockHandlerMap::RegisterBlockHandler(CBaseBlockHandler* p_blockhandler)
 	block_handler_.insert(make_pair(p_blockhandler->GetKeyWord(), p_blockhandler));
 }
 
-//ÔÚ³õÊ¼»¯º¯ÊýÖÐ×¢²áÐèÒª´¦ÀíµÄ¹Ø¼ü×ÖºÍËüµÄ´¦ÀíÀà
+//ï¿½Ú³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ä¹Ø¼ï¿½ï¿½Öºï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½
 void CBlockHandlerMap::InitBlockHandlerMap()
 {
 	RegisterBlockHandler(new CFileTitleHandler);
@@ -238,7 +238,7 @@ string CVarDefMap::fetch_value(const string& str_vname)
 	return itr->second;
 }
 
-bool operator<(const CMsgDefDesc& l, const CMsgDefDesc& r)//È·¶¨msgÀàÐÍÊ±ÒÑ¾­¼ì²âÁËÃû×ÖÊÇ·ñÖØ¶¨Òå
+bool operator<(const CMsgDefDesc& l, const CMsgDefDesc& r)//È·ï¿½ï¿½msgï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½
 {
 	if (l.msg_id_ < r.msg_id_ /*&& l.msg_cname_ < r.msg_cname_*/)
 	{
@@ -261,7 +261,8 @@ void CMsgBodyDefMap::AddMsgDef(CMsgDefDesc& msg_def_desc, MemItemVec& msg_body_d
 
 bool CMsgBodyDefMap::IsMsgIDUsed(string& msg_id)
 {
-	MsgBodyDefMap::iterator itr = msgbody_map_.find(CMsgDefDesc(msg_id,string()));
+	string str;
+	MsgBodyDefMap::iterator itr = msgbody_map_.find(CMsgDefDesc(msg_id, str));
 	if (itr != msgbody_map_.end())
 	{
 		return true;
@@ -286,7 +287,7 @@ bool CMsgBodyDefMap::IsMsgIDUsed(string& msg_id)
 	return false;
 }
 
-//ÅÐ¶Ïmsg_nameÊÇ·ñÊÇÒ»¸öÏûÏ¢ÌåÃû
+//ï¿½Ð¶ï¿½msg_nameï¿½Ç·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
 bool CMsgBodyDefMap::IsMsgType(const string& msg_name)
 {
 	for (size_t i = 0; i < msgbody_order_.size(); i++)

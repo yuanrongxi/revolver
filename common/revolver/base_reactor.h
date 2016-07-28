@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	base_rector.h
 *
-*to do:		¶¨Òå·´Ó¦Æ÷½Ó¿Ú
+*to do:		å®šä¹‰ååº”å™¨æ¥å£
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -27,16 +27,16 @@ typedef CTimerQueue_T<CEventHandler*, CTimerFunctor, BaseThreadMutex> TIMEQUEUE;
 
 typedef struct ReactorEventHandlerInfo
 {
-	CEventHandler*	event_handler;
-	int32_t			event_mask;
-	bool			event_close_;
+    CEventHandler*	event_handler;
+    int32_t			event_mask;
+    bool			event_close_;
 
-	ReactorEventHandlerInfo()
-	{
-		event_handler = NULL;
-		event_mask = 0;
-		event_close_ = true;
-	};
+    ReactorEventHandlerInfo()
+    {
+        event_handler = NULL;
+        event_mask = 0;
+        event_close_ = true;
+    };
 }ReactorEventHandlerInfo;
 
 typedef map<BASE_HANDLER, ReactorEventHandlerInfo*> ReactorEventHandlerMap;
@@ -46,41 +46,45 @@ typedef ObjectPool<ReactorEventHandlerInfo, HANDLER_POOL_SIZE> ReactorEventHandl
 class IMessageProcessor
 {
 public:
-	//É¨ÃèÄÚ²¿¶ÓÁĞ
-	virtual int32_t	processor() = 0;
+    //æ‰«æå†…éƒ¨é˜Ÿåˆ—
+    virtual int32_t	processor() = 0;
 };
 
 class CReactor
 {
 public:
-	CReactor(){msg_proc_ = NULL;};
-	virtual ~CReactor(){};
-	
-	void	set_message_processor(IMessageProcessor* proc){msg_proc_ = proc;};
+    CReactor(){ msg_proc_ = NULL; opened_ = 0; };
+    virtual ~CReactor(){};
+    
+    void	set_message_processor(IMessageProcessor* proc){msg_proc_ = proc;};
 
-	virtual int32_t open_reactor(uint32_t number_of_handlers) = 0;
-	virtual int32_t close_reactor() = 0;
+    virtual int32_t open_reactor(uint32_t number_of_handlers) = 0;
+    virtual int32_t close_reactor() = 0;
 
-	virtual int32_t event_loop() = 0;
-	virtual int32_t stop_event_loop() = 0;
+    virtual int32_t event_loop() = 0;
+    virtual int32_t stop_event_loop() = 0;
 
-	virtual	void print() {};
+    virtual	void print() {};
 
-	//ÊÂ¼ş²Ù×÷
-	//Ìí¼ÓÒ»¸öÊÂ¼şµÄ¼àÌı
-	virtual int32_t register_handler(CEventHandler *handler, uint32_t masks) = 0;
-	//É¾³ıÒ»¸öÊÂ¼şµÄÌØ¶¨¼àÌı
-	virtual int32_t remove_handler(CEventHandler *handler, uint32_t masks) = 0;
-	//É¾³ıÒ»¸öÊÂ¼ş
-	virtual int32_t delete_handler(CEventHandler *handler, bool del_event_obj = false) = 0;
-	//¶¨Ê±Æ÷²Ù×÷ 
-	//Ìí¼ÓÒ»¸ö¶¨Ê±Æ÷
-	virtual uint32_t set_timer(CEventHandler *event_handler, const void *act, uint32_t delay) = 0;
-	//É¾³ıÒ»¸ö¶¨Ê±Æ÷
-	virtual uint32_t cancel_timer(uint32_t timer_id, const void **act) = 0;
+    uint8_t is_opened() const { return opened_; }
+    void set_opend(uint8_t val) { opened_ = val; }
+
+    //äº‹ä»¶æ“ä½œ
+    //æ·»åŠ ä¸€ä¸ªäº‹ä»¶çš„ç›‘å¬
+    virtual int32_t register_handler(CEventHandler *handler, uint32_t masks) = 0;
+    //åˆ é™¤ä¸€ä¸ªäº‹ä»¶çš„ç‰¹å®šç›‘å¬
+    virtual int32_t remove_handler(CEventHandler *handler, uint32_t masks) = 0;
+    //åˆ é™¤ä¸€ä¸ªäº‹ä»¶
+    virtual int32_t delete_handler(CEventHandler *handler, bool del_event_obj = false) = 0;
+    //å®šæ—¶å™¨æ“ä½œ 
+    //æ·»åŠ ä¸€ä¸ªå®šæ—¶å™¨
+    virtual uint32_t set_timer(CEventHandler *event_handler, const void *act, uint32_t delay) = 0;
+    //åˆ é™¤ä¸€ä¸ªå®šæ—¶å™¨
+    virtual uint32_t cancel_timer(uint32_t timer_id, const void **act) = 0;
 
 protected:
-	IMessageProcessor* msg_proc_;
+    IMessageProcessor* msg_proc_;
+    uint8_t  opened_;
 };
 
 BASE_NAMESPACE_END_DECL

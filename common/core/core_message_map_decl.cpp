@@ -16,7 +16,7 @@ void CMessageMapDecl::clear()
 {
 	for(CoreMessageMap::iterator it = msg_map_.begin(); it != msg_map_.end(); it ++)
 	{
-		//delete it->second是否存在内存泄露？？可能要在CBasePacket增加个release_self的虚接口
+		//delete it->second鏄惁瀛樺湪鍐呭瓨娉勯湶锛燂紵鍙兘瑕佸湪CBasePacket澧炲姞涓猺elease_self鐨勮櫄鎺ュ彛
 		if(it->second != NULL)
 		{
 			it->second->release_self();

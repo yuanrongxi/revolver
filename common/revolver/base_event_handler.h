@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	base_event_handler.h
 *
-*to do:		¶¨ÒåÊÂ¼şÆ÷½Ó¿Ú
+*to do:		å®šä¹‰äº‹ä»¶å™¨æ¥å£
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -21,10 +21,10 @@ BASE_NAMESPACE_BEGIN_DECL
 
 typedef enum EVENT_MASK
 {
-	MASK_READ		= (1 << 0), //¶ÁÊÂ¼ş
-	MASK_WRITE		= (1 << 1),	//Ğ´ÊÂ¼ş
-	MASK_TIMEOUT	= (1 << 2),	//³¬Ê±ÊÂ¼ş
-	MASK_EXCEPT		= (1 << 3),	//Òì³£ÊÂ¼ş
+	MASK_READ		= (1 << 0), //è¯»äº‹ä»¶
+	MASK_WRITE		= (1 << 1),	//å†™äº‹ä»¶
+	MASK_TIMEOUT	= (1 << 2),	//è¶…æ—¶äº‹ä»¶
+	MASK_EXCEPT		= (1 << 3),	//å¼‚å¸¸äº‹ä»¶
 }EVENT_MASK;
 
 typedef uint32_t ReactorMask;
@@ -64,7 +64,7 @@ protected:
 	void					clear_timer_events();
 protected:
 	CReactor*				reactor_;
-	uint32_t				reactor_index_;			//ÔÚEPOLL HEAPÉÏµÄË÷Òı£¬ÔÚSELECTÏÂÎŞÓÃ£¡£¡
+	uint32_t				reactor_index_;			//åœ¨EPOLL HEAPä¸Šçš„ç´¢å¼•ï¼Œåœ¨SELECTä¸‹æ— ç”¨ï¼ï¼
 	//TIMER ID
 	BaseEventIDSet			timer_events_;
 };

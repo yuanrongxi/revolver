@@ -15,7 +15,7 @@ public:
 	}
 	static T* GetInstance()
 	{
-		if (p_T_ == NULL)
+		if (p_T_ == 0)
 		{
 			return p_T_ = new T;
 		}
@@ -26,10 +26,10 @@ public:
 	}
 	static void DestoryInstance()
 	{
-		if (p_T_ != NULL)
+		if (p_T_ != 0)
 		{
 			delete p_T_;
-			p_T_ = NULL;
+			p_T_ = 0;
 		}
 	}
 private:
@@ -41,5 +41,5 @@ private:
 };
 
 template<class T>
-T* CSingleton<T>::p_T_ = NULL;
+T* CSingleton<T>::p_T_ = 0;
 #endif //SINGLETON_H_

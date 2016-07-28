@@ -1,4 +1,4 @@
-#ifndef __DC_SHORT_CONN_H_
+ï»¿#ifndef __DC_SHORT_CONN_H_
 #define __DC_SHORT_CONN_H_
 
 #include "revolver/base_thread_mutex.h"
@@ -25,9 +25,9 @@ class ShortConnection : public CEventHandler
 public:
 	enum 
 	{
-		SHORT_CONN_IDLE,			//Æ½¾²×´Ì¬,ÓĞ¿ÉÄÜÊÇÎ´Á¬½Ó
-		SHORT_CONN_CONNECTING,		//Á¬½Ó×´Ì¬
-		SHORT_CONN_CONNECTED,		//Á¬½Ó×´Ì¬
+		SHORT_CONN_IDLE,			//å¹³é™çŠ¶æ€,æœ‰å¯èƒ½æ˜¯æœªè¿æ¥
+		SHORT_CONN_CONNECTING,		//è¿æ¥çŠ¶æ€
+		SHORT_CONN_CONNECTED,		//è¿æ¥çŠ¶æ€
 	};
 
 public:
@@ -57,7 +57,7 @@ public:
 	int32_t				send(CCorePacket &packet);
 
 public:
-	//ÊÂ¼ş½Ó¿Ú
+	//äº‹ä»¶æ¥å£
 	int32_t				handle_input(BASE_HANDLER handle);
 	int32_t				handle_output(BASE_HANDLER handle);
 	int32_t				handle_close(BASE_HANDLER handle, ReactorMask close_mask);
@@ -80,12 +80,12 @@ protected:
 
 	CSockStream			sock_stream_;
 
-	SBuffer				sbuffer_;			//·¢ËÍBUFFER
-	RBuffer				rbuffer_;			//½ÓÊÕBUFFER
+	SBuffer				sbuffer_;			//å‘é€BUFFER
+	RBuffer				rbuffer_;			//æ¥æ”¶BUFFER
 
 	BinStream			istrm_;
 
-	uint32_t			timer_count_;		//¶¨Ê±Æ÷¼ÆÊı
+	uint32_t			timer_count_;		//å®šæ—¶å™¨è®¡æ•°
 	Inet_Addr			remote_addr_;
 	IShortProcessor*	msg_proc_;
 

@@ -70,7 +70,7 @@ bool CTimerRing::cycle(uint32_t& scale, IRingEvent* ring_handler)
 	ElementSet::iterator it;
 	for(uint16_t pos = pos_; pos < new_pos; pos ++)
 	{
-		for(it = ring_[pos].begin(); it != ring_[pos].end(); ++ it) //´¥·¢ÉÏÒ»¿Ì¶ÈµÄ³¬Ê±£¬ÓÐ¿ÉÄÜÊÇÖÐÍ¾²åÈëµÄ¶¨Ê±Æ÷
+		for(it = ring_[pos].begin(); it != ring_[pos].end(); ++ it) //è§¦å‘ä¸Šä¸€åˆ»åº¦çš„è¶…æ—¶ï¼Œæœ‰å¯èƒ½æ˜¯ä¸­é€”æ’å…¥çš„å®šæ—¶å™¨
 		{
 			ring_handler->ring_event(ring_id_, *it);
 		}

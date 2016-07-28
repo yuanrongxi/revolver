@@ -1,7 +1,7 @@
 /*************************************************************************************
 *filename:	dc_tcp_listener.h
 *
-*to do:		定义专门为DCENTER的TCP监听服务
+*to do:		瀹氫箟涓撻棬涓篋CENTER鐨凾CP鐩戝惉鏈嶅姟
 *Create on: 2013-05
 *Author:	zerok
 *check list:

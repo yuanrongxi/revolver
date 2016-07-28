@@ -1,9 +1,9 @@
-/*************************************************************************************
-*filename:	rudp_packet.h
+ï»¿/*************************************************************************************
+*filename:  rudp_packet.h
 *
-*to do:		RUDPĞ­Òé¶¨Òå
+*to do:     RUDPåè®®å®šä¹‰
 *Create on: 2013-04
-*Author:	zerok
+*Author:    zerok
 *check list:
 *************************************************************************************/
 
@@ -21,295 +21,260 @@ using namespace std;
 BASE_NAMESPACE_BEGIN_DECL
 
 #define PARSE_RUDP_MESSAGE(strm, T, body, info) \
-	T body;\
-	try{\
-	strm >> body;\
+    T body;\
+    try{\
+    strm >> body;\
 }\
-	catch(...){\
-	RUDP_ERROR(info);\
-	return; \
+    catch(...){\
+    RUDP_ERROR(info);\
+    return; \
 }
 
-//Á¬½Ó±£³ÖĞ­Òé
-#define RUDP_SYN				0x10		//Ö÷¶¯·¢ÆğÁ¬½Ó
-#define RUDP_SYN2				0x11		//·¢ÆğÁ¬½Ó·µ»Ø°ü
-#define RUDP_SYN_ACK			0x02		//SYN2µÄACK
-#define RUDP_FIN				0x13		//Ö÷¶¯·¢Æğ¹Ø±Õ
-#define RUDP_FIN2				0x14		//¹Ø±Õ·µ»Ø°ü
-#define RUDP_KEEPALIVE			0x15		//ĞÄÌø°ü
-#define RUDP_KEEPALIVE_ACK		0x16		//ĞÄÌø·µ»Ø°ü
+//è¿æ¥ä¿æŒåè®®
+#define RUDP_SYN                0x10        //ä¸»åŠ¨å‘èµ·è¿æ¥
+#define RUDP_SYN2               0x11        //å‘èµ·è¿æ¥è¿”å›åŒ…
+#define RUDP_SYN_ACK            0x02        //SYN2çš„ACK
+#define RUDP_FIN                0x13        //ä¸»åŠ¨å‘èµ·å…³é—­
+#define RUDP_FIN2               0x14        //å…³é—­è¿”å›åŒ…
+#define RUDP_KEEPALIVE          0x15        //å¿ƒè·³åŒ…
+#define RUDP_KEEPALIVE_ACK      0x16        //å¿ƒè·³è¿”å›åŒ…
 
-//Êı¾İĞ­Òé
-#define RUDP_DATA				0x20		//¿É¿¿Êı¾İ
-#define RUDP_DATA_ACK			0x23		//¿É¿¿Êı¾İÈ·ÈÏ
-#define RUDP_DATA_NACK			0X24		//¶ª°üÈ·ÈÏ
+//æ•°æ®åè®®
+#define RUDP_DATA               0x20        //å¯é æ•°æ®
+#define RUDP_DATA_ACK           0x23        //å¯é æ•°æ®ç¡®è®¤
+#define RUDP_DATA_NACK          0X24        //ä¸¢åŒ…ç¡®è®¤
 
-//ÍøÂç´íÎóÂë
-#define ERROR_SYN_STATE			0x01
-#define SYSTEM_SYN_ERROR		0X02
+//ç½‘ç»œé”™è¯¯ç 
+#define ERROR_SYN_STATE         0x01
+#define SYSTEM_SYN_ERROR        0X02
 
-class RUDPHeadPacket : public CBasePacket
-{
-public:
-	RUDPHeadPacket(){};
-	virtual ~RUDPHeadPacket(){};
+#define RUDP_MODE_PASSIVE      0x0001
+#define RUDP_MODE_NORMAL      0x0000
 
-protected:
-	virtual void Pack(BinStream& strm) const
-	{
-		strm << msg_id_ << remote_rudp_id_ << check_sum_;
-	};
+class RUDPHeadPacket : public CBasePacket {
+  public:
+    RUDPHeadPacket() {};
+    virtual ~RUDPHeadPacket() {};
 
-	virtual void UnPack(BinStream& strm)
-	{
-		strm >> msg_id_ >> remote_rudp_id_ >> check_sum_;
-	};
+  protected:
+    virtual void Pack(BinStream& strm) const {
+        strm << msg_id_ << remote_rudp_id_ << check_sum_;
+    };
 
-	virtual void Print(std::ostream& os)const
-	{
-		os << "msg id = " << ", remote rudp id = " <<remote_rudp_id_ << "local sum = " << check_sum_ << std::endl;
-	};
+    virtual void UnPack(BinStream& strm) {
+        strm >> msg_id_ >> remote_rudp_id_ >> check_sum_;
+    };
 
-public:
-	uint8_t		msg_id_;
-	uint16_t	check_sum_;
-	int32_t		remote_rudp_id_; //-1±íÊ¾·Ç·¨
+    virtual void Print(std::ostream& os)const {
+        os << "msg id = " << ", remote rudp id = " << remote_rudp_id_ << "local sum = " << check_sum_ << std::endl;
+    };
+
+  public:
+    uint8_t     msg_id_;
+    uint16_t    check_sum_;
+    int32_t     remote_rudp_id_; //-1è¡¨ç¤ºéæ³•
 };
 
-class RUDPSynPacket : public CBasePacket
-{
-public:
-	RUDPSynPacket(){};
-	virtual ~RUDPSynPacket(){};
+class RUDPSynPacket : public CBasePacket {
+  public:
+    RUDPSynPacket() : flags_( RUDP_MODE_NORMAL) {};
+    virtual ~RUDPSynPacket() {};
 
-protected:
-	virtual void Pack(BinStream& strm) const
-	{
-		strm << version_ << max_segment_size_ << local_rudp_id_ << start_seq_ << local_ts_;
-	};
+  protected:
+    virtual void Pack(BinStream& strm) const {
+        strm << version_ << flags_ << max_segment_size_ << local_rudp_id_ << start_seq_ << local_ts_;
+    };
 
-	virtual void UnPack(BinStream& strm)
-	{
-		strm >> version_ >> max_segment_size_ >> local_rudp_id_ >> start_seq_ >> local_ts_;
-	};
+    virtual void UnPack(BinStream& strm) {
+        strm >> version_ >> flags_ >> max_segment_size_ >> local_rudp_id_ >> start_seq_ >> local_ts_;
+    };
 
-	virtual void Print(std::ostream& os)const
-	{
-		os << "version = " << version_ << ", max_segment_size = " << max_segment_size_ \
-			<< ", local rudp id = " << local_rudp_id_ << ", start seq = " << local_rudp_id_\
-			<< ", local ts = " << local_ts_ << std::endl;
-	}
+    virtual void Print(std::ostream& os)const {
+        os << "version = " << version_ << ", flags: " << flags_ << ", max_segment_size = " << max_segment_size_ \
+           << ", local rudp id = " << local_rudp_id_ << ", start seq = " << local_rudp_id_\
+           << ", local ts = " << local_ts_ << std::endl;
+    }
 
-public:
-	uint8_t			version_;				//°æ±¾
-	uint16_t		max_segment_size_;		//×î´ó¿é³ß´ç
-	int32_t			local_rudp_id_;			//±¾µØRUDP Ë÷ÒıID,ÀàËÆsocket id
-	uint64_t		start_seq_;				//ÆğÊ¼ĞòºÅ
-	uint64_t		local_ts_;				//±¾µØÊ±¼ä´Á
-};	
-
-
-class RUDPSyn2Packet : public CBasePacket
-{
-public:
-	RUDPSyn2Packet()
-	{
-	};
-
-	virtual ~RUDPSyn2Packet()
-	{
-	};
-
-protected:
-	virtual void Pack(BinStream& strm) const
-	{
-		strm << version_ << syn2_result_ << max_segment_size_ << local_rudp_id_ << start_seq_ << local_ts_ << remote_ts_;
-	};
-
-	virtual void UnPack(BinStream& strm)
-	{
-		strm >> version_>> syn2_result_ >> max_segment_size_ >> local_rudp_id_ >> start_seq_ >> local_ts_ >> remote_ts_;
-	};
-
-	virtual void Print(std::ostream& os)const
-	{
-		os << "version = " << version_ << ", max_segment_size = " << max_segment_size_ \
-			<< ", syn2_result_ = " << syn2_result_ \
-			<< ", local rudp id = " << local_rudp_id_ << ", start seq = " << local_rudp_id_ \
-			<< ", local ts = " << local_ts_ << ", remote ts = " << remote_ts_ << std::endl;
-	}
-public:
-	uint8_t			version_;			//°æ±¾
-	uint8_t			syn2_result_;		//ÎÕÊÖ½á¹û
-	uint16_t		max_segment_size_;	//±¾µØ×î´ó¿é³ß´ç
-	int32_t			local_rudp_id_;		//±¾µØrudp Ë÷ÒıID
-	uint64_t		start_seq_;			//±¾µØÆğÊ¼ĞòºÅ
-	uint64_t		local_ts_;			//±¾µØÊ±¼ä´Á
-	uint64_t		remote_ts_;			//Ô¶¶ËÊ±¼ä´Á, RUDPSynPacket.local_ts_
+  public:
+    uint8_t      version_;               //ç‰ˆæœ¬
+    uint8_t      flags_;
+    uint16_t    max_segment_size_;      //æœ€å¤§å—å°ºå¯¸
+    int32_t      local_rudp_id_;         //æœ¬åœ°RUDP ç´¢å¼•ID,ç±»ä¼¼socket id
+    uint64_t    start_seq_;             //èµ·å§‹åºå·
+    uint64_t    local_ts_;              //æœ¬åœ°æ—¶é—´æˆ³
 };
 
-class RUDPSyn2AckPacket : public CBasePacket
-{
-public:
-	RUDPSyn2AckPacket()
-	{
-	};
 
-	virtual ~RUDPSyn2AckPacket()
-	{
-	}
+class RUDPSyn2Packet : public CBasePacket {
+  public:
+    RUDPSyn2Packet() {
+    };
 
-protected:
-	virtual void Pack(BinStream& strm) const
-	{
-		strm << result_ << remote_ts_;
-	};
+    virtual ~RUDPSyn2Packet() {
+    };
 
-	virtual void UnPack(BinStream& strm)
-	{
-		strm >> result_ >> remote_ts_;
-	};
+  protected:
+    virtual void Pack(BinStream& strm) const {
+        strm << version_ << syn2_result_ << max_segment_size_ << local_rudp_id_ << start_seq_ << local_ts_ << remote_ts_;
+    };
 
-	virtual void Print(std::ostream& os)const
-	{
-		os << "result = " << (uint16_t)result_  << ", remote ts = " << remote_ts_ << std::endl;
-	}
+    virtual void UnPack(BinStream& strm) {
+        strm >> version_ >> syn2_result_ >> max_segment_size_ >> local_rudp_id_ >> start_seq_ >> local_ts_ >> remote_ts_;
+    };
 
-public:
-	uint8_t			result_;
-	uint64_t		remote_ts_;	//Ô¶¶ËÊ±¼ä´Á£¬RUDPSyn2Packet.local_ts_
+    virtual void Print(std::ostream& os)const {
+        os << "version = " << version_ << ", max_segment_size = " << max_segment_size_ \
+           << ", syn2_result_ = " << syn2_result_ \
+           << ", local rudp id = " << local_rudp_id_ << ", start seq = " << local_rudp_id_ \
+           << ", local ts = " << local_ts_ << ", remote ts = " << remote_ts_ << std::endl;
+    }
+  public:
+    uint8_t         version_;           //ç‰ˆæœ¬
+    uint8_t         syn2_result_;       //æ¡æ‰‹ç»“æœ
+    uint16_t        max_segment_size_;  //æœ¬åœ°æœ€å¤§å—å°ºå¯¸
+    int32_t         local_rudp_id_;     //æœ¬åœ°rudp ç´¢å¼•ID
+    uint64_t        start_seq_;         //æœ¬åœ°èµ·å§‹åºå·
+    uint64_t        local_ts_;          //æœ¬åœ°æ—¶é—´æˆ³
+    uint64_t        remote_ts_;         //è¿œç«¯æ—¶é—´æˆ³, RUDPSynPacket.local_ts_
 };
 
-class RDUPKeepLive : public CBasePacket
-{
-public:
-	RDUPKeepLive(){};
-	virtual ~RDUPKeepLive(){};
+class RUDPSyn2AckPacket : public CBasePacket {
+  public:
+    RUDPSyn2AckPacket() {
+    };
 
-protected:
-	virtual void Pack(BinStream& strm) const
-	{
-		strm << timestamp_;
-	};
+    virtual ~RUDPSyn2AckPacket() {
+    }
 
-	virtual void UnPack(BinStream& strm)
-	{
-		strm >> timestamp_;
-	};
+  protected:
+    virtual void Pack(BinStream& strm) const {
+        strm << result_ << remote_ts_;
+    };
 
-	virtual void Print(std::ostream& os)const
-	{
-		os << "timestamp = " << timestamp_ << std::endl;
-	};
+    virtual void UnPack(BinStream& strm) {
+        strm >> result_ >> remote_ts_;
+    };
 
-public:
-	uint64_t	timestamp_;		//Ê±¼ä´Á£¬Ö÷ÒªÓÃÓÚ¼ÆËãRTT
+    virtual void Print(std::ostream& os)const {
+        os << "result = " << (uint16_t)result_  << ", remote ts = " << remote_ts_ << std::endl;
+    }
+
+  public:
+    uint8_t         result_;
+    uint64_t        remote_ts_; //è¿œç«¯æ—¶é—´æˆ³ï¼ŒRUDPSyn2Packet.local_ts_
 };
 
-class RUDPData : public CBasePacket
-{
-public:
-	RUDPData() {};
-	virtual ~RUDPData(){};
+class RDUPKeepLive : public CBasePacket {
+  public:
+    RDUPKeepLive() {};
+    virtual ~RDUPKeepLive() {};
 
-protected:
-	virtual void Pack(BinStream& strm) const
-	{
-		strm << ack_seq_id_ << cur_seq_id_;// << data_;
-	};
+  protected:
+    virtual void Pack(BinStream& strm) const {
+        strm << timestamp_;
+    };
 
-	virtual void UnPack(BinStream& strm)
-	{
-		strm >> ack_seq_id_ >> cur_seq_id_;// >> data_;
-	};
+    virtual void UnPack(BinStream& strm) {
+        strm >> timestamp_;
+    };
 
-	virtual void Print(std::ostream& os)const
-	{
-		os << "ack seq id = " << ack_seq_id_ << ",cur seq id = " << cur_seq_id_ << std::endl;
-	};
+    virtual void Print(std::ostream& os)const {
+        os << "timestamp = " << timestamp_ << std::endl;
+    };
 
-public:
-	//µ±Ç°½ÓÊÜ¶ÓÁĞÖĞ×î´óSEQ
-	uint64_t	ack_seq_id_;
-	//µ±Ç°Êı¾İ¿éµÄSEQ
-	uint64_t	cur_seq_id_;
-
-	//string		data_;
+  public:
+    uint64_t    timestamp_;     //æ—¶é—´æˆ³ï¼Œä¸»è¦ç”¨äºè®¡ç®—RTT
 };
 
-class RUDPDataAck : public CBasePacket
-{
-public:
-	RUDPDataAck(){};
-	virtual ~RUDPDataAck(){};
+class RUDPData : public CBasePacket {
+  public:
+    RUDPData() {};
+    virtual ~RUDPData() {};
 
-protected:
-	virtual void Pack(BinStream& strm) const
-	{
-		strm << ack_seq_id_;
-	};
+  protected:
+    virtual void Pack(BinStream& strm) const {
+        strm << ack_seq_id_ << cur_seq_id_;// << data_;
+    };
 
-	virtual void UnPack(BinStream& strm)
-	{
-		strm >> ack_seq_id_ ;
-	};
+    virtual void UnPack(BinStream& strm) {
+        strm >> ack_seq_id_ >> cur_seq_id_;// >> data_;
+    };
 
-	virtual void Print(std::ostream& os)const
-	{
-		os << "ack seq id = " << ack_seq_id_ << std::endl;
-	};
+    virtual void Print(std::ostream& os)const {
+        os << "ack seq id = " << ack_seq_id_ << ",cur seq id = " << cur_seq_id_ << std::endl;
+    };
 
-public:
-	//µ±Ç°½ÓÊÜ¶ÓÁĞÖĞ×î´óSEQ
-	uint64_t	ack_seq_id_;
+  public:
+    //å½“å‰æ¥å—é˜Ÿåˆ—ä¸­æœ€å¤§SEQ
+    uint64_t    ack_seq_id_;
+    //å½“å‰æ•°æ®å—çš„SEQ
+    uint64_t    cur_seq_id_;
+
+    //string        data_;
 };
 
-typedef vector<uint16_t>	LossIDArray;
+class RUDPDataAck : public CBasePacket {
+  public:
+    RUDPDataAck() {};
+    virtual ~RUDPDataAck() {};
 
-class RUDPDataNack : public CBasePacket
-{
-public:
-	RUDPDataNack() {};
-	virtual ~RUDPDataNack() {};
+  protected:
+    virtual void Pack(BinStream& strm) const {
+        strm << ack_seq_id_;
+    };
 
-protected:
-		virtual void Pack(BinStream& strm) const
-	{
-		strm << base_seq_;
+    virtual void UnPack(BinStream& strm) {
+        strm >> ack_seq_id_ ;
+    };
 
-		uint16_t array_size = loss_ids_.size();
-		strm << array_size;
-		for(uint16_t i = 0; i < array_size; ++i)
-		{
-			strm << loss_ids_[i];
-		}
-	};
+    virtual void Print(std::ostream& os)const {
+        os << "ack seq id = " << ack_seq_id_ << std::endl;
+    };
 
-	virtual void UnPack(BinStream& strm)
-	{
-		strm >> base_seq_ ;
+  public:
+    //å½“å‰æ¥å—é˜Ÿåˆ—ä¸­æœ€å¤§SEQ
+    uint64_t    ack_seq_id_;
+};
 
-		uint16_t array_size;
-		strm >> array_size;
-		loss_ids_.resize(array_size);
-		for(uint16_t i = 0; i < array_size; ++i)
-		{
-			strm >> loss_ids_[i];
-		}
-	};
+typedef vector<uint16_t>    LossIDArray;
 
-	virtual void Print(std::ostream& os)const
-	{
-		os << "base seq id = " << base_seq_ << "loss ids =";
-		for(uint16_t i = 0; i < loss_ids_.size(); ++i)
-		{
-			os << " " << loss_ids_[i];
-		}
-	};
+class RUDPDataNack : public CBasePacket {
+  public:
+    RUDPDataNack() {};
+    virtual ~RUDPDataNack() {};
 
-public:
-	uint64_t		base_seq_;	//¶ª°üÆğÊ¼ID
-	LossIDArray		loss_ids_; //¶ª°üĞòÁĞ£¬Ïà¶Ôbase seqµÄ¾àÀë¡£¿ÉÒÔÍ¨¹ıloss ids[i]ºÍbase_seqÏà¼ÓµÃµ½¶ª°üµÄĞòºÅ
+  protected:
+    virtual void Pack(BinStream& strm) const {
+        strm << base_seq_;
+
+        uint16_t array_size = loss_ids_.size();
+        strm << array_size;
+        for (uint16_t i = 0; i < array_size; ++i) {
+            strm << loss_ids_[i];
+        }
+    };
+
+    virtual void UnPack(BinStream& strm) {
+        strm >> base_seq_ ;
+
+        uint16_t array_size;
+        strm >> array_size;
+        loss_ids_.resize(array_size);
+        for (uint16_t i = 0; i < array_size; ++i) {
+            strm >> loss_ids_[i];
+        }
+    };
+
+    virtual void Print(std::ostream& os)const {
+        os << "base seq id = " << base_seq_ << "loss ids =";
+        for (uint16_t i = 0; i < loss_ids_.size(); ++i) {
+            os << " " << loss_ids_[i];
+        }
+    };
+
+  public:
+    uint64_t        base_seq_;  //ä¸¢åŒ…èµ·å§‹ID
+    LossIDArray     loss_ids_; //ä¸¢åŒ…åºåˆ—ï¼Œç›¸å¯¹base seqçš„è·ç¦»ã€‚å¯ä»¥é€šè¿‡loss ids[i]å’Œbase_seqç›¸åŠ å¾—åˆ°ä¸¢åŒ…çš„åºå·
 };
 
 BASE_NAMESPACE_END_DECL

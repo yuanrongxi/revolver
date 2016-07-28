@@ -1,9 +1,9 @@
-/*************************************************************************************
-*filename:	rudp_recv_buffer.h
+ï»¿/*************************************************************************************
+*filename:  rudp_recv_buffer.h
 *
-*to do:		¶¨ÒåRUDP½ÓÊÕ´°¿ÚBuffer
+*to do:     å®šä¹‰RUDPæ¥æ”¶çª—å£Buffer
 *Create on: 2013-04
-*Author:	zerok
+*Author:    zerok
 *check list:
 *************************************************************************************/
 
@@ -19,71 +19,72 @@
 BASE_NAMESPACE_BEGIN_DECL
 
 typedef map<uint64_t, RUDPRecvSegment*> RecvWindowMap;
-typedef list<RUDPRecvSegment*>	RecvDataList;
+typedef list<RUDPRecvSegment*>  RecvDataList;
 
-typedef map<uint64_t, uint64_t>	LossIDTSMap;
+typedef map<uint64_t, uint64_t> LossIDTSMap;
 
-class RUDPRecvBuffer
-{
-public:
+class RUDPRecvBuffer {
+  public:
     RUDPRecvBuffer();
     virtual~RUDPRecvBuffer();
 
-    void				reset();
-    //À´×ÔÍøÂçÖĞµÄÊı¾İ
-    int32_t				on_data(uint64_t seq, const uint8_t* data, int32_t data_size);
-    //¶¨Ê±
-    void				on_timer(uint64_t now_timer, uint32_t rtc);
+    void  reset();
+    //æ¥è‡ªç½‘ç»œä¸­çš„æ•°æ®
+    int32_t  on_data(uint64_t seq, const uint8_t* data, int32_t data_size);
+    //å®šæ—¶
+    void  on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt);
 
-    //¶ÁÈ¡BUFFERÖĞµÄÊı¾İ
-    int32_t				read(uint8_t* data, int32_t data_size);
+    //è¯»å–BUFFERä¸­çš„æ•°æ®
+    int32_t  read(uint8_t* data, int32_t data_size);
 
-    uint64_t			get_ack_id() const { return first_seq_;};
+    uint64_t  get_ack_id() const { return first_seq_;};
 
-    uint32_t			get_bandwidth();
+    uint32_t  get_bandwidth();
 
-    void				set_net_channel(IRUDPNetChannel* channel) {net_channel_ = channel;};
-    void				set_send_last_ack_ts(uint64_t ts) {last_ack_ts_ = ts;  recv_new_packet_ = false;};
-    //Ö»ÓĞÆô¶¯ÊÕµ½¶Ô·½ÎÕÊÖÊ±µ÷ÓÃÒ»´Î£¡£¡
-    void				set_first_seq(uint64_t first_seq) {first_seq_ = first_seq - 1; max_seq_ = first_seq_;};
+    void  set_net_channel(IRUDPNetChannel* channel) {net_channel_ = channel;};
+    void  set_send_last_ack_ts(uint64_t ts) {last_ack_ts_ = ts;  recv_new_packet_ = false;};
+    //åªæœ‰å¯åŠ¨æ”¶åˆ°å¯¹æ–¹æ¡æ‰‹æ—¶è°ƒç”¨ä¸€æ¬¡ï¼ï¼
+    void  set_first_seq(uint64_t first_seq) {first_seq_ = first_seq - 1; max_seq_ = first_seq_;};
 
-    void				check_buffer();
-    int32_t				get_buffer_data_size();
+    void  check_buffer();
+    int32_t  get_buffer_data_size();
+    void set_rudp_id(int32_t id) { rudp_id_ = id; }
 
-protected:
-    void				check_recv_window();
-    bool				check_loss(uint64_t now_timer, uint32_t rtc);
+  protected:
+    void  check_recv_window();
+    bool  check_loss();
+    void  on_data_recv(uint64_t seq);
+  protected:
+    IRUDPNetChannel*    net_channel_;
 
-protected:
-    IRUDPNetChannel*	net_channel_;
+    //æ¥æ”¶çª—å£
+    RecvWindowMap       recv_window_;
+    //å·²å®Œæˆçš„è¿ç»­æ•°æ®ç‰‡
+    RecvDataList        recv_data_;
+    //ä¸¢åŒ…åºåˆ—
+    LossIDTSMap         loss_map_;
 
-    //½ÓÊÕ´°¿Ú
-    RecvWindowMap		recv_window_;
-    //ÒÑÍê³ÉµÄÁ¬ĞøÊı¾İÆ¬
-    RecvDataList		recv_data_;
-    //¶ª°üĞòÁĞ
-    LossIDTSMap			loss_map_;
+    //å½“å‰BUFFERä¸­æœ€å¤§è¿ç»­æ•°æ®ç‰‡çš„SEQ
+    uint64_t            first_seq_;
+    //å½“æœŸBUFFERä¸­å—åˆ°çš„æœ€å¤§çš„æ•°æ®ç‰‡ID
+    uint64_t            max_seq_;
+    //æœ€åä¸€æ¬¡å‘é€ACKçš„æ—¶åˆ»
+    uint64_t            last_ack_ts_;
 
-    //µ±Ç°BUFFERÖĞ×î´óÁ¬ĞøÊı¾İÆ¬µÄSEQ
-    uint64_t			first_seq_;
-    //µ±ÆÚBUFFERÖĞÊÜµ½µÄ×î´óµÄÊı¾İÆ¬ID
-    uint64_t			max_seq_;
-    //×îºóÒ»´Î·¢ËÍACKµÄÊ±¿Ì
-    uint64_t			last_ack_ts_;
-    
 
-    //ÔÚÉÏ´Î·¢ËÍACKµ½ÏÖÔÚ£¬ÊÜµ½ĞÂµÄÁ¬Ğø±¨ÎÄµÄ±êÖ¾	
-    bool				recv_new_packet_;
-    int					ok_count_;
+    //åœ¨ä¸Šæ¬¡å‘é€ACKåˆ°ç°åœ¨ï¼Œå—åˆ°æ–°çš„è¿ç»­æŠ¥æ–‡çš„æ ‡å¿—
+    bool                recv_new_packet_;
+    int                 recv_pkt_count_;
 
-    uint32_t			bandwidth_;
-    uint64_t			bandwidth_ts_;
-    uint32_t			rtc_;
+    uint32_t            bandwidth_;
+    uint64_t            bandwidth_ts_;
+    uint32_t            rtc_;
+    int32_t   rudp_id_;
 };
 
 BASE_NAMESPACE_END_DECL
 
-#endif   
+#endif
 /************************************************************************************/
 
 

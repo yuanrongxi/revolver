@@ -106,6 +106,7 @@
     <ClCompile Include="..\revolver\base_thread.cpp" />
     <ClCompile Include="..\revolver\base_timer_value.cpp" />
     <ClCompile Include="..\revolver\crc_crypt.c" />
+    <ClCompile Include="..\revolver\daemonize.cpp" />
     <ClCompile Include="..\revolver\date_time.cpp" />
     <ClCompile Include="..\revolver\gettimeofday.cpp" />
     <ClCompile Include="..\revolver\lzo_object.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="..\revolver\base_timer_value.h" />
     <ClInclude Include="..\revolver\base_typedef.h" />
     <ClInclude Include="..\revolver\crc_crypt.h" />
+    <ClInclude Include="..\revolver\daemonize.h" />
     <ClInclude Include="..\revolver\date_time.h" />
     <ClInclude Include="..\revolver\gettimeofday.h" />
     <ClInclude Include="..\revolver\lzoconf.h" />

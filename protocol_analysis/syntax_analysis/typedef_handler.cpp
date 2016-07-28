@@ -7,7 +7,8 @@
 
 CTypedefHandler::CTypedefHandler()
 {
-	if (!GET_KEYWORDSET()->IsKeyWord(string(TYPE_DEFINE)))
+	string val = TYPE_DEFINE;
+	if (!GET_KEYWORDSET()->IsKeyWord(val))
 	{
 		std::cerr << "CTypedefHandler:bind wrong key word" << std::endl;
 		abort();
@@ -29,17 +30,17 @@ void CTypedefHandler::AnalysisBlockContent(string& str_line, int line_num)
 
 	if (v_elem.size() != 4)
 	{
-		//to do:¸ñÊ½²»ÕýÈ·
+		//to do:ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½È·
 		THROW_ERROR(line_num, "Error:wrong form, expected 'typedef type<type> : OTHER_NAME'");
 	}
 
 	if (!(GET_KEYWORDSET()->IsKeyWord(v_elem[0])))
 	{
-		//to do:¹Ø¼ü×Ö²»ÕýÈ·
+		//to do:ï¿½Ø¼ï¿½ï¿½Ö²ï¿½ï¿½ï¿½È·
 		THROW_ERROR(line_num, "Error:wrong key word, expected 'typedef'");
 	}
 
-	//¼ì²é¿ÉÄÜµÄ¸´ºÏÀàÐÍ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ÜµÄ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	CheckComplexType(v_elem[1], line_num);
 
 	if (v_elem[2] != ":")
@@ -55,12 +56,12 @@ void CTypedefHandler::AnalysisBlockContent(string& str_line, int line_num)
 
 	if (!CBaseLineHandler::IsVarNameLegal(v_elem[3]))
 	{
-		//to do:Ãû×Ö²»ºÏ·¨
+		//to do:ï¿½ï¿½ï¿½Ö²ï¿½ï¿½Ï·ï¿½
 		THROW_ERROR(line_num, string("Warning:") + v_elem[3] + " is a bad name, need to change");
 	}
 
 	GET_DATATYPESET()->AddDataType(v_elem[3]);
-	//to do:¼ÓÈëtypedefÃèÊö±í
+	//to do:ï¿½ï¿½ï¿½ï¿½typedefï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	GET_TYPEDEFSET()->AddTypedef(v_elem[1], v_elem[3]);
 }
 
@@ -72,7 +73,7 @@ void CTypedefHandler::CheckComplexType(string& str_type, int line_num)
 	{
 		if (!(GET_DATATYPESET()->IsContainType(str_type)))
 		{
-			//to do:¹Ø¼ü×Ö²»ÕýÈ·
+			//to do:ï¿½Ø¼ï¿½ï¿½Ö²ï¿½ï¿½ï¿½È·
 			THROW_ERROR(line_num, string("Error:type ") + str_type + " not defined");
 		}
 	}
@@ -87,7 +88,7 @@ void CTypedefHandler::CheckComplexType(string& str_type, int line_num)
 		{
 			if (!(GET_DATATYPESET()->IsContainType(v_type[i])))
 			{
-				//to do:¹Ø¼ü×Ö²»ÕýÈ·
+				//to do:ï¿½Ø¼ï¿½ï¿½Ö²ï¿½ï¿½ï¿½È·
 				THROW_ERROR(line_num, string("Error:type ") + v_type[i] + " not defined");
 			}
 		}

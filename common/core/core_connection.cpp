@@ -1,4 +1,4 @@
-#include "core/core_packet.h"
+﻿#include "core/core_packet.h"
 #include "core/core_connection.h"
 #include "revolver/base_reactor_instance.h"
 #include "core/core_log_macro.h"
@@ -308,13 +308,15 @@ void  CCoreConnection::cancel_timer()
 {
     if(timer_id_ > 0)
     {
-        const void* param = NULL;
-        REACTOR_INSTANCE()->cancel_timer(timer_id_, &param);
-        if(param != NULL)
-        {
-            delete (STCPTimerParam *)param;
+        if (REACTOR_INSTANCE()->is_opened()) {
+            const void* param = NULL;
+            REACTOR_INSTANCE()->cancel_timer(timer_id_, &param);
+            if (param != NULL)
+            {
+                delete (STCPTimerParam *)param;
+            }
         }
-
+        
         timer_id_ = 0;
     }
 }
@@ -350,7 +352,7 @@ int32_t CCoreConnection::handle_timeout(const void *act, uint32_t timer_id)
                 MSG_PROCESSOR()->on_disconnect(server_id_, this);
 
                 state_ = CONN_IDLE;
-                CORE_DEBUG("CConnection, state = CONN_IDLE");
+                CORE_DEBUG("connecting timeout, CConnection, state = CONN_IDLE");
                 this->close();
             }
         }
@@ -622,7 +624,8 @@ int32_t CCoreConnection::process_handshake(const CCorePacket &packet, BinStream&
     //通知服务器节点管理模块
     CONN_MANAGER()->on_add_connection(this);
 
-    CORE_DEBUG("process TCP HANDSHAKE, conn = " << this);
+    CORE_DEBUG("process TCP HANDSHAKE, conn = " << this << "srvid:" << server_id_
+        << ", server type: " << GetServerName(server_type_));
 
     //通知上层有新的连接进入，被动连接方
     MSG_PROCESSOR()->on_connect(server_id_, this);

@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename: core_message_map_decl.h
 *
-*to do:		¶¨ÒåCOREµÄÄÚ²¿ÏûÏ¢ÌåÓëÏûÏ¢IDÖ®¼äµÄÓ³Éä¹ØÏµ
+*to do:		å®šä¹‰COREçš„å†…éƒ¨æ¶ˆæ¯ä½“ä¸æ¶ˆæ¯IDä¹‹é—´çš„æ˜ å°„å…³ç³»
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -29,9 +29,9 @@ public:
 	CMessageMapDecl();
 	~CMessageMapDecl();
 	
-	//»ñÈ¡Ò»¸öÏûÏ¢Ìå¾ä±ú
+	//è·å–ä¸€ä¸ªæ¶ˆæ¯ä½“å¥æŸ„
 	CBasePacket*	gain_message(uint32_t msg_id);
-	//×¢²áÒ»¸öÏûÏ¢Ìå¾ä±ú
+	//æ³¨å†Œä¸€ä¸ªæ¶ˆæ¯ä½“å¥æŸ„
 	void			register_message(uint32_t msg_id, CBasePacket* msg_obj);
 
 private:
@@ -45,7 +45,7 @@ private:
 #define MESSAGE_MAP_DECL			CSingleton<CMessageMapDecl>::instance
 #define DESTROY_MESSAGE_MAP_DECL	CSingleton<CMessageMapDecl>::destroy
 
-//¶¨ÒåÓ³Éä¼ÓÔØºê
+//å®šä¹‰æ˜ å°„åŠ è½½å®
 #define MESSAGEMAP_DECL_BEGIN(entity)\
 class CMessageMapDecl_##entity	\
 {\

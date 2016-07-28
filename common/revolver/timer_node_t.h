@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	timer_node_t.h
 *
-*to do:		¶¨Òå¶¨Ê±Æ÷µ¥ÔªÄ£°æ£¬ÊµÏÖ¶Ô¶¨Ê±Æ÷²ÎÊıµÄ¹ÜÀí
+*to do:		å®šä¹‰å®šæ—¶å™¨å•å…ƒæ¨¡ç‰ˆï¼Œå®ç°å¯¹å®šæ—¶å™¨å‚æ•°çš„ç®¡ç†
 *Create on: 2012-04
 *Author:	zerok
 *check list:
@@ -18,9 +18,9 @@ template<class HANDLER>
 class BaseTimerDispathInfo_T
 {
 public:
-	HANDLER		handler_;		//´¥·¢¾ä±ú
-	const void* act_;			//¶¨Ê±Æ÷²ÎÊı
-	int32_t		recurring_;		//ÊÇ·ñÑ­»·¶¨Ê±
+	HANDLER		handler_;		//è§¦å‘å¥æŸ„
+	const void* act_;			//å®šæ—¶å™¨å‚æ•°
+	int32_t		recurring_;		//æ˜¯å¦å¾ªç¯å®šæ—¶
 };
 
 template <class HANDLER>
@@ -84,14 +84,14 @@ public:
 
 	void		get_dispatch_info(BaseTimerDispathInfo_T<HANDLER> &info);
 
-	//»ñÈ¡ÂÖ×ªµÄÎ»ÖÃ
+	//è·å–è½®è½¬çš„ä½ç½®
 	void		get_revolver_pos(uint8_t& first, uint8_t &second, uint8_t& third, uint8_t& fourth) const;
 private:
 	HANDLER			handler_;
 	const void*		act_;
-	uint32_t		timeout_stamp_;	//³¬Ê±Ê±¼ä´Á£¬MSÎªµ¥Î»¿Ì¶È
-	uint32_t		internal_;		//Ñ­»·¶¨Ê±µÄÊ±¼ä¼ä¸ô
-	uint32_t		timer_id_;		//¶¨Ê±Æ÷ID
+	uint32_t		timeout_stamp_;	//è¶…æ—¶æ—¶é—´æˆ³ï¼ŒMSä¸ºå•ä½åˆ»åº¦
+	uint32_t		internal_;		//å¾ªç¯å®šæ—¶çš„æ—¶é—´é—´éš”
+	uint32_t		timer_id_;		//å®šæ—¶å™¨ID
 };
 
 

@@ -7,8 +7,9 @@
 
 CFileTitleHandler::CFileTitleHandler()
 {
-	//ÉèÖÃ´¦Àí¹Ø¼ü×ÖkeywordµÄ¿é
-	if (!GET_KEYWORDSET()->IsKeyWord(string(FILE_TITLE)))
+	//ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½keywordï¿½Ä¿ï¿½
+	string val = FILE_TITLE;
+	if (!GET_KEYWORDSET()->IsKeyWord(val))
 	{
 		std::cerr << "CFileTitleHandler:bind wrong key word" << std::endl;
 		abort();
@@ -29,12 +30,12 @@ void CFileTitleHandler::AnalysisBlockContent(string& str_line, int line_num)
 // 	cout << v_elem.size() << v_elem[0] << v_elem[1] << v_elem[2] << endl;
 	if (v_elem.size() != 3)
 	{
-		//to do:¸ñÊ½²»ÕýÈ·
+		//to do:ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½È·
 		THROW_ERROR(line_num, "Error:wrong form, expected 'filetitle = sample'");
 	}
 	if (!(GET_KEYWORDSET()->IsKeyWord(v_elem[0])))
 	{
-		//to do:¹Ø¼ü×Ö²»ÕýÈ·
+		//to do:ï¿½Ø¼ï¿½ï¿½Ö²ï¿½ï¿½ï¿½È·
 		THROW_ERROR(line_num, "Error:wrong key word, expected 'filetitle'");
 	}
 	if (v_elem[1] != "=")
@@ -44,9 +45,9 @@ void CFileTitleHandler::AnalysisBlockContent(string& str_line, int line_num)
 	}
 	if (!CBaseLineHandler::IsVarNameLegal(v_elem[2]))
 	{
-		//to do:Ãû×Ö²»ºÏ·¨
+		//to do:ï¿½ï¿½ï¿½Ö²ï¿½ï¿½Ï·ï¿½
 		THROW_ERROR(line_num, string("Warning:") + v_elem[2] + " is a bad name, need to change");
 	}
-	//to do:½«v_elem[2]¼ÓÈëµ½ÎÄ¼þÃèÊö±í
+	//to do:ï¿½ï¿½v_elem[2]ï¿½ï¿½ï¿½ëµ½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	GET_FILEDESCMAP()->AddFileDesc(v_elem[0], v_elem[2]);
 }

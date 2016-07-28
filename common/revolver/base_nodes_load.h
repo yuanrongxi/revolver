@@ -1,10 +1,10 @@
 /*************************************************************************************
 *filename:	base_nodes_load.h
 *
-*to do:		¶¨ÒåÍøÂç½Úµã¸ºÔØ¹ÜÀíÓëÑ¡È¡Ëã·¨
+*to do:		å®šä¹‰ç½‘ç»œèŠ‚ç‚¹è´Ÿè½½ç®¡ç†ä¸é€‰å–ç®—æ³•
 *Create on: 2012-04
 *Author:	zerok
-*check list:Ö÷Òª²ÉÓÃËæ»úµôÂäÑ¡È¡Ëã·¨£¬ÔÙÍ¨¹ı2·Ö²éÕÒ·¨½øĞĞÑ¡È¡
+*check list:ä¸»è¦é‡‡ç”¨éšæœºæ‰è½é€‰å–ç®—æ³•ï¼Œå†é€šè¿‡2åˆ†æŸ¥æ‰¾æ³•è¿›è¡Œé€‰å–
 *************************************************************************************/
 #ifndef __BASE_NODES_LOAD_H
 #define __BASE_NODES_LOAD_H
@@ -27,8 +27,8 @@ typedef vector<uint32_t> SERVER_ID_ARRAY;
 
 typedef struct NodeLoadInfo
 {
-	uint32_t	node_id;		//½ÚµãID
-	uint16_t	node_load;		//½Úµã¸ºÔØÖµ£¬0µ½100,100±íÊ¾¸ºÔØ×î´ó
+	uint32_t	node_id;		//èŠ‚ç‚¹ID
+	uint16_t	node_load;		//èŠ‚ç‚¹è´Ÿè½½å€¼ï¼Œ0åˆ°100,100è¡¨ç¤ºè´Ÿè½½æœ€å¤§
 
 	NodeLoadInfo()
 	{
@@ -75,11 +75,11 @@ private:
 	uint32_t		locate_server(int32_t region);
 
 private:
-	NodeLoadInfoMap	node_info_map_;		//½Úµã¸ºÔØ±í
-	NodeRangeArray	node_ranges_;		//Ò»¶¨ÖÜÆÚµÄ¸ÅÂÊÇø¼ä±í
+	NodeLoadInfoMap	node_info_map_;		//èŠ‚ç‚¹è´Ÿè½½è¡¨
+	NodeRangeArray	node_ranges_;		//ä¸€å®šå‘¨æœŸçš„æ¦‚ç‡åŒºé—´è¡¨
 	
-	bool			create_range_;		//ÊÇ·ñĞèÒªÖØ½¨¸ÅÂÊÑ¡È¡±í
-	int32_t			region_;			//¸ÅÂÊÈ«Çø¼ä
+	bool			create_range_;		//æ˜¯å¦éœ€è¦é‡å»ºæ¦‚ç‡é€‰å–è¡¨
+	int32_t			region_;			//æ¦‚ç‡å…¨åŒºé—´
 };
 
 BASE_NAMESPACE_END_DECL

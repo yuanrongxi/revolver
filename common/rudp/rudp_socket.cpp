@@ -1,27 +1,27 @@
-#include "revolver/base_reactor_instance.h"
+﻿#include "revolver/base_reactor_instance.h"
 #include "rudp/rudp_interface.h"
 #include "rudp/rudp_socket.h"
 #include "revolver/base_timer_value.h"
 #include "rudp/rudp_log_macro.h"
 
+
 BASE_NAMESPACE_BEGIN_DECL
 
 //每6秒发送一次KEEPLIVE
-#define DEFAULT_KEEPLIVE			200
+#define DEFAULT_KEEPLIVE            1000/*200*/
 //默认2分钟心跳未收到就断开
-#define DEFAULT_TIMEOUT_COUNT		40
-#define CONNECT_DELAY				1000
+#define DEFAULT_TIMEOUT_COUNT       /*3000*/10
+#define CONNECT_DELAY               2000
 
-#define SYN_MAX_COUNT				20
-#define FIN_MAX_COUNT				8
+#define SYN_MAX_COUNT               20
+#define FIN_MAX_COUNT               8
 
-#define TIMER_MIN_DELAY				50
+#define TIMER_MIN_DELAY             50
 
-#define MIN_SEND_BUFFER_SIZE		4096
-    
+#define MIN_SEND_BUFFER_SIZE        4096
 
-RUDPSocket::RUDPSocket()
-{
+
+RUDPSocket::RUDPSocket() {
     timer_id_ = 0;
     rudp_id_ = -1;
     local_index_ = INVALID_ADAPTER_INDEX;
@@ -47,25 +47,22 @@ RUDPSocket::RUDPSocket()
 
     check_sum_ = 0;
     user_data_ = 0;
-    last_heatbeat_ts_ = 0;
     last_ack_seq_id_ = 0;
     recv_data_cnt_ = 0;
-    last_ack_send_cnt_ = 0;
+    mode_ = RUDP_MODE_PASSIVE;
+    net_stat_.reset();
 }
 
-RUDPSocket::~RUDPSocket()
-{
+RUDPSocket::~RUDPSocket() {
     reset();
 
     clear_timer_events();
 }
 
-void RUDPSocket::reset()
-{
-    if(state_ != RUDP_IDLE)
-    {
+void RUDPSocket::reset() {
+    if (state_ != RUDP_IDLE) {
         RUDP_DEBUG("state = RUDP_IDLE, rudp id = " << rudp_id_);
-        state_ = RUDP_IDLE; 
+        state_ = RUDP_IDLE;
     }
 
     rudp_id_ = -1;
@@ -98,9 +95,8 @@ void RUDPSocket::reset()
     last_ack_send_cnt_ = 0;
 }
 
-void RUDPSocket::set_state(uint16_t state)
-{
-    if(state_ >= state)
+void RUDPSocket::set_state(uint16_t state) {
+    if (state_ >= state)
         return ;
 
     state_ = state;
@@ -109,138 +105,118 @@ void RUDPSocket::set_state(uint16_t state)
     cancel_timer();
 
     //释放SOCKET对象
-    if(state == RUDP_CLOSE)
-    {
+    if (state == RUDP_CLOSE) {
         RUDP()->free_sockets(rudp_id_);
     }
 }
 
-void RUDPSocket::set_timer(uint32_t delay)
-{
-    if(timer_id_ == 0)
+void RUDPSocket::set_timer(uint32_t delay) {
+    if (timer_id_ == 0)
         timer_id_ = REACTOR_INSTANCE()->set_timer(this, NULL, delay);
 }
 
-void RUDPSocket::cancel_timer()
-{
-    if(timer_id_ != 0)
-    {
+void RUDPSocket::cancel_timer() {
+    if (timer_id_ != 0) {
         const void* act = NULL;
         REACTOR_INSTANCE()->cancel_timer(timer_id_, &act);
         timer_id_ = 0;
     }
 }
 
-int32_t RUDPSocket::handle_timeout(const void *act, uint32_t timer_id)
-{
-    if(timer_id_ != timer_id)
+int32_t RUDPSocket::handle_timeout(const void* act, uint32_t timer_id) {
+    if (timer_id_ != timer_id)
         return 0;
 
-    timer_id_= 0;
+    timer_id_ = 0;
 
     //解决状态定时的问题，尤其是报文发送
-    switch(state_)
-    {
-    case RUDP_CONNECTING:
-        if(send_count_ < SYN_MAX_COUNT)
-        {
-            send_syn();
-            set_timer(CONNECT_DELAY);
-            RUDP_DEBUG("resend syn, rudp socket id = " << rudp_id_);
-            send_count_ ++;
-        }
-        else //连接超时
-        {
-            RUDP_INFO("connecting timeout! state = RUDP_FIN2_STATE, rudp id = " << rudp_id_);
-            set_state(RUDP_FIN2_STATE);
+    switch (state_) {
+        case RUDP_CONNECTING:
+            if (send_count_ < SYN_MAX_COUNT) {
+                send_syn();
+                set_timer(CONNECT_DELAY);
+                RUDP_DEBUG("resend syn, rudp socket id = " << rudp_id_);
+                send_count_ ++;
+            } else { //连接超时
+                RUDP_INFO("connecting timeout! state = RUDP_FIN2_STATE, rudp id = " << rudp_id_);
+                set_state(RUDP_FIN2_STATE);
 
-            if(event_handler_ != NULL)
-                event_handler_->rudp_exception_event(rudp_id_);
-            else
-            {
-                RUDP_INFO("state = RUDP_CLOSE, rudp id = " << rudp_id_);
+                if (event_handler_ != NULL)
+                    event_handler_->rudp_exception_event(rudp_id_);
+                else {
+                    RUDP_INFO("state = RUDP_CLOSE, rudp id = " << rudp_id_);
+                    set_state(RUDP_CLOSE);
+                }
+            }
+            break;
+
+        case RUDP_FIN_STATE:
+            if (send_count_ < FIN_MAX_COUNT) {
+                RUDP_DEBUG("resend fin, rudp socket id = " << rudp_id_);
+                send_fin();
+                set_timer(ccc_.get_rtt() + TIMER_MIN_DELAY);
+                send_count_ ++;
+            } else {
+                RUDP_INFO("fin timeout, state = RUDP_CLOSE, rudp id = " << rudp_id_);
                 set_state(RUDP_CLOSE);
             }
-        }
-        break;
-
-    case RUDP_FIN_STATE:
-        if(send_count_ < FIN_MAX_COUNT)
-        {
-            RUDP_DEBUG("resend fin, rudp socket id = " << rudp_id_);
-            send_fin();
-            set_timer(ccc_.get_rtt() + TIMER_MIN_DELAY);
-            send_count_ ++;
-        }
-        else
-        {
-            RUDP_INFO("fin timeout, state = RUDP_CLOSE, rudp id = " << rudp_id_);
-            set_state(RUDP_CLOSE);
-        }
-        break;
+            break;
     }
 
     return 0;
 }
 
-int32_t RUDPSocket::open(int32_t rudp_id)
-{
+int32_t RUDPSocket::open(int32_t rudp_id) {
     reset();
 
     rudp_id_ = rudp_id;
-
+    send_buffer_.set_rudp_id(rudp_id_);
+    recv_buffer_.set_rudp_id(rudp_id_);
     return 0;
 }
 //正常关闭RUDP SOCKET
-void RUDPSocket::close()
-{
-    switch(state_)
-    {
-    case RUDP_CONNECTING:
-    case RUDP_CONNECTED:
-        if(event_handler_ != NULL)
-        {
-            event_handler_->rudp_close_event(rudp_id_);
-        }
+void RUDPSocket::close() {
+    switch (state_) {
+        case RUDP_CONNECTING:
+        case RUDP_CONNECTED:
+            if (event_handler_ != NULL) {
+                event_handler_->rudp_close_event(rudp_id_);
+            }
 
-        //发送SYN
-        RUDP_INFO("close rudp socket, state = RUDP_FIN_STATE, rudp id = " << rudp_id_);
-        set_state(RUDP_FIN_STATE);
-        
-        RUDP_DEBUG("send fin, rudp socket id = " << rudp_id_);
-        send_fin();
-        set_timer(ccc_.get_rtt() + TIMER_MIN_DELAY);
+            //发送SYN
+            RUDP_INFO("close rudp socket, state = RUDP_FIN_STATE, rudp id = " << rudp_id_);
+            set_state(RUDP_FIN_STATE);
 
-        send_count_ ++;
-        break;
+            RUDP_DEBUG("send fin, rudp socket id = " << rudp_id_);
+            send_fin();
+            set_timer(ccc_.get_rtt() + TIMER_MIN_DELAY);
 
-    case RUDP_FIN2_STATE:
-        set_state(RUDP_CLOSE);
-        break;
+            send_count_ ++;
+            break;
+
+        case RUDP_FIN2_STATE:
+            set_state(RUDP_CLOSE);
+            break;
     }
 }
 //强制关闭RUDP SOCKET
-void RUDPSocket::force_close()
-{
-    switch(state_)
-    {
-    case RUDP_CONNECTING:
-    case RUDP_CONNECTED:
-        RUDP_DEBUG("send fin, rudp socket id = " << rudp_id_);
-        for(uint8_t i = 0; i < 6; i ++) //直接发送3个fin
-            send_fin();
+void RUDPSocket::force_close() {
+    switch (state_) {
+        case RUDP_CONNECTING:
+        case RUDP_CONNECTED:
+            RUDP_DEBUG("send fin, rudp socket id = " << rudp_id_);
+            for (uint8_t i = 0; i < 6; i ++) //直接发送3个fin
+                send_fin();
 
-    case RUDP_FIN2_STATE:
-        RUDP_INFO("state = RUDP_CLOSE");
-        set_state(RUDP_CLOSE);
-        break;
+        case RUDP_FIN2_STATE:
+            RUDP_INFO("state = RUDP_CLOSE");
+            set_state(RUDP_CLOSE);
+            break;
     }
 }
 
-int32_t RUDPSocket::bind(uint8_t index, uint8_t title)
-{
-    if(rudp_id_ == -1 || state_ != RUDP_IDLE)
-    {
+int32_t RUDPSocket::bind(uint8_t index, uint8_t title) {
+    if (rudp_id_ == -1 || state_ != RUDP_IDLE) {
         RUDP_FATAL("rudp socket bind failed!");
         error_code_ = RUDP_BIND_FAIL;
         return -1;
@@ -252,11 +228,9 @@ int32_t RUDPSocket::bind(uint8_t index, uint8_t title)
     return 0;
 }
 
-int32_t RUDPSocket::connect(const Inet_Addr& remote_addr)
-{
-    if(rudp_id_ == INVALID_RUDP_HANDLE || state_ != RUDP_IDLE 
-        || local_index_ == 255 || remote_rudp_id_ != INVALID_RUDP_HANDLE)
-    {
+int32_t RUDPSocket::connect(const Inet_Addr& remote_addr) {
+    if (rudp_id_ == INVALID_RUDP_HANDLE || state_ != RUDP_IDLE
+            || local_index_ == 255 || remote_rudp_id_ != INVALID_RUDP_HANDLE) {
         RUDP_FATAL("rudp connect failed! rudp socket id = " << rudp_id_);
         error_code_ = RUDP_CONNECT_FAIL;
         return -1;
@@ -265,91 +239,85 @@ int32_t RUDPSocket::connect(const Inet_Addr& remote_addr)
     remote_addr_ = remote_addr;
     check_sum_ = rand() % 65536; //产生一个会话的CHECK SUM
 
-    RUDP_INFO("state = RUDP_CONNECTING, rudp id = " << rudp_id_ << ", remote addr = " << remote_addr_);
+    RUDP_INFO("state = RUDP_CONNECTING, rudp id = " << rudp_id_ << ", remote addr = "
+              << remote_addr_  << ", checksum: " << check_sum_);
     set_state(RUDP_CONNECTING);
 
     RUDP_DEBUG("send syn, rudp socket id = " << rudp_id_);
     send_syn();
     ccc_.init(send_buffer_.get_buffer_seq() - 1);
+    send_buffer_.set_passive(mode_);
     set_timer(CONNECT_DELAY);
     send_count_ ++;
 
     return 0;
 }
 
-int32_t RUDPSocket::setoption(int32_t op_type, int32_t op_value)
-{
-    if(rudp_id_ == -1 || state_ > RUDP_FIN_STATE)
-    {
+int32_t RUDPSocket::setoption(int32_t op_type, int32_t op_value) {
+    if (rudp_id_ == -1 || state_ > RUDP_FIN_STATE) {
         RUDP_FATAL("setoption failed!");
 
         return -1;
     }
 
     int32_t ret = 0;
-    switch(op_type)
-    {
-    case RUDP_KEEPLIVE:
-        RUDP_INFO("keep live intnal = " << op_value << "ms, rudp socket id = " << rudp_id_);
-        keeplive_intnal_ = op_value > DEFAULT_KEEPLIVE ? op_value : DEFAULT_KEEPLIVE;
-        break;
+    switch (op_type) {
+        case RUDP_KEEPLIVE:
+            RUDP_INFO("keep live intnal = " << op_value << "ms, rudp socket id = " << rudp_id_);
+            keeplive_intnal_ = op_value > DEFAULT_KEEPLIVE ? op_value : DEFAULT_KEEPLIVE;
+            break;
 
-    case RUDP_NAGLE:
-        if(op_value == 0)
-        {
-            send_buffer_.set_nagle(false);
-            RUDP_INFO("cancel nagle, rudp socket id = " << rudp_id_);
-        }
-        else
-        {
-            send_buffer_.set_nagle(true);
-            RUDP_INFO("set nagle, rudp socket id = " << rudp_id_);
-        }
-        break;
+        case RUDP_NAGLE:
+            if (op_value == 0) {
+                send_buffer_.set_nagle(false);
+                RUDP_INFO("cancel nagle, rudp socket id = " << rudp_id_);
+            } else {
+                send_buffer_.set_nagle(true);
+                RUDP_INFO("set nagle, rudp socket id = " << rudp_id_);
+            }
+            break;
 
-    case RUDP_RECV_BUFF_SIZE:
-        break;
+        case RUDP_RECV_BUFF_SIZE:
+            break;
 
-    case RUDP_SEND_BUFF_SIZE:
-        send_buffer_.set_buffer_size(op_value > MIN_SEND_BUFFER_SIZE ? op_value : MIN_SEND_BUFFER_SIZE);
-        RUDP_INFO("set send buffer, buffer size = " << op_value);
-        break;
+        case RUDP_SEND_BUFF_SIZE:
+            send_buffer_.set_buffer_size(op_value > MIN_SEND_BUFFER_SIZE ? op_value : MIN_SEND_BUFFER_SIZE);
+            RUDP_INFO("set send buffer, buffer size = " << op_value);
+            break;
 
-    case RUDP_TIMEOUT_COUNT:
-        timeout_count_ = op_value > 2 ? op_value : 2;
-        RUDP_INFO("set rudp timeout delay = " << timeout_count_ * 6 << "s");
-        break;
-
-    default:
-        ret = -1;
+        case RUDP_TIMEOUT_COUNT:
+            timeout_count_ = op_value > 2 ? op_value : 2;
+            RUDP_INFO("set rudp timeout delay = " << timeout_count_ * (keeplive_intnal_/1000) << "s");
+            break;
+        case RUDP_MODE:
+            mode_ = op_value ? RUDP_MODE_PASSIVE : RUDP_MODE_NORMAL;
+            send_buffer_.set_passive(mode_);
+            break;
+        default:
+            ret = -1;
     }
 
     return ret;
 }
 
-int32_t RUDPSocket::send(const uint8_t* data, int32_t data_size)
-{
-    if(state_ != RUDP_CONNECTED || data_size <= 0)
-    {
+int32_t RUDPSocket::send(const uint8_t* data, int32_t data_size) {
+    if (state_ != RUDP_CONNECTED || data_size <= 0) {
         RUDP_FATAL("send failed! state_ != RUDP_CONNECTED or data size = 0, rudp id = " << rudp_id_);
         error_code_ = RUDP_SEND_ERROR;
         return -1;
     }
 
     int32_t ret = send_buffer_.send(data, data_size);
-    if(ret <= 0)
-    {
-        RUDP_INFO("send buffer is full, rudp socket id = " << rudp_id_);
+    if (ret <= 0) {
+        RUDP_ERROR("send buffer is full, rudp socket id = " << rudp_id_);
         error_code_ = RUDP_SEND_EAGIN;
     }
 
     return ret;
 }
 
-int32_t RUDPSocket::recv(uint8_t* data, int32_t data_size)
-{
-    if(state_ != RUDP_CONNECTED || data_size <= 0)
-    {
+int32_t RUDPSocket::recv(uint8_t* data, int32_t data_size) {
+    if (state_ != RUDP_CONNECTED || data_size <= 0) {
         RUDP_FATAL("recv failed! state_ != RUDP_CONNECTED or data size = 0, rudp id = " << rudp_id_);
         error_code_ = RUDP_SEND_ERROR;
         return -1;
@@ -359,23 +327,23 @@ int32_t RUDPSocket::recv(uint8_t* data, int32_t data_size)
 
 }
 
-void RUDPSocket::send_ack(uint64_t ack_seq_id)
-{
-    if(state_ != RUDP_CONNECTED || remote_rudp_id_ < 0)
-    {
+void RUDPSocket::send_ack(uint64_t ack_seq_id) {
+    if (state_ != RUDP_CONNECTED || remote_rudp_id_ < 0) {
         RUDP_WARNING("send ack failed! rudp socket id = " << rudp_id_);
         return ;
     }
 
-    if (last_ack_seq_id_ > ack_seq_id) {
-        if (last_ack_send_cnt_ < 5 && last_ack_seq_id_ - 1 == ack_seq_id)
-            return;
-    }
+    if (last_ack_seq_id_ >= ack_seq_id)
+        return;
+    //if (last_ack_seq_id_ > ack_seq_id) {
+    //    if (last_ack_send_cnt_ < 5 && last_ack_seq_id_ - 1 == ack_seq_id)
+    //        return;
+    //}
 
-    /*if (5 <= last_ack_send_cnt_ && last_ack_seq_id_ + 1 == ack_seq_id)
-        last_ack_send_cnt_ = 0;*/
-    if (last_ack_seq_id_ != ack_seq_id)
-        last_ack_send_cnt_ = 0;
+    ///*if (5 <= last_ack_send_cnt_ && last_ack_seq_id_ + 1 == ack_seq_id)
+    //    last_ack_send_cnt_ = 0;*/
+    //if (last_ack_seq_id_ != ack_seq_id)
+    //    last_ack_send_cnt_ = 0;
 
     last_ack_seq_id_ = ack_seq_id;
     recv_data_cnt_ = 0;
@@ -384,14 +352,14 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
     head.msg_id_ = RUDP_DATA_ACK;
     head.remote_rudp_id_ = remote_rudp_id_;
     head.check_sum_ = check_sum_;
-    
+
     RUDPDataAck ack;
     ack.ack_seq_id_ = ack_seq_id;
 
     strm_.rewind(true);
     strm_ << local_title_ << head << ack;
 
-    RUDP_DEBUG("rudp["<< rudp_id_ << "] send ack, seq = " << ack_seq_id);
+    RUDP_SEND_DEBUG("rudp[" << rudp_id_ << "] send ack, seq = " << ack_seq_id);
     if (RUDP()->send_udp(local_index_, strm_, remote_addr_)) {
         RUDP_WARNING("failed to send ack, seq: " << ack_seq_id);
     }
@@ -404,13 +372,11 @@ void RUDPSocket::send_ack(uint64_t ack_seq_id)
         ++last_ack_seq_id_;
         //last_ack_send_cnt_ = 0;
     }
-        
+
 }
 
-void RUDPSocket::send_nack(uint64_t base_seq_id, const LossIDArray& ids)
-{
-    if(state_ != RUDP_CONNECTED || remote_rudp_id_ < 0)
-    {
+void RUDPSocket::send_nack(uint64_t base_seq_id, const LossIDArray& ids) {
+    if (state_ != RUDP_CONNECTED || remote_rudp_id_ < 0) {
         RUDP_WARNING("send nack failed! rudp socket id = " << rudp_id_);
         return ;
     }
@@ -427,13 +393,12 @@ void RUDPSocket::send_nack(uint64_t base_seq_id, const LossIDArray& ids)
     strm_.rewind(true);
     strm_ << local_title_ << head << nack;
 
+    RUDP_DEBUG("[" << rudp_id_ << "] send nack:" << nack);
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
-void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8_t* data, uint16_t data_size, uint64_t now_ts)
-{
-    if(state_ != RUDP_CONNECTED || remote_rudp_id_ < 0 || data_size <= 0)
-    {
+void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8_t* data, uint16_t data_size, uint64_t now_ts) {
+    if (state_ != RUDP_CONNECTED || remote_rudp_id_ < 0 || data_size <= 0) {
         RUDP_WARNING("send data failed! rudp socket id = " << rudp_id_);
         return ;
     }
@@ -451,18 +416,20 @@ void RUDPSocket::send_data(uint64_t ack_seq_id, uint64_t cur_seq_id, const uint8
     //设置一个最后发送ACK的时刻
     if (ack_seq_id)
         recv_buffer_.set_send_last_ack_ts(now_ts);
-    RUDP_DEBUG("send data seq[" << cur_seq_id << "], size: " << data_size <<" ack seq: " << body.ack_seq_id_);
+
+    RUDP_TRACE("[" << rudp_id_ << "] send data packet, seq = " << cur_seq_id
+        << ", size: " << data_size << ", ack seq: " << body.ack_seq_id_);
 
     strm_.rewind(true);
     strm_ << local_title_ << head << body;
     //加入数据
     strm_.push_data(data, data_size);
+    net_stat_.push_out_data(strm_.data_size());
 
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
-void RUDPSocket::send_syn()
-{
+void RUDPSocket::send_syn() {
     RUDPHeadPacket head;
     head.msg_id_ = RUDP_SYN;
     head.remote_rudp_id_ = INVALID_RUDP_HANDLE;
@@ -474,15 +441,14 @@ void RUDPSocket::send_syn()
     syn.local_ts_ = CBaseTimeValue::get_time_value().msec();
     syn.max_segment_size_ = MAX_SEGMENT_SIZE;
     syn.start_seq_ = send_buffer_.get_buffer_seq();
-
+    syn.flags_ = mode_;
     strm_.rewind(true);
     strm_ << local_title_ << head << syn;
 
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
-void RUDPSocket::send_syn2(uint8_t result, uint64_t remote_ts)
-{
+void RUDPSocket::send_syn2(uint8_t result, uint64_t remote_ts) {
     RUDPHeadPacket head;
     head.msg_id_ = RUDP_SYN2;
     head.remote_rudp_id_ = remote_rudp_id_;
@@ -500,12 +466,11 @@ void RUDPSocket::send_syn2(uint8_t result, uint64_t remote_ts)
     strm_.rewind(true);
     strm_ << local_title_ << head << syn2;
 
-    for(uint8_t i = 0; i < 3; ++i)
+    for (uint8_t i = 0; i < 3; ++i)
         RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
-void RUDPSocket::send_syn_ack(uint8_t result , uint64_t remote_ts)
-{
+void RUDPSocket::send_syn_ack(uint8_t result , uint64_t remote_ts) {
     RUDPHeadPacket head;
     head.msg_id_ = RUDP_SYN_ACK;
     head.remote_rudp_id_ = remote_rudp_id_;
@@ -521,8 +486,7 @@ void RUDPSocket::send_syn_ack(uint8_t result , uint64_t remote_ts)
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
-void RUDPSocket::send_fin()
-{
+void RUDPSocket::send_fin() {
     RUDPHeadPacket head;
     head.msg_id_ = RUDP_FIN;
     head.remote_rudp_id_ = remote_rudp_id_;
@@ -534,8 +498,7 @@ void RUDPSocket::send_fin()
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
-void RUDPSocket::send_fin2()
-{
+void RUDPSocket::send_fin2() {
     RUDPHeadPacket head;
     head.msg_id_ = RUDP_FIN2;
     head.remote_rudp_id_ = remote_rudp_id_;
@@ -544,12 +507,11 @@ void RUDPSocket::send_fin2()
     strm_.rewind(true);
     strm_ << local_title_ << head;
 
-    for(uint8_t i = 0; i < 3; i++)
+    for (uint8_t i = 0; i < 3; i++)
         RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
-void RUDPSocket::send_keeplive(uint64_t now_ts)
-{
+void RUDPSocket::send_keeplive(uint64_t now_ts) {
     RUDPHeadPacket head;
     head.msg_id_ = RUDP_KEEPALIVE;
     head.remote_rudp_id_ = remote_rudp_id_;
@@ -566,8 +528,7 @@ void RUDPSocket::send_keeplive(uint64_t now_ts)
     heart_ts_ = now_ts;
 }
 
-void RUDPSocket::send_keeplive_ack(uint64_t ts)
-{
+void RUDPSocket::send_keeplive_ack(uint64_t ts) {
     RUDPHeadPacket head;
     head.msg_id_ = RUDP_KEEPALIVE_ACK;
     head.remote_rudp_id_ = remote_rudp_id_;
@@ -582,97 +543,87 @@ void RUDPSocket::send_keeplive_ack(uint64_t ts)
     RUDP()->send_udp(local_index_, strm_, remote_addr_);
 }
 
-void RUDPSocket::on_write()
-{
-    if(state_ != RUDP_CONNECTED || event_handler_ == NULL)
-    {
+void RUDPSocket::on_write() {
+    if (state_ != RUDP_CONNECTED || event_handler_ == NULL) {
         return ;
     }
 
     event_handler_->rudp_output_event(rudp_id_);
 }
 
-void RUDPSocket::on_read()
-{
-    if(state_ != RUDP_CONNECTED || event_handler_ == NULL)
-    {
+void RUDPSocket::on_read() {
+    if (state_ != RUDP_CONNECTED || event_handler_ == NULL) {
         return ;
     }
 
     event_handler_->rudp_input_event(rudp_id_);
 }
 
-void RUDPSocket::on_exception()
-{
-    if(state_ != RUDP_CONNECTED || event_handler_ == NULL)
-    {
+void RUDPSocket::on_exception() {
+    if (state_ != RUDP_CONNECTED || event_handler_ == NULL) {
         return ;
     }
 
     event_handler_->rudp_close_event(rudp_id_);
 }
 
-void RUDPSocket::process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, const Inet_Addr& remote_addr)
-{
-    if(check_sum != check_sum_)
+void RUDPSocket::process(uint8_t msg_id, uint16_t check_sum, BinStream& strm, const Inet_Addr& remote_addr) {
+    if (check_sum != check_sum_)
         return ;
 
     keeplive_count_ = 0;
 
     //地址学习
-    if(remote_addr_ != remote_addr)
-    {
+    if (remote_addr_ != remote_addr) {
         RUDP()->delete_peer_index(remote_rudp_id_, remote_addr_);
         remote_addr_ = remote_addr;
     }
 
-    RUDP_DEBUG("recv rupd[" << rudp_id_ <<"] packet type: " << (int)msg_id << ", size: " << strm.data_size());
-    switch(msg_id)
-    {
-    case RUDP_DATA:
-        process_data(strm, remote_addr);
-        break;
+    /*RUDP_TRACE("recv rupd[" << rudp_id_ << "] packet type: " << (int)msg_id <<
+     ", size: " << strm.data_size());*/
+    switch (msg_id) {
+        case RUDP_DATA:
+            process_data(strm, remote_addr);
+            break;
 
-    case RUDP_DATA_ACK:
-        process_data_ack(strm, remote_addr);
-        break;
+        case RUDP_DATA_ACK:
+            process_data_ack(strm, remote_addr);
+            break;
 
-    case RUDP_DATA_NACK:
-        process_data_nack(strm, remote_addr);
-        break;
+        case RUDP_DATA_NACK:
+            process_data_nack(strm, remote_addr);
+            break;
 
-    case RUDP_SYN2:
-        process_syn2(strm, remote_addr);
-        break;
+        case RUDP_SYN2:
+            process_syn2(strm, remote_addr);
+            break;
 
-    case RUDP_SYN_ACK:
-        process_syn_ack(strm, remote_addr);
-        break;
+        case RUDP_SYN_ACK:
+            process_syn_ack(strm, remote_addr);
+            break;
 
-    case RUDP_FIN:
-        process_fin(strm, remote_addr);
-        break;
+        case RUDP_FIN:
+            process_fin(strm, remote_addr);
+            break;
 
-    case RUDP_FIN2:
-        process_fin2(strm, remote_addr);
-        break;
+        case RUDP_FIN2:
+            process_fin2(strm, remote_addr);
+            break;
 
-    case RUDP_KEEPALIVE:
-        process_keeplive(strm, remote_addr);
-        break;
+        case RUDP_KEEPALIVE:
+            process_keeplive(strm, remote_addr);
+            break;
 
-    case RUDP_KEEPALIVE_ACK:
-        process_keeplive_ack(strm, remote_addr);
-        break;
+        case RUDP_KEEPALIVE_ACK:
+            process_keeplive_ack(strm, remote_addr);
+            break;
     }
 
     heartbeat();
 }
 
-void RUDPSocket::process_data(BinStream& strm, const Inet_Addr& remote_addr)
-{
-    if(state_ != RUDP_CONNECTED)
-    {
+void RUDPSocket::process_data(BinStream& strm, const Inet_Addr& remote_addr) {
+    if (state_ != RUDP_CONNECTED) {
         RUDP_WARNING("process data, state != RUDP_CONNECTED");
         return ;
     }
@@ -685,33 +636,30 @@ void RUDPSocket::process_data(BinStream& strm, const Inet_Addr& remote_addr)
 
     uint32_t data_size = 0;
     strm >> data_size;
-    RUDP_DEBUG("rudp[" << rudp_id_ << "] receive data[" << data.cur_seq_id_ 
-        <<"], data size: " << data_size << ", ack seq: " << data.ack_seq_id_);
-    recv_buffer_.on_data(data.cur_seq_id_, (const uint8_t *)strm.get_rptr(), data_size);
+    /*RUDP_DEBUG("rudp[" << rudp_id_ << "] receive data[" << data.cur_seq_id_
+               << "], data size: " << data_size << ", ack seq: " << data.ack_seq_id_);*/
+    recv_buffer_.on_data(data.cur_seq_id_, (const uint8_t*)strm.get_rptr(), data_size);
     recv_data_cnt_++;
-    if (recv_data_cnt_ >= 10)
+    if (recv_data_cnt_ % 10 == 0) {
         send_ack(recv_buffer_.get_ack_id());
+    }
 }
 
-void RUDPSocket::process_data_ack(BinStream& strm, const Inet_Addr& remote_addr)
-{
-    if(state_ != RUDP_CONNECTED)
-    {
+void RUDPSocket::process_data_ack(BinStream& strm, const Inet_Addr& remote_addr) {
+    if (state_ != RUDP_CONNECTED) {
         RUDP_WARNING("process_data_ack, state_ != RUDP_CONNECTED");
         return ;
     }
-    
+
     RUDPDataAck ack;
     strm >> ack;
-    RUDP_DEBUG("rudp[" << rudp_id_ <<"] recv data ack[" << ack.ack_seq_id_ << "], remote_addr = " << remote_addr);
+    RUDP_DEBUG("rudp[" << rudp_id_ << "] recv data ack[" << ack.ack_seq_id_ << "], remote_addr = " << remote_addr);
     ccc_.on_ack(ack.ack_seq_id_);
     send_buffer_.on_ack(ack.ack_seq_id_);
 }
 
-void RUDPSocket::process_data_nack(BinStream& strm, const Inet_Addr& remote_addr)
-{
-    if(state_ != RUDP_CONNECTED)
-    {
+void RUDPSocket::process_data_nack(BinStream& strm, const Inet_Addr& remote_addr) {
+    if (state_ != RUDP_CONNECTED) {
         RUDP_WARNING("process_data_nack, state_ != RUDP_CONNECTED");
         return ;
     }
@@ -719,6 +667,7 @@ void RUDPSocket::process_data_nack(BinStream& strm, const Inet_Addr& remote_addr
     RUDPDataNack nack;
     strm >> nack;
 
+    RUDP_DEBUG("[" << rudp_id_ <<"] recv nack:" << nack)
     send_buffer_.on_nack(nack.base_seq_, nack.loss_ids_);
     ccc_.on_loss(nack.base_seq_, nack.loss_ids_);
 
@@ -726,12 +675,10 @@ void RUDPSocket::process_data_nack(BinStream& strm, const Inet_Addr& remote_addr
     send_buffer_.on_ack(nack.base_seq_);
 }
 
-void RUDPSocket::process_syn(RUDPSynPacket& syn, const Inet_Addr& remote_addr)
-{
+void RUDPSocket::process_syn(RUDPSynPacket& syn, const Inet_Addr& remote_addr) {
     RUDP_INFO("recv syn from " << remote_addr << ", rudp id = " << rudp_id_);
 
-    if(state_ == RUDP_IDLE && rudp_id_ != INVALID_RUDP_HANDLE)
-    {
+    if (state_ == RUDP_IDLE && rudp_id_ != INVALID_RUDP_HANDLE) {
         uint64_t now_timer = CBaseTimeValue::get_time_value().msec();
         //初始化接收SEQ
         recv_buffer_.set_first_seq(syn.start_seq_);
@@ -742,25 +689,24 @@ void RUDPSocket::process_syn(RUDPSynPacket& syn, const Inet_Addr& remote_addr)
         remote_addr_ = remote_addr;
         remote_rudp_id_ = syn.local_rudp_id_;
 
-        RUDP_INFO("sart seq = " << syn.start_seq_ << ", remote_rudp_id = " << remote_rudp_id_);
+        RUDP_INFO("start seq = " << syn.start_seq_ << ", flags: " << (int32_t)syn.flags_
+            << ", remote_rudp_id = " << remote_rudp_id_ << "checksum: " << check_sum_);
 
         RUDP_DEBUG("send syn2, rudp socket id = " << rudp_id_);
         send_syn2(0, syn.local_ts_);
 
         RUDP_INFO("state = RUDP_CONNECTED, rudp id = " << rudp_id_);
         set_state(RUDP_CONNECTED);
+        mode_ = syn.flags_ & RUDP_MODE_PASSIVE;
+        send_buffer_.set_passive(mode_);
 
         //发送一个KEEPLIVE
         RUDP_DEBUG("send keeplive, rudp socket id =" << rudp_id_);
         send_keeplive(now_timer);
-    }
-    else if(state_ == RUDP_CONNECTING || state_ == RUDP_CONNECTED)
-    {
+    } else if (state_ == RUDP_CONNECTING || state_ == RUDP_CONNECTED) {
         RUDP_INFO("send syn2, rudp socket id = " << rudp_id_);
         send_syn2(0, syn.local_ts_);
-    }
-    else
-    {
+    } else {
         RUDP_DEBUG("send syn2(ERROR_SYN_STATE), rudp socket id = " << rudp_id_);
         send_syn2(ERROR_SYN_STATE, syn.local_ts_);
 
@@ -769,25 +715,19 @@ void RUDPSocket::process_syn(RUDPSynPacket& syn, const Inet_Addr& remote_addr)
     }
 }
 
-void RUDPSocket::process_syn2(BinStream& strm, const Inet_Addr& remote_addr)
-{
+void RUDPSocket::process_syn2(BinStream& strm, const Inet_Addr& remote_addr) {
     RUDP_INFO("recv syn2 from " << remote_addr << ", rudp id = " << rudp_id_);
 
     PARSE_RUDP_MESSAGE(strm, RUDPSyn2Packet, syn2, "parse syn2 failed!");
-    if(state_ == RUDP_CONNECTING)
-    {
-        if(syn2.syn2_result_ != 0x00) //连接异常
-        {
+    if (state_ == RUDP_CONNECTING) {
+        if (syn2.syn2_result_ != 0x00) { //连接异常
             RUDP_INFO("syn failed! syn2.syn2_result_ = " << (uint16_t)syn2.syn2_result_);
 
-            if(event_handler_ != NULL)
-            {
+            if (event_handler_ != NULL) {
                 RUDP_INFO("state = RUDP_FIN2_STATE, rudp id = " << rudp_id_);
                 set_state(RUDP_FIN2_STATE);
                 event_handler_->rudp_exception_event(rudp_id_);
-            }
-            else
-            {
+            } else {
                 RUDP_INFO("state = RUDP_CLOSE, rudp id = " << rudp_id_);
                 set_state(RUDP_CLOSE);
             }
@@ -807,7 +747,9 @@ void RUDPSocket::process_syn2(BinStream& strm, const Inet_Addr& remote_addr)
         recv_buffer_.set_send_last_ack_ts(now_ts);
         ccc_.set_rtt(rtt);
 
-        RUDP_INFO("syn succ, sart seq = " << syn2.start_seq_ << ", remote_rudp_id = " << remote_rudp_id_ << ", rtt = " << rtt);
+        RUDP_INFO("rudp[" << rudp_id_ << "] syn succ, start seq = " << syn2.start_seq_
+                  << ", remote_rudp_id = " << remote_rudp_id_ << ", check_sum: " << check_sum_
+                  << ", rtt = " << rtt);
 
         RUDP_INFO("state = RUDP_CONNECTED, rudp id = " << rudp_id_);
         set_state(RUDP_CONNECTED);
@@ -816,27 +758,22 @@ void RUDPSocket::process_syn2(BinStream& strm, const Inet_Addr& remote_addr)
         send_syn_ack(0, syn2.local_ts_);
 
         //触发一个写事件
-        if(event_handler_ != NULL)
+        if (event_handler_ != NULL)
             event_handler_->rudp_output_event(rudp_id_);
 
         heart_ts_ = now_ts;
-    }
-    else if(state_ == RUDP_CONNECTED)
-    {
+    } else if (state_ == RUDP_CONNECTED) {
         RUDP_DEBUG("send syn ack, rudp socket id = " << rudp_id_);
         send_syn_ack(0, syn2.local_ts_);
     }
 }
 
-void RUDPSocket::process_syn_ack(BinStream& strm, const Inet_Addr& remote_addr)
-{
+void RUDPSocket::process_syn_ack(BinStream& strm, const Inet_Addr& remote_addr) {
     RUDP_INFO("recv syn ack from " << remote_addr << ", rudp id = " << rudp_id_);
 
     RUDP()->delete_peer_index(remote_rudp_id_, remote_addr_);
 
-    RUDP_INFO("recv syn ack from " << remote_addr);
-    if(state_ != RUDP_CONNECTED)
-    {
+    if (state_ != RUDP_CONNECTED) {
         RUDP_FATAL("state != RUDP_CONNECTED");
         return ;
     }
@@ -850,62 +787,51 @@ void RUDPSocket::process_syn_ack(BinStream& strm, const Inet_Addr& remote_addr)
     RUDP_INFO("rtt = " << rtt << ", rudp socket id = " << rudp_id_);
 
     //触发一个写事件
-    if(event_handler_ != NULL)
+    if (event_handler_ != NULL)
         event_handler_->rudp_output_event(rudp_id_);
 }
 
-void RUDPSocket::process_fin(BinStream& strm, const Inet_Addr& remote_addr)
-{
+void RUDPSocket::process_fin(BinStream& strm, const Inet_Addr& remote_addr) {
     RUDP_INFO("recv fin from " << remote_addr << ", rudp id = " << rudp_id_);
 
     RUDP_INFO("send fin2, rudp socket id = " << rudp_id_);
     send_fin2();
 
-    if(state_ == RUDP_CONNECTING || state_ == RUDP_CONNECTED)
-    {
+    if (state_ == RUDP_CONNECTING || state_ == RUDP_CONNECTED) {
         RUDP_INFO("state = RUDP_FIN2_STATE, rudp id = " << rudp_id_);
         set_state(RUDP_FIN2_STATE);
 
-        if(event_handler_ != NULL)
+        if (event_handler_ != NULL)
             event_handler_->rudp_close_event(rudp_id_);
-        else
-        {
+        else {
             RUDP_INFO("state = RUDP_CLOSE, rudp id = " << rudp_id_);
             set_state(RUDP_CLOSE);
         }
-    }
-    else
-    {
+    } else {
         RUDP_INFO("state = RUDP_CLOSE, rudp id = " << rudp_id_);
         set_state(RUDP_CLOSE);
     }
-    
+
 }
 
-void RUDPSocket::process_fin2(BinStream& strm, const Inet_Addr& remote_addr)
-{
+void RUDPSocket::process_fin2(BinStream& strm, const Inet_Addr& remote_addr) {
     RUDP_INFO("recv fin2 from " << remote_addr << ", rudp id = " << rudp_id_);
 
-    if(event_handler_ != NULL)
-    {
+    if (event_handler_ != NULL) {
         event_handler_->rudp_close_event(rudp_id_);
-    }
-    else
-    {
+    } else {
         RUDP_INFO("state = RUDP_CLOSE, rudp id = " << rudp_id_);
         set_state(RUDP_CLOSE);
     }
 }
 
-void RUDPSocket::process_keeplive(BinStream& strm, const Inet_Addr& remote_addr)
-{
-    RUDP_INFO("keeplive from " << remote_addr << ", rudp id = " << rudp_id_);
+void RUDPSocket::process_keeplive(BinStream& strm, const Inet_Addr& remote_addr) {
+    //RUDP_INFO("recv keeplive from " << remote_addr << ", rudp id = " << rudp_id_);
 
-    if(state_ != RUDP_CONNECTED)
-    {
+    if (state_ != RUDP_CONNECTED) {
         return ;
     }
-    
+
     keeplive_count_ = 0;
 
     PARSE_RUDP_MESSAGE(strm, RDUPKeepLive, body, "parse keeplive failed!");
@@ -913,12 +839,10 @@ void RUDPSocket::process_keeplive(BinStream& strm, const Inet_Addr& remote_addr)
     send_keeplive_ack(body.timestamp_);
 }
 
-void RUDPSocket::process_keeplive_ack(BinStream& strm, const Inet_Addr& remote_addr)
-{
+void RUDPSocket::process_keeplive_ack(BinStream& strm, const Inet_Addr& remote_addr) {
     //RUDP_INFO("keeplive ack from " << remote_addr << ", rudp id = " << rudp_id_);
 
-    if(state_ != RUDP_CONNECTED)
-    {
+    if (state_ != RUDP_CONNECTED) {
         RUDP_WARNING("state != RUDP_CONNECTED");
         return ;
     }
@@ -935,69 +859,63 @@ void RUDPSocket::process_keeplive_ack(BinStream& strm, const Inet_Addr& remote_a
     //RUDP_INFO("rtt = " << rtt << ", rudp socket id = " << rudp_id_);
 }
 
-void RUDPSocket::heartbeat()
-{
-    if(state_ != RUDP_CONNECTED)
+void RUDPSocket::heartbeat() {
+    if (state_ != RUDP_CONNECTED)
         return ;
 
     uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
 
-    if (now_ts - last_heatbeat_ts_ < RUDP_TIMER_DELAY)
+    /*if (now_ts - last_heatbeat_ts_ < RUDP_TIMER_DELAY)
         return;
-    last_heatbeat_ts_ = now_ts;
+    last_heatbeat_ts_ = now_ts;*/
 
     //心跳计数
     /*RUDP_DEBUG("socket[" << rudp_id_ << "] heartbeat, keepalive cnt: " << keeplive_count_
         << ", timeout cnt: " << timeout_count_);*/
-    if(now_ts > heart_ts_ + keeplive_intnal_)
-    {
+    if (now_ts > heart_ts_ + keeplive_intnal_) {
         keeplive_count_ ++;
-        if(keeplive_count_ > timeout_count_) //超时
-        {
+        if (keeplive_count_ > timeout_count_) { //超时
             RUDP_ERROR("keep live timeout, rudp socket id = " << rudp_id_);
-            if(event_handler_ != NULL) //通知上层异常
-            {
+            if (event_handler_ != NULL) { //通知上层异常
                 RUDP_INFO("state = RUDP_FIN2_STATE");
                 set_state(RUDP_FIN2_STATE);
 
                 event_handler_->rudp_exception_event(rudp_id_);
                 return ;
-            }
-            else
-            {
+            } else {
                 RUDP_INFO("state = RUDP_CLOSE");
                 set_state(RUDP_CLOSE);
 
                 return ;
             }
-        }
-        else//发送KEEPLIVE
-        {
-            RUDP_DEBUG("send keeplive, rudp socket id =" << rudp_id_);
+        } else { //发送KEEPLIVE
+            //RUDP_DEBUG("send keeplive, rudp socket id =" << rudp_id_);
             send_keeplive(now_ts);
         }
     }
 
     //模块心跳
     ccc_.on_timer(now_ts);
-    recv_buffer_.on_timer(now_ts, ccc_.get_rtt_var());
+    recv_buffer_.on_timer(now_ts, ccc_.get_rtt_var(), ccc_.get_rtt());
     send_buffer_.on_timer(now_ts);
 }
 
-void RUDPSocket::register_event(uint32_t marks)
-{
-    if(state_ != RUDP_CONNECTED)
+void RUDPSocket::register_event(uint32_t marks) {
+    if (state_ != RUDP_CONNECTED)
         return ;
 
-    if((marks & MASK_READ) == MASK_READ)
-    {
+    if ((marks & MASK_READ) == MASK_READ) {
         recv_buffer_.check_buffer();
     }
 
-    if((marks & MASK_WRITE) == MASK_WRITE)
-    {
+    if ((marks & MASK_WRITE) == MASK_WRITE) {
         send_buffer_.check_buffer();
     }
+}
+
+void RUDPSocket::reset_stat() {
+    stat_lost_pkt_cnt_ = 0;
+    stat_resend_pkt_cnt_ = 0;
 }
 
 BASE_NAMESPACE_END_DECL

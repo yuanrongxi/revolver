@@ -6,7 +6,7 @@
 #include "base_bin_stream.h"
 #include "base_inet_addr.h"
 
-//RUDPÊÊÅäÆ÷½Ó¿Ú
+//RUDPé€‚é…å™¨æ¥å£
 BASE_NAMESPACE_BEGIN_DECL
 
 class IRUDPAdapter

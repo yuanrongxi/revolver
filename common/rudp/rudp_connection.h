@@ -111,6 +111,10 @@ public:
     int32_t close();
 
     const Inet_Addr& get_local_addr() { return _adapter.get_local_addr(); }
+
+    void get_net_stat(uint32_t &up_band, uint32_t &up_cnt, uint32_t &down_band, uint32_t &down_cnt) {
+        _rudp_handler.get_net_stat(up_band, up_cnt, down_band, down_cnt);
+    }
 protected:
     RudpAdapter _adapter;
     RudpHandler _rudp_handler;
@@ -123,6 +127,8 @@ protected:
 
 int32_t create_rudp_client(uint16_t port = 0);
 void destroy_rudp_client();
+void get_rudp_stat();
+
 
 
 BASE_NAMESPACE_END_DECL

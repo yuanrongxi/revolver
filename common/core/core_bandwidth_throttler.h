@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename: core_bandwidth_throttler.h
 *
-*to do:		ÏûÏ¢Ó³Éä»ù´¡Àà
+*to do:		æ¶ˆæ¯æ˜ å°„åŸºç¡€ç±»
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -41,10 +41,10 @@ public:
 	uint64_t	get_total_down_count() const{return total_down_count_;};
 
 protected:
-	//´ø¿íÍ³¼Æ
+	//å¸¦å®½ç»Ÿè®¡
 	uint32_t	up_bandwidth_;
 	uint32_t	down_bandwidth_;
-	//±¨ÎÄÍ³¼Æ
+	//æŠ¥æ–‡ç»Ÿè®¡
 	uint32_t	up_packet_count_;
 	uint32_t	down_packet_count_;
 	
@@ -56,9 +56,9 @@ protected:
 	uint32_t	up_tcp_count_;
 	uint32_t	down_tcp_count_;
 
-	//×Ü·¢ËÍ±¨ÎÄÁ¿
+	//æ€»å‘é€æŠ¥æ–‡é‡
 	uint64_t	total_up_count_;
-	//×Ü½ÓÊÕ±¨ÎÄÁ¿
+	//æ€»æ¥æ”¶æŠ¥æ–‡é‡
 	uint64_t	total_down_count_;
 };
 

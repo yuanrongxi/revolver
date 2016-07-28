@@ -1,4 +1,4 @@
-#include "revolver/base_reactor_instance.h"
+﻿#include "revolver/base_reactor_instance.h"
 #include "rudp/rudp_connection.h"
 #include "core/core_packet.h"
 #include "rudp/rudp_socket.h"
@@ -365,6 +365,13 @@ int32_t create_rudp_client(uint16_t port) {
 void destroy_rudp_client() {
     RUDP_CLI()->close();
     DESTROY_RUDP_CLI();
+}
+
+void get_rudp_stat() {
+    uint32_t up_band, up_cnt, down_band, down_cnt;
+    RUDP_CLI()->get_net_stat(up_band, up_cnt, down_band, down_cnt);
+    RUDP_INFO("RUDP IO statistics, up: " << up_band << "/" << up_cnt << ", "
+        << "down: " << down_band << "/" << down_cnt);
 }
 
 BASE_NAMESPACE_END_DECL

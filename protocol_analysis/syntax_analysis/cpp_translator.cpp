@@ -2,6 +2,8 @@
 #include "base_line_handler.h"
 #include <cctype>
 #include <stdlib.h>
+#include <string.h>
+#include <string>
 
 using namespace std;
 
@@ -46,7 +48,8 @@ void CCppTranslator::TranslateProtocol()
 
 void CCppTranslator::OpenObjFile()
 {
-	string str_ftitle = GET_FILEDESCMAP()->FindDescInfo(string(FILE_TITLE));
+	string val = FILE_TITLE;
+	string str_ftitle = GET_FILEDESCMAP()->FindDescInfo(val);
 	CBaseLineHandler::StringToLower(str_ftitle);
 	str_ftitle += ".h";
 
@@ -67,7 +70,8 @@ void CCppTranslator::CloseObjFile()
 
 void CCppTranslator::AddFileDescToFile()
 {
-	string str_ftitle = GET_FILEDESCMAP()->FindDescInfo(string(FILE_TITLE));
+    string val = FILE_TITLE;
+	string str_ftitle = GET_FILEDESCMAP()->FindDescInfo(val);
 	CBaseLineHandler::StringToUpper(str_ftitle);
 
 	out_file_ << "#ifndef " << str_ftitle + "_H__" << endl;
@@ -85,8 +89,8 @@ void CCppTranslator::AddFileDescToFile()
 	out_file_ << "using namespace BASEOBJECT;" << endl;
 
 	out_file_ << endl;
-
-	string str_ns = GET_FILEDESCMAP()->FindDescInfo(string(NAME_SPACE));
+    val = NAME_SPACE;
+	string str_ns = GET_FILEDESCMAP()->FindDescInfo(val);
 	out_file_ << "namespace " << str_ns << " {" << endl;
 	left_file_desc_.push_back("}");
 
@@ -214,7 +218,8 @@ void CCppTranslator::AddMsgBodyDef()
 		itr != msgbody_order.end(); ++itr)
 	{
 		string msgid = *itr;
-		MsgBodyDefMap::const_iterator m_itr = msgbody_map.find(CMsgDefDesc(msgid, string()));
+        string val = "";
+		MsgBodyDefMap::const_iterator m_itr = msgbody_map.find(CMsgDefDesc(msgid, val));
 
 		out_file_ << "class ";
 		out_file_ << m_itr->first << " : public CBasePacket" << endl;
@@ -305,7 +310,7 @@ void CCppTranslator::OutputArrayToFile(const string& str_name, const string& str
 	static int suffix_num = 0;
 	char str[10];
 	memset(str, '\0', sizeof(str));
-	_itoa_s(suffix_num, str, 10);
+    sprintf(str, "%d", suffix_num);
 	string temp_count(string("count_") + string(str));
 	suffix_num++;
 
@@ -339,7 +344,8 @@ void CCppTranslator::OutputLeftFileDesc()
 
 	if (!msgbody_map.empty())
 	{
-		string f_title = GET_FILEDESCMAP()->FindDescInfo(string(FILE_TITLE));
+        string val = FILE_TITLE;
+		string f_title = GET_FILEDESCMAP()->FindDescInfo(val);
 		CBaseLineHandler::StringToUpper(f_title);
 		out_file_ << "MESSAGEMAP_DECL_BEGIN(" << f_title << ")" << endl; 
 
@@ -348,7 +354,8 @@ void CCppTranslator::OutputLeftFileDesc()
 			itr != msgbody_order.end(); ++itr)
 		{
 			string msgid = *itr;
-			MsgBodyDefMap::const_iterator m_itr = msgbody_map.find(CMsgDefDesc(msgid, string()));
+            val = "";
+			MsgBodyDefMap::const_iterator m_itr = msgbody_map.find(CMsgDefDesc(msgid, val));
 			out_file_ << "MESSAGEMAP_REGISTER(" << msgid ;
 			out_file_ << ", new " << m_itr->first.msg_cname_ << "())";
 			out_file_ << endl;
@@ -392,7 +399,7 @@ void CCppTranslator::OutputInetAddrType(const string& str_vname, const string& s
 	{
 		char str[10];
 		memset(str, '\0', sizeof(str));
-		_itoa_s(suffix_num, str, 10);
+        sprintf(str, "%d", suffix_num);
 		string temp_ip(string("ip_") + string(str));
 		string temp_port(string("port_") + string(str));
 		suffix_num++;

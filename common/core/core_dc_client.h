@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	core_daemon_client.h
 *
-*to do:		¶¨ÒåÒ»¸öDC µÄ¿Í»§¶Ë£¬Ö÷ÒªÊµÏÖDCµÄÇëÇó¹ÜÀí¡¢ÊÂÎñ³¬Ê±¹ÜÀí¡¢ÊÂÎñ²ÎÊıµÈ£¬ÓÃÓÚÊı¾İ¿â·ÃÎÊ
+*to do:		å®šä¹‰ä¸€ä¸ªDC çš„å®¢æˆ·ç«¯ï¼Œä¸»è¦å®ç°DCçš„è¯·æ±‚ç®¡ç†ã€äº‹åŠ¡è¶…æ—¶ç®¡ç†ã€äº‹åŠ¡å‚æ•°ç­‰ï¼Œç”¨äºæ•°æ®åº“è®¿é—®
 *Create on: 2012-11
 *Author:	zerok
 *check list:
@@ -25,7 +25,7 @@ BASE_NAMESPACE_BEGIN_DECL
 
 class IDCEvent;
 
-//¶¨ÒåDCµÄ»Øµ÷²ÎÊıÄ£°æ
+//å®šä¹‰DCçš„å›è°ƒå‚æ•°æ¨¡ç‰ˆ
 class CoreDCParam 
 {
 public:
@@ -53,7 +53,7 @@ private:
 	T data_;
 };
 
-//¶¨ÒåÒ»¸öDCÊÂ¼ş½Ó¿Ú
+//å®šä¹‰ä¸€ä¸ªDCäº‹ä»¶æ¥å£
 class IDCEvent
 {
 public:
@@ -77,17 +77,17 @@ public:
 
 	void			clear();
 
-	//Ìá½»Ò»¸öPHPÖ´ĞĞÇëÇó£¬ack±íÊ¾ÊÇ·ñĞèÒª»ØÖ´½á¹û£¬·µ»ØÒ»¸öPHPÖ´ĞĞID
+	//æäº¤ä¸€ä¸ªPHPæ‰§è¡Œè¯·æ±‚ï¼Œackè¡¨ç¤ºæ˜¯å¦éœ€è¦å›æ‰§ç»“æœï¼Œè¿”å›ä¸€ä¸ªPHPæ‰§è¡ŒID
 	uint32_t		post_dc_request(uint32_t dc_sid, CoreDCParam* param, const string& php, 
 									const string& php_param, bool read_flag, bool ack = true);
 
-	//È¡ÏûÒ»¸öPHP»ØÖ´½á¹ûÊÂ¼ş
+	//å–æ¶ˆä¸€ä¸ªPHPå›æ‰§ç»“æœäº‹ä»¶
 	CoreDCParam*	cancel_dc_request(uint32_t exc_id);
 
-	//³¬Ê±ÏûÏ¢
+	//è¶…æ—¶æ¶ˆæ¯
 	int32_t			handle_timeout(const void *act, uint32_t timer_id);
 
-	//ÏûÏ¢´¦Àíº¯Êı
+	//æ¶ˆæ¯å¤„ç†å‡½æ•°
 	int32_t			on_php_response(CBasePacket* packet, uint32_t sid);
 
 	int32_t			on_short_connected(ShortConnection *conn);

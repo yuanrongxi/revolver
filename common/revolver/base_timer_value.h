@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	base_timer_value.h
 *
-*to do:		¶¨ÒåUNIXÊ±¼äÀà
+*to do:		å®šä¹‰UNIXæ—¶é—´ç±»
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -22,7 +22,7 @@
 
 BASE_NAMESPACE_BEGIN_DECL
 
-//100Íò
+//100ä¸‡
 #define ONE_SECOND_IN_USECS 1000000
 
 class CBaseTimeValue

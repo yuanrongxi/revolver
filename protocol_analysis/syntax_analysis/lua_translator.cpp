@@ -26,7 +26,8 @@ void CLuaTranslator::TranslateProtocol()
 
 void CLuaTranslator::OpenObjFile()
 {
-	string str_ftitle = GET_FILEDESCMAP()->FindDescInfo(string(FILE_TITLE));
+	string val = FILE_TITLE;
+	string str_ftitle = GET_FILEDESCMAP()->FindDescInfo(val);
 	CBaseLineHandler::StringToLower(str_ftitle);
 	str_ftitle += ".lua";
 
@@ -47,7 +48,8 @@ void CLuaTranslator::CloseObjFile()
 
 void CLuaTranslator::AddFileDescToFile()
 {
-	string str_ftitle = GET_FILEDESCMAP()->FindDescInfo(string(FILE_TITLE));
+    string val = FILE_TITLE;
+	string str_ftitle = GET_FILEDESCMAP()->FindDescInfo(val);
 	CBaseLineHandler::StringToUpper(str_ftitle);
 
 	out_file_ << "require\"pack\"" << endl; 
@@ -99,7 +101,8 @@ void CLuaTranslator::AddMsgBodyDef()
 		itr != msgbody_order.end(); ++itr)
 	{
 		string msgid = *itr;
-		MsgBodyDefMap::const_iterator m_itr = msgbody_map.find(CMsgDefDesc(msgid, string()));
+        string val = "";
+		MsgBodyDefMap::const_iterator m_itr = msgbody_map.find(CMsgDefDesc(msgid, val));
 
 		InitUserClass(m_itr->first.msg_cname_, m_itr->second);
 
@@ -372,8 +375,8 @@ void CLuaTranslator::GenarateInterfaceFile(string& msgid)
 	fn_name += msgid;
 
 	InsertSeprator(out);
-	out << "--¸ÃÎÄ¼þ´¦ÀíÏûÏ¢IDÎª: " << msgid << "µÄÏûÏ¢"
-		<< "Èë¿Úº¯ÊýÎªHandle_Msg_" << msgid << endl;
+	out << "--ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢IDÎª: " << msgid << "ï¿½ï¿½ï¿½ï¿½Ï¢"
+		<< "ï¿½ï¿½Úºï¿½ï¿½ï¿½ÎªHandle_Msg_" << msgid << endl;
 	InsertSeprator(out);
 
 	out << "function Handle_Msg_" << msgid << "()" << endl

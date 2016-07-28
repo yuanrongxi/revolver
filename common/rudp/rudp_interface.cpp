@@ -1,4 +1,4 @@
-#include "revolver/base_reactor_instance.h"
+﻿#include "revolver/base_reactor_instance.h"
 #include "rudp/rudp_interface.h"
 #include "rudp/rudp_adapter.h"
 #include "rudp/rudp_packet.h"
@@ -17,6 +17,7 @@
             strm >> head;\
         }\
         catch(...){\
+            RUDP_WARNING(info);\
             return;\
         }
 
@@ -250,7 +251,7 @@ int32_t RUDPObject::bind(int32_t rudp_id, const Inet_Addr& local_addr)
         return -1;
     }
 
-    for(uint16_t i = 0; i < adapter_array_.size(); ++i)
+    for(uint8_t i = 0; i < adapter_array_.size(); ++i)
     {
         if(adapter_array_[i] != NULL && local_addr == adapter_array_[i]->get_local_addr())
         {
@@ -450,6 +451,8 @@ void RUDPObject::process(IRUDPAdapter* adapter, BinStream& strm, const Inet_Addr
     PARSE_RUDP_HEAD(rudp_head, "parse rudp head failed!!");
 
     RUDPSocket *rudp_session = get_socket(rudp_head.remote_rudp_id_);
+    RUDP_TRACE("receive rudp[" << rudp_head.remote_rudp_id_ <<"] from: "
+        << remote_addr <<", msg id[" << (uint16_t)rudp_head.msg_id_ <<"], data size: " << strm.data_size());
     if(rudp_session != NULL)
     {
         rudp_session->process(rudp_head.msg_id_, rudp_head.check_sum_, strm, remote_addr);
@@ -488,7 +491,7 @@ void RUDPObject::process(IRUDPAdapter* adapter, BinStream& strm, const Inet_Addr
 
             rudp_session = get_socket(new_rudp_id);
             rudp_session->set_check_sum(rudp_head.check_sum_);
-
+            rudp_session->set_peer_addr(remote_addr);
             //提示上层EVENT HANDLE进行ACCEPT，可以在上层进行SOCKET属性设置
             if(listener_ != NULL)
                 listener_->rudp_accept_event(new_rudp_id);
@@ -536,7 +539,7 @@ void RUDPObject::attach(IRUDPAdapter* adapter)
         return ;
     }
 
-    for(uint16_t i = 0; i < adapter_array_.size(); i ++) //关联本地的网络适配器
+    for(uint8_t i = 0; i < adapter_array_.size(); i ++) //关联本地的网络适配器
     {
         if(adapter_array_[i] == adapter || i >= INVALID_ADAPTER_INDEX) //重复ATTACH
         {

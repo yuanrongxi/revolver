@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	base_sock_stream.h
 *
-*to do:		¶¨ÒåTCP SOCKETÀà
+*to do:		å®šä¹‰TCP SOCKETç±»
 *Create on: 2012-05
 *Author:	zerok
 *check list:
@@ -20,9 +20,9 @@ public:
 	virtual ~CSockStream();
 
 	int32_t			open(const Inet_Addr& local_addr, bool nonblocking = false, bool resue = true, bool client = false);
-	//»ñµÃÔ¶¶ËµÄ¶ÔÓ¦IPµØÖ·,Ò»°ãTCPÓĞĞ§
+	//è·å¾—è¿œç«¯çš„å¯¹åº”IPåœ°å€,ä¸€èˆ¬TCPæœ‰æ•ˆ
 	int32_t			get_remote_addr (Inet_Addr &remote_addr) const;
-	//°ó¶¨µØÖ·
+	//ç»‘å®šåœ°å€
 	int32_t			bind(Inet_Addr& local_addr);
 private:
 	Inet_Addr		local_addr_;

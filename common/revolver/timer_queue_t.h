@@ -1,7 +1,7 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
 *filename:	timer_queue_t.h
 *
-*to do:		¶¨ÒåÂÖ×ª¶¨Ê±Æ÷£¬ÊµÏÖÒ»¸ö4ÂÖ¿Ì¶È×ª»»µÄ¶¨Ê±Æ÷ÂÖĞòÁĞ£¬¾«È·µÄ×îĞ¡µ¥Î»ÎªºÁÃë
+*to do:		å®šä¹‰è½®è½¬å®šæ—¶å™¨ï¼Œå®ç°ä¸€ä¸ª4è½®åˆ»åº¦è½¬æ¢çš„å®šæ—¶å™¨è½®åºåˆ—ï¼Œç²¾ç¡®çš„æœ€å°å•ä½ä¸ºæ¯«ç§’
 *Create on: 2012-04
 *Author:	zerok
 *check list:
@@ -32,32 +32,32 @@ public:
 	CTimerQueue_T(FUNCTOR* functor, size_t heap_size = TIMER_POOL_SIZE);
 	~CTimerQueue_T();
 
-	//²åÈëÒ»¸ö¶¨Ê±Æ÷
+	//æ’å…¥ä¸€ä¸ªå®šæ—¶å™¨
 	uint32_t schedule(HANDLER handler, const void* act, uint32_t delay, uint32_t interval = 0);
-	//È¡ÏûÒ»¸ö¶¨Ê±Æ÷
+	//å–æ¶ˆä¸€ä¸ªå®šæ—¶å™¨
 	void cancel_timer(uint32_t timer_id, const void **act);
-	//ÖØÖÃÒ»¸ö¶¨Ê±Æ÷
+	//é‡ç½®ä¸€ä¸ªå®šæ—¶å™¨
 	uint32_t reset_timer(uint32_t timer_id, uint32_t delay, uint32_t interval = 0);
 
-	//É¨Ãè³¬Ê±£¬·µ»ØÏÂÒ»¸ö³¬Ê±¼ä¼ä¸ô£¬×îĞ¡Îª10MS£¬×î´óÎª50MS
+	//æ‰«æè¶…æ—¶ï¼Œè¿”å›ä¸‹ä¸€ä¸ªè¶…æ—¶é—´é—´éš”ï¼Œæœ€å°ä¸º10MSï¼Œæœ€å¤§ä¸º50MS
 	virtual uint32_t expire();
 
-	//Ô­×Ó´¦ÀíÊÂÎñ
+	//åŸå­å¤„ç†äº‹åŠ¡
 	void ring_event(uint8_t ring_id, uint32_t timer_id);
 
-	//ÅĞ¶Ï¶¨Ê±Æ÷¶ÑÊÇ·ñÂú
+	//åˆ¤æ–­å®šæ—¶å™¨å †æ˜¯å¦æ»¡
 	bool full() const;
 
 	FUNCTOR &upcall_functor (void);
 
 #if _DEBUG
-	//ÓÃÓÚ´¥·¢ÁÙ½çµã£¬0,255,255,255
+	//ç”¨äºè§¦å‘ä¸´ç•Œç‚¹ï¼Œ0,255,255,255
 	void set_ring_id();
 #endif
 
 protected:
 	void dispatch_info(BaseTimerDispathInfo_T<HANDLER>& info, uint32_t timer_id);
-	//»ñÈ¡Ò»¸ö¿ÕÏĞµÄTimer nodeĞòºÅ
+	//è·å–ä¸€ä¸ªç©ºé—²çš„Timer nodeåºå·
 	uint32_t get_free_node();
 
 	void clear();
@@ -71,27 +71,27 @@ protected:
 protected:
 	ObjectPool<BaseTimerNode_T<HANDLER>, TIMER_POOL_SIZE>	node_pool_;
 	
-	//¶¨Ê±Æ÷¶Ñ
+	//å®šæ—¶å™¨å †
 	TimerNodeArray			heap_;
 	size_t					heap_size_;
-	//ÒÑ¾­Õ¼ÓÃµÄHEAP¸öÊı
+	//å·²ç»å ç”¨çš„HEAPä¸ªæ•°
 	uint32_t				used_num_;
 	uint32_t				cur_heap_pos_;
 	FreeTimerIDList			freeTimers_;
 
-	//ÂÖĞòÁĞ
-	CTimerRing				rings_[RINGS_SIZE];	//0±íÊ¾µÍÎ»ÂÖ£¬3±íÊ¾¸ßÎ»ÂÖ,Ò»¸öÂÖ±íÊ¾256¸ö¿Ì¶È£¬4¸öÂÖÕıºÃÊÇ32Î»ÕûĞÎÊıÃèÊö
+	//è½®åºåˆ—
+	CTimerRing				rings_[RINGS_SIZE];	//0è¡¨ç¤ºä½ä½è½®ï¼Œ3è¡¨ç¤ºé«˜ä½è½®,ä¸€ä¸ªè½®è¡¨ç¤º256ä¸ªåˆ»åº¦ï¼Œ4ä¸ªè½®æ­£å¥½æ˜¯32ä½æ•´å½¢æ•°æè¿°
 
-	//³õÊ¼Ê±¿Ì
+	//åˆå§‹æ—¶åˆ»
 	CBaseTimeValue			start_time_;	
-	//ÉÏÒ»´Îexpire´¦ÀíµÄÊ±¿Ì
+	//ä¸Šä¸€æ¬¡expireå¤„ç†çš„æ—¶åˆ»
 	CBaseTimeValue			prev_time_;
 
 	LOCK					mutex_;
 	FUNCTOR*				functor_;
 };
 
-//¶¨Òåfunctor
+//å®šä¹‰functor
 class CTimerFunctor
 {
 public:
