@@ -54,7 +54,7 @@ BASE_NAMESPACE_BEGIN_DECL
 		uint8_t* pos = (uint8_t*)&data;\
 		if(big_endian)\
 		{\
-			::memcpy(pos ,wptr_, type_size);\
+			::memcpy(pos ,rptr_, type_size);\
 		}\
 		else\
 		{\
