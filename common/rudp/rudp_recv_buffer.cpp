@@ -47,6 +47,8 @@ void RUDPRecvBuffer::reset()
 
 	bandwidth_ = 0;
 	bandwidth_ts_ = CBaseTimeValue::get_time_value().msec();
+	rtt_ = 5;
+	rtc_ = 0;
 }
 
 int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_size)
@@ -55,6 +57,7 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 
 	//删除丢包
 	loss_map_.erase(seq);
+	uint64_t ts = CBaseTimeValue::get_time_value().msec();
 
 	if(seq > first_seq_ + MAX_SEQ_INTNAL || data_size > MAX_SEGMENT_SIZE)
 	{
@@ -63,8 +66,6 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 		net_channel_->on_exception();
 		return -1;
 	}
-
-	//RUDP_RECV_DEBUG("on data, seq = " << seq);
 
 	RUDPRecvSegment* seg = NULL;
 	if(first_seq_ + 1 == seq)
@@ -82,7 +83,8 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 		//报告可读
 		net_channel_->on_read();
 
-		ok_count_++;
+		net_channel_->send_ack(first_seq_);
+		set_send_last_ack_ts(ts);
 	}
 	else if(seq > first_seq_ + 1)
 	{
@@ -104,16 +106,9 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 	if (max_seq_ < seq){
 		if (max_seq_ > 0){
 			for (uint64_t i = max_seq_ + 1; i < seq; i++)
-				loss_map_[i] = i;
+				loss_map_[i] = ts - rtt_;
 		}
 		max_seq_ = seq;
-	}
-
-	if (ok_count_ >= 128){
-		if (!check_loss())
-			net_channel_->send_ack(first_seq_);
-
-		ok_count_ = 0;
 	}
 
 	return 0;
@@ -130,15 +125,13 @@ void RUDPRecvBuffer::check_recv_window()
 		return ;
 	//将所有连续的数据片放到数据读取队列
 	RecvWindowMap::iterator it = recv_window_.begin();
-	while(it != recv_window_.end() && it->first == first_seq_ + 1)
+	while (it != recv_window_.end() && it->first == first_seq_ + 1)
 	{
 		first_seq_ = it->first;
 		bandwidth_ts_ += it->second->data_size_;
 		recv_data_.push_back(it->second);
 
 		recv_window_.erase(it ++);
-
-		ok_count_++;
 	}
 }
 
@@ -148,12 +141,15 @@ bool RUDPRecvBuffer::check_loss()
 
 	LossIDArray ids;
 	int count = 0;
+	uint64_t ts = CBaseTimeValue::get_time_value().msec();
+
 	for (LossIDTSMap::iterator it = loss_map_.begin(); it != loss_map_.end(); it++)
 	{
-		if (it->first < first_seq_ + 2048){
+		if (it->second + rtc_ + rtt_ < ts){
 			ids.push_back(static_cast<uint32_t>(it->first - first_seq_));
 			ret = true;
-			if (count++ > 150)
+			it->second = ts;
+			if (count++ > 80)
 				break;
 		}
 		else
@@ -168,16 +164,14 @@ bool RUDPRecvBuffer::check_loss()
 
 void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt)
 {
+	rtc_ = rtc;
+	rtt_ = rtt;
 
-	if (last_ack_ts_ + rtc + 10 < now_timer){
-		if (ok_count_ > 0){
-			if (check_loss())
-				recv_new_packet_ = false;
-			else
-				net_channel_->send_ack(first_seq_);
-		}
-		ok_count_ = 0;
-		set_send_last_ack_ts(now_timer);
+	if (last_ack_ts_ + rtc_ < now_timer){
+		if (!check_loss())
+			net_channel_->send_ack(first_seq_);
+
+		set_send_last_ack_ts(now_timer); 
 	}
 	//判断是否可以读
 	if(!recv_data_.empty() && net_channel_ != NULL)

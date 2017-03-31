@@ -19,7 +19,7 @@ using namespace std;
 
 BASE_NAMESPACE_BEGIN_DECL
 
-#define MAX_SEGMENT_SIZE	1280
+#define MAX_SEGMENT_SIZE	1024
 
 typedef set<uint64_t>		LossIDSet;
 

@@ -324,7 +324,7 @@ int32_t RUDPSocket::send(const uint8_t* data, int32_t data_size)
 {
     if(state_ != RUDP_CONNECTED || data_size <= 0)
     {
-        RUDP_FATAL("send failed! state_ != RUDP_CONNECTED or data size = 0, rudp id = " << rudp_id_);
+		RUDP_FATAL("send failed! state_ != RUDP_CONNECTED or data size = 0, rudp id = " << rudp_id_ << ", state =" << state_);
         error_code_ = RUDP_SEND_ERROR;
         return -1;
     }

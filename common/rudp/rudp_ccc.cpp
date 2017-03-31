@@ -53,6 +53,7 @@ void RUDPCCCObject::reset()
 
 	resend_count_ = 0;
 	print_count_ = 0;
+	rtt_scale_ = 1.0;
 }
 
 void RUDPCCCObject::on_ack(uint64_t ack_seq)
@@ -61,7 +62,7 @@ void RUDPCCCObject::on_ack(uint64_t ack_seq)
 	{
 		return;
 	}
-
+	 
 	uint32_t space = (uint32_t)(ack_seq - last_ack_id_);
 	if(slow_start_) //慢启动窗口决策
 	{
@@ -76,18 +77,8 @@ void RUDPCCCObject::on_ack(uint64_t ack_seq)
 
 		RUDP_DEBUG("send window size = " << snd_cwnd_);
 	}
-	else //平衡状态
-	{
-		if (recv_count_ / 2 < resend_count_) //出现丢包，不做加速
-			loss_flag_ = false;
-		else if(resend_count_ == 0) //加速，快速恢复
-		{
-			snd_cwnd_ = (uint32_t)(snd_cwnd_ + (snd_cwnd_ >> 3));
-			snd_cwnd_ = core_min(max_cwnd_, snd_cwnd_);
-			loss_flag_ = false;
-		}
-	}
 
+	//RUDP_DEBUG("onack, seq = " << ack_seq);
 	last_ack_id_ = ack_seq;
 }
 
@@ -111,11 +102,11 @@ void RUDPCCCObject::set_max_cwnd(uint32_t rtt)
 	else if (rtt <= 200)
 		max_cwnd_ = 1024 + 512;
 	else{
-		max_cwnd_ = 720;
+		max_cwnd_ = 1024;
 	}
 
-	limit_cwnd_ = max_cwnd_ - 512 + DEFAULT_CWND_SIZE;
-	max_cwnd_ = 2 * max_cwnd_;
+
+	limit_cwnd_ = 128;
 }   
 
 void RUDPCCCObject::add_resend()
@@ -130,13 +121,12 @@ void RUDPCCCObject::add_recv(uint32_t count)
 
 void RUDPCCCObject::on_timer(uint64_t now_ts)
 {
-	uint32_t delay = core_max(rtt_, 50);
+	uint32_t delay = core_max(rtt_ * 4, 100);
 	if (now_ts >= prev_on_ts_ + delay) //10个RTT决策一次
 	{
 		print_count_ ++;
 		if(print_count_ % 4 == 0)
 		{
-			RUDP_DEBUG("send window size = " << snd_cwnd_ << ",rtt = " << rtt_ << ",rtt_var = " << rtt_var_ << ",resend = " << resend_count_);
 			set_max_cwnd(rtt_);
 		}
 
@@ -151,27 +141,25 @@ void RUDPCCCObject::on_timer(uint64_t now_ts)
 		}
 		else
 		{
-			if (recv_count_ > (snd_cwnd_ * delay * 7 / (rtt_ * 8)))
+			if (recv_count_ / 16 > resend_count_)
 			{
-				snd_cwnd_ = (uint32_t)(snd_cwnd_ + core_max(8,(snd_cwnd_ / 8)));
+				snd_cwnd_ = (uint32_t)(snd_cwnd_ + core_max(8, (snd_cwnd_ / 8)));
 				snd_cwnd_ = core_min(max_cwnd_, snd_cwnd_);
-				if (snd_cwnd_ > limit_cwnd_)
+			}
+			else if (recv_count_ / 4 < resend_count_){
+				snd_cwnd_ = (uint32_t)(snd_cwnd_ - (snd_cwnd_ / 4));
+				snd_cwnd_ = core_max(min_cwnd_, snd_cwnd_);
+				loss_flag_ = true;
+
+				if (snd_cwnd_ < limit_cwnd_)
 					min_cwnd_ = limit_cwnd_;
 			}
-			else if (recv_count_ < snd_cwnd_ * delay * 3 / (rtt_ * 4)){
-				snd_cwnd_ = (uint32_t)(snd_cwnd_ - (snd_cwnd_ / 16));
-				snd_cwnd_ = core_max(min_cwnd_, snd_cwnd_);
-				loss_flag_ = true;
-			}
-			else if (resend_count_ >= core_max(8, snd_cwnd_ * delay * 3 / (8 * rtt_))){
-				snd_cwnd_ = (uint32_t)(snd_cwnd_ - (snd_cwnd_ / 8));
-				snd_cwnd_ = core_max(min_cwnd_, snd_cwnd_);
-				loss_flag_ = true;
-			}
-			
+		
+			RUDP_DEBUG("send window size = " << snd_cwnd_ << ",rtt = " << rtt_ << ",rtt_var = " << rtt_var_ << ",resend = " << resend_count_ << "recv count = " << recv_count_);
+
 			resend_count_ = 0;
+			recv_count_ = 0;
 		}
-		recv_count_ = 0;
 		prev_on_ts_ = now_ts;
 		loss_flag_ = false;
 	} 
@@ -196,8 +184,8 @@ void RUDPCCCObject::set_rtt(uint32_t keep_live_rtt)
 		rtt_ = (7 * rtt_ + keep_live_rtt) / 8;
 	}
 
-	rtt_ = core_max(5, rtt_);
-	rtt_var_ = core_max(3, rtt_var_);
+	rtt_ = core_max(1, rtt_);
+	rtt_var_ = core_max(1, rtt_var_);
 }
 
 BASE_NAMESPACE_END_DECL

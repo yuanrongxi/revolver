@@ -23,6 +23,8 @@ typedef list<RUDPRecvSegment*>	RecvDataList;
 
 typedef map<uint64_t, uint64_t>	LossIDTSMap;
 
+class RUDPCCCObject;
+
 class RUDPRecvBuffer
 {
 public:
@@ -77,6 +79,7 @@ protected:
 	uint32_t			bandwidth_;
 	uint64_t			bandwidth_ts_;
 	uint32_t			rtc_;
+	uint32_t			rtt_;
 };
 
 BASE_NAMESPACE_END_DECL

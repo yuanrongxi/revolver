@@ -34,9 +34,9 @@ public:
 	void				set_max_segment_size(uint16_t mss);
 
 	void				set_rtt(uint32_t keep_live_rtt);
-	uint32_t			get_rtt() const {return rtt_;};
+	uint32_t			get_rtt() const { return (uint32_t)(rtt_ * rtt_scale_); };
 
-	uint32_t			get_rtt_var() const {return rtt_var_;};
+	uint32_t			get_rtt_var() const { return (uint32_t)(rtt_var_ * rtt_scale_); };
 
 	void				add_resend();
 	void				add_recv(uint32_t count);
@@ -49,6 +49,7 @@ private:
 
 	uint32_t			rtt_;
 	uint32_t			rtt_var_;
+	double				rtt_scale_;
 
 	uint64_t			last_ack_id_;
 
