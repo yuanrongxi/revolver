@@ -77,7 +77,7 @@ int main(int agc, char* argv[])
 		else if(c == 'c')
 		{
 			Inet_Addr local_addr(INADDR_ANY, 2030);	//本地绑定的RUDP监听端口
-			Inet_Addr remote_addr("192.168.90.17", 2020);	//远端帮顶的rudp监听端口,rudp_recv的地址!!!!!!
+			Inet_Addr remote_addr("192.168.90.14", 2020);	//远端帮顶的rudp监听端口,rudp_recv的地址!!!!!!
 
 			//for(int32_t i = 0; i < 1; i ++)
 			{

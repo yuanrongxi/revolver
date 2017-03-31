@@ -112,7 +112,7 @@ public:
 	void Print()
 	{
 		//cout << "finished packet count = " << m_nTotalCount << endl;
-		if(m_nTotalCount % 5000 == 0)
+		if(m_nTotalCount % 1000 == 0)
 		{
 			m_file << "finished packet count = " << m_nTotalCount << endl;
 

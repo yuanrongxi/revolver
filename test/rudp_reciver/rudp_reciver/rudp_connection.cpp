@@ -150,6 +150,7 @@ int32_t RUDPConnection::rudp_input_event(int32_t rudp_id)
 {
 	if(state_ == RUDP_CONN_CONNECTING)
 	{
+		std::cout << "rudp connected!" << std::endl;
 		return 0;
 	}
 
@@ -206,6 +207,7 @@ int32_t RUDPConnection::rudp_output_event(int32_t rudp_id)
 {
 	if(state_ == RUDP_CONN_CONNECTING)
 	{
+		std::cout << "rudp connected!" << std::endl;
 		cancel_timer();
 
 		state_ = RUDP_CONN_CONNECTED;
@@ -254,7 +256,8 @@ int32_t RUDPConnection::rudp_exception_event(int32_t rudp_id)
 
 void RUDPConnection::process(RUDPTestPacket* packet)
 {
-	//send(*packet);
+	//if (packet->user_id % 1000 == 0)
+		send(*packet);
 }
 
 

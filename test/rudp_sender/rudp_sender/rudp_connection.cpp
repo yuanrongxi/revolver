@@ -5,8 +5,8 @@
 #include "rudp/rudp_socket.h"
 #include <math.h>
  
-#define PACKET_NUM	100 
-#define SEND_DELAY  100
+#define PACKET_NUM	5 
+#define SEND_DELAY  10
 
 RUDPConnection::RUDPConnection()
 {
@@ -59,7 +59,7 @@ void RUDPConnection::cancel_timer()
 void RUDPConnection::heartbeat()
 {
 	uint64_t cur_count = CBaseTimeValue::get_time_value().msec();
-	if(tick_count_ + 1000 < cur_count)
+	if(tick_count_ + 1000 <= cur_count)
 	{
 		cout << "push packet number = " << (packet_count_ * 1000 / (cur_count - tick_count_)) 
 			<< ", bandwidth = " << (byte_count_ / 1024) << "kb/s" << endl;
@@ -67,23 +67,24 @@ void RUDPConnection::heartbeat()
 		tick_count_ = cur_count;
 		byte_count_ = 0;
 	}
+
+	send_packet();
 }
 
 void RUDPConnection::send_packet()
 {
-	count_ ++;
+	int i = 0;
 
 	RUDPTestPacket packet;
-	packet.user_id = count_;
+	packet.user_id = count_ ++;
 	packet.ts = CBaseTimeValue::get_time_value().msec();
 	packet.nick = "zerok775";
 	packet.ctx = "abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890";
 
 	uint64_t begin_ts = CBaseTimeValue::get_time_value().msec();
 
-	for (int32_t i = 0; i < PACKET_NUM; i++){
-		if(this->send(packet) != 0)
-			return ;
+	while (this->send(packet) == 0 && i++ < PACKET_NUM){
+		packet.user_id = count_++;
 		packet_count_++;
 	}
 }
@@ -118,7 +119,7 @@ int32_t RUDPConnection::connect(const Inet_Addr& src_addr, const Inet_Addr& dst_
 		return -1;
 	}
 
-	rudp_setoption(rudp_sock_.get_handler(), RUDP_NAGLE, 1);
+	rudp_setoption(rudp_sock_.get_handler(), RUDP_NAGLE, 0);
 	if(rudp_sock_.connect(dst_addr) != 0)
 	{
 		this->close();
@@ -205,8 +206,6 @@ int32_t RUDPConnection::rudp_input_event(int32_t rudp_id)
 						return -2;
 					}
 
-					packet_count_ ++;
-
 					process(&packet);
 				}
 				else if(split_ret < 0) //非法报文
@@ -240,9 +239,10 @@ int32_t RUDPConnection::rudp_output_event(int32_t rudp_id)
 	}
 
 	if (sbuffer_.data_length() == 0)
-		send_packet();
+		;//send_packet();
 	
-	byte_count_ += sbuffer_.send(rudp_sock_);
+	if (sbuffer_.data_length() > 0)
+		byte_count_ += sbuffer_.send(rudp_sock_);
 
 	return 0;
 }
@@ -286,8 +286,6 @@ void RUDPConnection::process(RUDPTestPacket* packet)
 	uint64_t cur_ts = CBaseTimeValue::get_time_value().msec();
 	if(cur_ts >= packet->ts)
 	{
-		cout << "seq = " << packet->user_id << endl;
-
 		if(stat_ != NULL)
 			stat_->Stat(cur_ts - packet->ts);
 	}
