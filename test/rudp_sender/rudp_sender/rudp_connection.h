@@ -129,6 +129,7 @@ protected:
 
 	StatPacketObj*	stat_;
 	uint64_t		tick_count_;
+	uint32_t		total_count_;
 };
 
 #endif

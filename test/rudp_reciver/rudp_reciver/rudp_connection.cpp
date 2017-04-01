@@ -7,6 +7,7 @@ RUDPConnection::RUDPConnection()
 	timer_id_ = 0;
 	byte_count_ = 0;
 	packet_count_ = 0;
+	total_count_ = 0;
 }
 
 RUDPConnection::~RUDPConnection()
@@ -29,6 +30,7 @@ void RUDPConnection::reset()
 
 	byte_count_ = 0;
 	packet_count_ = 0;
+	total_count_ = 0;
 }
 
 void RUDPConnection::set_timer(uint32_t delay)
@@ -49,7 +51,7 @@ void RUDPConnection::cancel_timer()
 
 void RUDPConnection::heartbeat()
 {
-	cout << "bandwidth = " << byte_count_ / 1024 << " KB/S, packet count = " << packet_count_ << endl;
+	cout << "bandwidth = " << byte_count_ / 1024 << " KB/S, packet count = " << packet_count_ << "total count = " << total_count_ << endl;
 
 	byte_count_ = 0;
 	packet_count_ = 0;
@@ -185,6 +187,7 @@ int32_t RUDPConnection::rudp_input_event(int32_t rudp_id)
 				}
 
 				packet_count_ ++;
+				total_count_++;
 
 				process(&packet);
 			}
@@ -257,7 +260,7 @@ int32_t RUDPConnection::rudp_exception_event(int32_t rudp_id)
 void RUDPConnection::process(RUDPTestPacket* packet)
 {
 	//if (packet->user_id % 1000 == 0)
-		send(*packet);
+		/*send(*packet);*/
 }
 
 

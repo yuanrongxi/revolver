@@ -6,11 +6,12 @@
 #include <math.h>
  
 #define PACKET_NUM	5 
-#define SEND_DELAY  10
+#define SEND_DELAY  100
 
 RUDPConnection::RUDPConnection()
 {
 	packet_count_ = 0;
+	total_count_ = 0;
 	timer_id_ = 0;
 	count_ = 0;
 	byte_count_ = 0;
@@ -38,6 +39,7 @@ void RUDPConnection::reset()
 	
 	packet_count_ = 0;
 	tick_count_ = 0;
+	total_count_ = 0;
 }
 
 void RUDPConnection::set_timer(uint32_t delay)
@@ -62,7 +64,7 @@ void RUDPConnection::heartbeat()
 	if(tick_count_ + 1000 <= cur_count)
 	{
 		cout << "push packet number = " << (packet_count_ * 1000 / (cur_count - tick_count_)) 
-			<< ", bandwidth = " << (byte_count_ / 1024) << "kb/s" << endl;
+			<< ", total count = " << total_count_ << ",bandwidth = " << (byte_count_ / 1024) << "kb/s" << endl;
 		packet_count_ = 0;
 		tick_count_ = cur_count;
 		byte_count_ = 0;
@@ -86,6 +88,7 @@ void RUDPConnection::send_packet()
 	while (this->send(packet) == 0 && i++ < PACKET_NUM){
 		packet.user_id = count_++;
 		packet_count_++;
+		total_count_++;
 	}
 }
 

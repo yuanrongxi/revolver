@@ -117,6 +117,7 @@ protected:
 	BinStream		istrm_;
 	uint64_t		byte_count_;
 	uint64_t		packet_count_;
+	uint64_t		total_count_;
 };
 
 #endif
