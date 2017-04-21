@@ -296,6 +296,21 @@ public:
 		used_ += data_len;
 	}
 
+	uint32_t pop_data(uint8_t *data, uint32_t data_len)
+	{
+		uint32_t ret = 0;
+		DECODE(val_size, uint32_t);
+
+		if (ret > data_len || ret > used_ - rsize_)
+			throw 0;
+
+		memcpy(data, get_rptr(), ret);
+		rptr_ += ret;
+		rsize_ += ret;
+
+		return ret;
+	}
+
 	void bin_to_string(string& data)
 	{
 		data.clear();

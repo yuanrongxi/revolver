@@ -139,7 +139,9 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 			bandwidth_ += it->second->data_size_;
 
 			RETURN_SEND_SEG(it->second);
-			send_window_.erase(it ++);
+			send_window_.erase(it);
+			it = send_window_.begin();
+
 			ccc_->add_recv(1);
 		}
 	}
