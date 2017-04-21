@@ -299,7 +299,7 @@ public:
 	uint32_t pop_data(uint8_t *data, uint32_t data_len)
 	{
 		uint32_t ret = 0;
-		DECODE(val_size, uint32_t);
+		DECODE(ret, uint32_t);
 
 		if (ret > data_len || ret > used_ - rsize_)
 			throw 0;
