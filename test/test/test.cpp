@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 	//test_tcp();
 	//test_queue();
 	//test_localtime_s();
-	//test_log();
+	test_log();
 	//test_single_log();
 	//test_select();
 	//test_tcp_select();
