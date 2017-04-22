@@ -144,7 +144,17 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 
 			ccc_->add_recv(1);
 		}
+
+		if(send_window_.size() == 1){
+			it = send_window_.begin();
+			net_channel_->send_data(0, it->second->seq_, it->second->data_, it->second->data_size_, now_timer);
+			it->second->last_send_ts_ = now_timer;
+			it->second->send_count_++;
+
+			ccc_->add_resend();
+		}
 	}
+
 
 	if (dest_max_seq_ < seq)
 		dest_max_seq_ = seq;
