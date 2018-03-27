@@ -124,6 +124,8 @@ void RUDPSendBuffer::on_ack(uint64_t seq)
 	if(cwnd_max_seq_ < seq)
 		return;
 
+	uint64_t now_timer = CBaseTimeValue::get_time_value().msec();
+
 	if(!send_window_.empty())
 	{
 		//删除窗口的数据片
