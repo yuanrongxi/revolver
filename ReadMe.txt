@@ -19,3 +19,5 @@
 	完成后，make就可以生成各个执行文件，执行文件在revolver/cmake/bin下
 
 需要了解关于revolver细节，请访问博客http://blog.csdn.net/column/details/zerok-revolver.html
+
+*QQ交流群: 717185367
