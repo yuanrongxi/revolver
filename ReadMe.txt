@@ -21,4 +21,3 @@
 需要了解关于revolver细节，请访问博客http://blog.csdn.net/column/details/zerok-revolver.html
 
 *QQ交流群: 717185367
-[![LICENSE](https://img.shields.io/badge/license-NPL%20(The%20996%20Prohibited%20License)-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
