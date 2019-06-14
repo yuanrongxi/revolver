@@ -167,7 +167,7 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt)
 	rtc_ = rtc;
 	rtt_ = rtt;
 
-	if (last_ack_ts_ + rtc_ < now_timer){
+	if (last_ack_ts_ + core_max(100, rtc_) < now_timer){
 		if (!check_loss())
 			net_channel_->send_ack(first_seq_);
 
