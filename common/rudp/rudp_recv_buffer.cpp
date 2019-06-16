@@ -111,6 +111,8 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 		max_seq_ = seq;
 	}
 
+	on_timer(ts, rtc_, rtt_, true);
+
 	return 0;
 }
 
@@ -156,22 +158,24 @@ bool RUDPRecvBuffer::check_loss()
 			break;
 	}
 
-	if(ret && net_channel_ != NULL)
+	if (ret && net_channel_ != NULL){
 		net_channel_->send_nack(first_seq_, ids);
+		set_send_last_ack_ts(ts);
+	}
 
 	return ret;
 } 
 
-void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt)
+void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt, bool acked)
 {
 	rtc_ = rtc;
 	rtt_ = rtt;
 
-	if (last_ack_ts_ + core_max(100, rtc_) < now_timer){
+	if ((!recv_new_packet_ && last_ack_ts_ + core_max(200, rtc_) <= now_timer) || (last_ack_ts_ + rtc_ <= now_timer && recv_new_packet_)){
 		if (!check_loss())
 			net_channel_->send_ack(first_seq_);
 
-		set_send_last_ack_ts(now_timer); 
+		set_send_last_ack_ts(now_timer);
 	}
 	//≈–∂œ «∑Òø…“‘∂¡
 	if(!recv_data_.empty() && net_channel_ != NULL)

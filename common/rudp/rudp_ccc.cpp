@@ -184,8 +184,8 @@ void RUDPCCCObject::set_rtt(uint32_t keep_live_rtt)
 		rtt_ = (7 * rtt_ + keep_live_rtt) / 8;
 	}
 
-	rtt_ = core_max(1, rtt_);
-	rtt_var_ = core_max(1, rtt_var_);
+	rtt_ = core_max(10, rtt_);
+	rtt_var_ = core_max(5, rtt_var_);
 }
 
 BASE_NAMESPACE_END_DECL
