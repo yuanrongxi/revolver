@@ -171,7 +171,7 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt, bo
 	rtc_ = rtc;
 	rtt_ = rtt;
 
-	uint32_t space = 100;
+	uint32_t space = 20;
 	if (loss_map_.size() == 0)
 		space = core_min(2000, 200 + 100 * ok_count_);
 
