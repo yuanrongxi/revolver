@@ -26,8 +26,13 @@ int32_t CSockStream::open(const Inet_Addr& local_addr, bool nonblocking /* = fal
 
 	//设置收发缓冲区
 	int32_t buf_size = 64 * 1024;
+	int32_t set = 1;
 	set_option(SOL_SOCKET, SO_RCVBUF, (void *)&buf_size, sizeof(int32_t));
 	set_option(SOL_SOCKET, SO_SNDBUF, (void *)&buf_size, sizeof(int32_t));
+
+#ifdef __IOS__
+	set_option(SOL_SOCKET, SO_NOSIGPIPE, (void*)&set, sizeof(int32_t));
+#endif
 
 	//建立一个监听服务
 	if(!local_addr.is_null())

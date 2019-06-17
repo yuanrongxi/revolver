@@ -50,7 +50,9 @@ int32_t CSockDgram::open(const Inet_Addr& local_addr, bool nonblocking, bool res
 	int32_t buf_size = 64 * 1024;
 	set_option(SOL_SOCKET, SO_RCVBUF, (void *)&buf_size, sizeof(int32_t));
 	set_option(SOL_SOCKET, SO_SNDBUF, (void *)&buf_size, sizeof(int32_t));
-
+#ifdef __IOS__
+	set_option(SOL_SOCKET, SO_NOSIGPIPE, (void*)&set, sizeof(int32_t));
+#endif
 	return ret;
 }
 
