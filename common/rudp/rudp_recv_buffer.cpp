@@ -54,6 +54,7 @@ void RUDPRecvBuffer::reset()
 int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_size)
 {
 	recv_new_packet_ = true;
+	ok_count_ = 0;
 
 	//…æ≥˝∂™∞¸
 	loss_map_.erase(seq);
@@ -85,6 +86,7 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 
 		net_channel_->send_ack(first_seq_);
 		set_send_last_ack_ts(ts);
+		ok_count_++;
 	}
 	else if(seq > first_seq_ + 1)
 	{
@@ -99,8 +101,6 @@ int32_t RUDPRecvBuffer::on_data(uint64_t seq, const uint8_t* data, int32_t data_
 
 			recv_window_[seq] = seg;
 		}
-
-		ok_count_++;
 	}
 
 	if (max_seq_ < seq){
@@ -171,11 +171,17 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt, bo
 	rtc_ = rtc;
 	rtt_ = rtt;
 
-	if ((!recv_new_packet_ && last_ack_ts_ + core_max(200, rtc_) <= now_timer) || (last_ack_ts_ + 20 <= now_timer && recv_new_packet_)){
+	uint32_t space = 100;
+	if (loss_map_.size() == 0)
+		space = core_min(2000, 200 + 100 * ok_count_);
+
+	if ((!recv_new_packet_ && last_ack_ts_ + core_max(space, rtc_) <= now_timer) || (last_ack_ts_ + 20 <= now_timer && recv_new_packet_)){
 		if (!check_loss())
 			net_channel_->send_ack(first_seq_);
 
 		set_send_last_ack_ts(now_timer);
+
+		ok_count_++;
 	}
 	//≈–∂œ «∑Òø…“‘∂¡
 	if(!recv_data_.empty() && net_channel_ != NULL)

@@ -80,6 +80,8 @@ protected:
 	uint64_t			bandwidth_ts_;
 	uint32_t			rtc_;
 	uint32_t			rtt_;
+
+	uint32_t			ack_count_;
 };
 
 BASE_NAMESPACE_END_DECL
