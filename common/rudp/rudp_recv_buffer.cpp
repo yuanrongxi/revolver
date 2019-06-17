@@ -171,14 +171,14 @@ void RUDPRecvBuffer::on_timer(uint64_t now_timer, uint32_t rtc, uint32_t rtt, bo
 	rtc_ = rtc;
 	rtt_ = rtt;
 
-	uint32_t space = 20;
+	uint32_t space = 30;
 	if (loss_map_.size() == 0)
 		space = core_min(2000, 200 + 100 * ok_count_);
 
 	if ((!recv_new_packet_ && last_ack_ts_ + core_max(space, rtc_) <= now_timer) || (last_ack_ts_ + 20 <= now_timer && recv_new_packet_)){
-		if (!check_loss())
+		if (!check_loss()){
 			net_channel_->send_ack(first_seq_);
-
+		}
 		set_send_last_ack_ts(now_timer);
 
 		ok_count_++;
