@@ -43,6 +43,8 @@ void RUDPObject::set_timer()
     {
         timer_id_ = REACTOR_INSTANCE()->set_timer(this, NULL, RUDP_TIMER_DELAY);
     }
+
+	hb_ts_ = CBaseTimeValue::get_time_value().msec();
 }
 
 void RUDPObject::cancel_timer()
@@ -70,18 +72,23 @@ int32_t RUDPObject::handle_timeout(const void *act, uint32_t timer_id)
 
 void RUDPObject::heartbeat()
 {
-    //扫描所有的RUDP SOCKET对象
-    uint32_t id = INVALID_RUDP_HANDLE;
-    int32_t size = socket_array_.size();
+	uint64_t now_ts = CBaseTimeValue::get_time_value().msec();
+	if (hb_ts_ + 5 <= now_ts){
+		//扫描所有的RUDP SOCKET对象
+		uint32_t id = INVALID_RUDP_HANDLE;
+		int32_t size = socket_array_.size();
 
-	for (RUDPHandleSet::iterator it = used_socket_ids_.begin(); it != used_socket_ids_.end(); ++it)
-    {
-        id = *it;
-        if(id > 0 && id < size && socket_array_[id] != NULL)
-        {
-            socket_array_[id]->heartbeat();
-        }
-    }
+		for (RUDPHandleSet::iterator it = used_socket_ids_.begin(); it != used_socket_ids_.end(); ++it)
+		{
+			id = *it;
+			if (id > 0 && id < size && socket_array_[id] != NULL)
+			{
+				socket_array_[id]->heartbeat();
+			}
+		}
+
+		hb_ts_ = now_ts;
+	}
 }
 
 void RUDPObject::init()

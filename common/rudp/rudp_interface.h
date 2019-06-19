@@ -98,6 +98,7 @@ protected:
     RUDPSocket*			find_by_peer_id(int32_t peer_rudp_id, const Inet_Addr& peer_addr);
 
 protected:
+	int64_t				hb_ts_;
     RUDPSocketArray		socket_array_;
     RUDPSocketPool		socket_pool_;
     RUDPHandleSet		free_socket_ids_;
