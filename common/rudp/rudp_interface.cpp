@@ -9,7 +9,7 @@
 #define MAX_LOCAL_ADDR_SIZE		256
 
 //RUDP的心跳周期是5毫秒
-#define RUDP_TIMER_DELAY		20
+#define RUDP_TIMER_DELAY		10
 
 //消息解码宏
 #define PARSE_RUDP_HEAD(head, info) \
@@ -74,11 +74,9 @@ void RUDPObject::heartbeat()
     uint32_t id = INVALID_RUDP_HANDLE;
     int32_t size = socket_array_.size();
 
-    for(RUDPHandleSet::iterator it = used_socket_ids_.begin(); it != used_socket_ids_.end();)
+	for (RUDPHandleSet::iterator it = used_socket_ids_.begin(); it != used_socket_ids_.end(); ++it)
     {
         id = *it;
-
-         ++ it;
         if(id > 0 && id < size && socket_array_[id] != NULL)
         {
             socket_array_[id]->heartbeat();
@@ -435,6 +433,8 @@ void RUDPObject::register_event(int32_t rudp_id, int32_t marks)
     }
 
     rudp_session->register_event(marks);
+
+	heartbeat();
 }
 
 void RUDPObject::process(IRUDPAdapter* adapter, BinStream& strm, const Inet_Addr& remote_addr)

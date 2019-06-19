@@ -240,9 +240,6 @@ int32_t RUDPConnection::rudp_output_event(int32_t rudp_id)
 
 		tick_count_ = CBaseTimeValue::get_time_value().msec();
 	}
-
-	if (sbuffer_.data_length() == 0)
-		;//send_packet();
 	
 	if (sbuffer_.data_length() > 0)
 		byte_count_ += sbuffer_.send(rudp_sock_);
