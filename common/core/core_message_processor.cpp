@@ -1,9 +1,9 @@
-#include "core/core_cmd_target.h"
-#include "core/core_packet.h"
-#include "core/core_message_processor.h"
-#include "core/core_message_map_decl.h"
-#include "core/core_event_message.h"
-#include "core/core_log_macro.h"
+#include "core_cmd_target.h"
+#include "core_packet.h"
+#include "core_message_processor.h"
+#include "core_message_map_decl.h"
+#include "core_event_message.h"
+#include "core_log_macro.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 #define CORE_PACKET_HEAD_SIZE 12

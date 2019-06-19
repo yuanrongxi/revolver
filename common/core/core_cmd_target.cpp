@@ -1,6 +1,6 @@
-#include "revolver/base_packet.h"
-#include "core/core_cmd_target.h"
-#include "core/core_msg_.h"
+#include "base_packet.h"
+#include "core_cmd_target.h"
+#include "core_msg_.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

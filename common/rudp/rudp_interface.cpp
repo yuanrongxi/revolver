@@ -1,9 +1,9 @@
-#include "revolver/base_reactor_instance.h"
-#include "rudp/rudp_interface.h"
-#include "rudp/rudp_adapter.h"
-#include "rudp/rudp_packet.h"
-#include "rudp/rudp_socket.h"
-#include "rudp/rudp_log_macro.h"
+#include "base_reactor_instance.h"
+#include "rudp_interface.h"
+#include "rudp_adapter.h"
+#include "rudp_packet.h"
+#include "rudp_socket.h"
+#include "rudp_log_macro.h"
 
 #define RUDP_DEFAULT_POOL_SIZE	1024
 #define MAX_LOCAL_ADDR_SIZE		256
@@ -78,9 +78,10 @@ void RUDPObject::heartbeat()
 		uint32_t id = INVALID_RUDP_HANDLE;
 		int32_t size = socket_array_.size();
 
-		for (RUDPHandleSet::iterator it = used_socket_ids_.begin(); it != used_socket_ids_.end(); ++it)
+		for (RUDPHandleSet::iterator it = used_socket_ids_.begin(); it != used_socket_ids_.end();)
 		{
 			id = *it;
+			++it;
 			if (id > 0 && id < size && socket_array_[id] != NULL)
 			{
 				socket_array_[id]->heartbeat();

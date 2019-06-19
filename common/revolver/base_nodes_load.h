@@ -9,8 +9,8 @@
 #ifndef __BASE_NODES_LOAD_H
 #define __BASE_NODES_LOAD_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_typedef.h"
+#include "base_namespace.h"
+#include "base_typedef.h"
 
 #include <map>
 #include <set>

@@ -10,9 +10,9 @@
 #ifndef __BASE_INET_ADDR_H
 #define __BASE_INET_ADDR_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_os.h"
-#include "revolver/base_bin_stream.h"
+#include "base_namespace.h"
+#include "base_os.h"
+#include "base_bin_stream.h"
 
 #include <string>
 #include <vector>

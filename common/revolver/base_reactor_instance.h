@@ -1,8 +1,8 @@
 #ifndef __BASE_REACTOR_INSTANCE_H
 #define __BASE_REACTOR_INSTANCE_H
 
-#include "revolver/base_select_reactor.h"
-#include "revolver/base_epoll_reactor.h"
+#include "base_select_reactor.h"
+#include "base_epoll_reactor.h"
 
 #if defined(WIN32) || defined(__APPLE__)
 #define REACTOR_CREATE	 CSingleton<CSelectReator>::instance

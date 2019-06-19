@@ -259,8 +259,7 @@ int32_t RUDPConnection::rudp_exception_event(int32_t rudp_id)
 
 void RUDPConnection::process(RUDPTestPacket* packet)
 {
-	//if (packet->user_id % 1000 == 0)
-		/*send(*packet);*/
+		send(*packet);
 }
 
 

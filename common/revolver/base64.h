@@ -13,7 +13,7 @@
 #define TALK_BASE_BASE64_H__
 
 #include <string>
-#include "revolver/base_namespace.h"
+#include "base_namespace.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

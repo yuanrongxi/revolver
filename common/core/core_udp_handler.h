@@ -10,10 +10,10 @@
 #ifndef __CORE_UDP_HANDLER_H
 #define __CORE_UDP_HANDLER_H
 
-#include "revolver/base_event_handler.h"
-#include "revolver/base_sock_dgram.h"
-#include "revolver/base_bin_stream.h"
-#include "core/core_reciver_interface.h"
+#include "base_event_handler.h"
+#include "base_sock_dgram.h"
+#include "base_bin_stream.h"
+#include "core_reciver_interface.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

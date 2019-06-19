@@ -61,7 +61,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../../common/lib/debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>core.lib;rudp.lib;revolver.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../bin/debug/rudp_reciver/reciver.exe</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -100,6 +100,17 @@
     <ClInclude Include="rudp_connection.h" />
     <ClInclude Include="rudp_listen_handler.h" />
     <ClInclude Include="udp_handler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\common\core\core.vcxproj">
+      <Project>{fe6a74b2-881b-4997-a3d1-a63692a728ba}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\revolver\revolver.vcxproj">
+      <Project>{bda4a7e5-409b-49ec-bacd-55553920d8db}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\rudp\rudp.vcxproj">
+      <Project>{c0b49343-7669-4fb5-b538-145d17341cc6}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

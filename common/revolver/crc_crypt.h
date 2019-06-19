@@ -5,7 +5,7 @@
 extern "C" {
 #endif 
 
-#include "revolver/aes.h"
+#include "aes.h"
 
 aes_context*	create_crypt(unsigned char* _ekey, int _ebits);
 void			destroy_crypt(aes_context* context);

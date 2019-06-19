@@ -1,5 +1,5 @@
-#include "revolver/base_reactor_instance.h"
-#include "core/core_reactor_thread.h"
+#include "base_reactor_instance.h"
+#include "core_reactor_thread.h"
 BASE_NAMESPACE_BEGIN_DECL
 
 CCoreThread::CCoreThread()

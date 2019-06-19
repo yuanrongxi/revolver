@@ -10,14 +10,14 @@
 #ifndef __RUDP_INTERFACE_H_
 #define __RUDP_INTERFACE_H_
 
-#include "revolver/base_typedef.h"
-#include "revolver/base_namespace.h"
-#include "revolver/base_singleton.h"
-#include "revolver/object_pool.h"
-#include "revolver/base_inet_addr.h"
-#include "revolver/base_event_handler.h"
-#include "rudp/rudp_half_connection.h"
-#include "rudp/rudp_event_handler.h"
+#include "base_typedef.h"
+#include "base_namespace.h"
+#include "base_singleton.h"
+#include "object_pool.h"
+#include "base_inet_addr.h"
+#include "base_event_handler.h"
+#include "rudp_half_connection.h"
+#include "rudp_event_handler.h"
 
 #include <vector>
 #include <set>

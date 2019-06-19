@@ -9,9 +9,9 @@
 #ifndef __BASE_EPOLL_REACTOR_H
 #define __BASE_EPOLL_REACTOR_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_reactor.h"
-#include "revolver/base_timer_value.h"
+#include "base_namespace.h"
+#include "base_reactor.h"
+#include "base_timer_value.h"
 
 #include <set>
 

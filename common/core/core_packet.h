@@ -9,9 +9,9 @@
 #ifndef __CORE_PACKET_H
 #define __CORE_PACKET_H
 
-#include "revolver/base_packet.h"
-#include "revolver/base_bin_stream.h"
-#include "revolver/object_pool.h"
+#include "base_packet.h"
+#include "base_bin_stream.h"
+#include "object_pool.h"
 
 #include <string>
 using namespace std;

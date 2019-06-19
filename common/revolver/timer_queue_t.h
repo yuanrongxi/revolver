@@ -9,11 +9,11 @@
 #ifndef __TIMER_QUEUE_T_H
 #define __TIMER_QUEUE_T_H
 
-#include "revolver/timer_ring.h"
-#include "revolver/object_pool.h"
-#include "revolver/timer_node_t.h"
-#include "revolver/base_timer_value.h"
-#include "revolver/base_event_handler.h"
+#include "timer_ring.h"
+#include "object_pool.h"
+#include "timer_node_t.h"
+#include "base_timer_value.h"
+#include "base_event_handler.h"
 
 #include <list>
 #include <assert.h>

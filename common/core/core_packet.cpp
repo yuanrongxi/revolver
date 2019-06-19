@@ -1,5 +1,5 @@
-#include "core/core_packet.h"
-#include "revolver/base_timer_value.h"
+#include "core_packet.h"
+#include "base_timer_value.h"
 
 //×î´ó10M
 #define MAX_PACKET_BODY_SIZE	1048576

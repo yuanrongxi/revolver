@@ -9,9 +9,9 @@
 #ifndef __CORE_TCP_LISTENER_H
 #define __CORE_TCP_LISTENER_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_sock_acceptor.h"
-#include "revolver/base_event_handler.h"
+#include "base_namespace.h"
+#include "base_sock_acceptor.h"
+#include "base_event_handler.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

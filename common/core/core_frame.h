@@ -10,10 +10,10 @@
 #ifndef __CORE_FRAME_H
 #define __CORE_FRAME_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_typedef.h"
-#include "core/core_daemon_client.h"
-#include "core/core_dc_client.h"
+#include "base_namespace.h"
+#include "base_typedef.h"
+#include "core_daemon_client.h"
+#include "core_dc_client.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

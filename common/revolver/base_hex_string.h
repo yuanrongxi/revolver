@@ -1,8 +1,8 @@
 #ifndef __BASE_HEX_STRING_H
 #define __BASE_HEX_STRING_H
 
-#include "revolver/base_typedef.h"
-#include "revolver/base_namespace.h"
+#include "base_typedef.h"
+#include "base_namespace.h"
 
 #include <string>
 using namespace std;

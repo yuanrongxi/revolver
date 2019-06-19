@@ -9,8 +9,8 @@
 #ifndef __CORE_LOG_MACRO_H
 #define __CORE_LOG_MACRO_H
 
-#include "revolver/base_log.h"
-#include "revolver/base_hex_string.h"
+#include "base_log.h"
+#include "base_hex_string.h"
 
 #ifdef WIN32
 extern SingleLogStream core_log;

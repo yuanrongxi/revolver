@@ -9,10 +9,10 @@
 #ifndef __BASE_LOG_THREAD_H
 #define __BASE_LOG_THREAD_H
 
-#include "revolver/base_thread.h"
-#include "revolver/base_queue.h"
-#include "revolver/base_thread_mutex.h"
-#include "revolver/object_pool.h"
+#include "base_thread.h"
+#include "base_queue.h"
+#include "base_thread_mutex.h"
+#include "object_pool.h"
 
 using namespace BASE_NAMEPSACE_DECL;
 

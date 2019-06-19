@@ -1,7 +1,7 @@
 #ifndef __BASE_THREAD_MUTEX_H
 #define __BASE_THREAD_MUTEX_H
 
-#include "revolver/base_namespace.h"
+#include "base_namespace.h"
 
 #if defined(WIN32) | defined(_WIN32) | defined(_WIN64)
 

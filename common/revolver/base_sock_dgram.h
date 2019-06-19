@@ -9,7 +9,7 @@
 #ifndef __BASE_SOCK_DGRAM_H
 #define __BASE_SOCK_DGRAM_H
 
-#include "revolver/base_socket.h"
+#include "base_socket.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

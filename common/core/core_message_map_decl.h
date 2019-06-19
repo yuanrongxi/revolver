@@ -16,8 +16,8 @@
 using namespace __gnu_cxx;
 #endif
 
-#include "revolver/base_packet.h"
-#include "revolver/base_singleton.h"
+#include "base_packet.h"
+#include "base_singleton.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

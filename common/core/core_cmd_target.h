@@ -9,9 +9,9 @@
 #ifndef __CORE_CMD_TARGET_H
 #define __CORE_CMD_TARGET_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_typedef.h"
-#include "revolver/base_inet_addr.h"
+#include "base_namespace.h"
+#include "base_typedef.h"
+#include "base_inet_addr.h"
 #include <map>
 
 using namespace std;

@@ -1,7 +1,7 @@
-#include "core/core_connection_manager.h"
-#include "revolver/base_reactor_instance.h"
-#include "core/core_tcp_listener.h"
-#include "core/core_log_macro.h"
+#include "core_connection_manager.h"
+#include "base_reactor_instance.h"
+#include "core_tcp_listener.h"
+#include "core_log_macro.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 CCoreTCPListener::CCoreTCPListener()

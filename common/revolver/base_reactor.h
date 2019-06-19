@@ -9,11 +9,11 @@
 #ifndef __BASE_REACTOR_H
 #define __BASE_REACTOR_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_typedef.h"
-#include "revolver/timer_queue_t.h"
-#include "revolver/object_pool.h"
-#include "revolver/base_thread_mutex.h"
+#include "base_namespace.h"
+#include "base_typedef.h"
+#include "timer_queue_t.h"
+#include "object_pool.h"
+#include "base_thread_mutex.h"
 
 #include <map>
 #include <vector>

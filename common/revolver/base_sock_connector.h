@@ -9,7 +9,7 @@
 #ifndef __BASE_SOCK_CONNNECTOR_H
 #define __BASE_SOCK_CONNNECTOR_H
 
-#include "revolver/base_sock_stream.h"
+#include "base_sock_stream.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

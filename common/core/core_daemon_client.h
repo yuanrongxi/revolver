@@ -10,12 +10,12 @@
 #ifndef __CORE_DAEMON_CLIENT_H
 #define __CORE_DAEMON_CLIENT_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_typedef.h"
-#include "core/core_cmd_target.h"
-#include "revolver/base_inet_addr.h"
-#include "core/core_udp_handler.h"
-#include "core/core_msg_.h"
+#include "base_namespace.h"
+#include "base_typedef.h"
+#include "core_cmd_target.h"
+#include "base_inet_addr.h"
+#include "core_udp_handler.h"
+#include "core_msg_.h"
 
 #include <map>
 

@@ -9,14 +9,14 @@
 #ifndef __CORE_CONNECTION_MANAGER_H
 #define __CORE_CONNECTION_MANAGER_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_typedef.h"
-#include "core/core_connection.h"
-#include "revolver/object_pool.h"
-#include "revolver/base_thread_mutex.h"
-#include "revolver/base_singleton.h"
-#include "core/core_server_type.h"
-#include "core/core_packet.h"
+#include "base_namespace.h"
+#include "base_typedef.h"
+#include "core_connection.h"
+#include "object_pool.h"
+#include "base_thread_mutex.h"
+#include "base_singleton.h"
+#include "core_server_type.h"
+#include "core_packet.h"
 
 #include <list>
 #include <vector>

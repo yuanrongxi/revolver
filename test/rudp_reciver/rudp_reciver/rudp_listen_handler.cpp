@@ -26,6 +26,8 @@ int32_t RUDPListenHandler::rudp_accept_event(int32_t rudp_id)
 
 	conn->set_state(RUDP_CONN_CONNECTED);
 	conn->set_timer(1000);
+
+	std::cout << "accept rudp connection" << std::endl;
 	return 0;
 }
 

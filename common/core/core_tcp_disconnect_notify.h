@@ -9,8 +9,8 @@
 #ifndef __CORE_TCP_DISCONNECT_NOTIFY_H
 #define __CORE_TCP_DISCONNECT_NOTIFY_H
 
-#include "revolver/base_namespace.h"
-#include "revolver/base_typedef.h"
+#include "base_namespace.h"
+#include "base_typedef.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

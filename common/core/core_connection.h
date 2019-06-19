@@ -9,11 +9,11 @@
 #ifndef __CORE_CONNECTION_H
 #define __CORE_CONNECTION_H
 
-#include "revolver/base_bin_stream.h"
-#include "revolver/base_event_handler.h"
-#include "revolver/base_sock_stream.h"
-#include "core/core_reciver_interface.h"
-#include "revolver/base_block_buffer.h"
+#include "base_bin_stream.h"
+#include "base_event_handler.h"
+#include "base_sock_stream.h"
+#include "core_reciver_interface.h"
+#include "base_block_buffer.h"
 
 #include <list>
 using namespace std;

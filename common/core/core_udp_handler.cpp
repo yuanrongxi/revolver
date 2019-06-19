@@ -1,8 +1,8 @@
-#include "core/core_packet.h"
-#include "core/core_udp_handler.h"
-#include "core/core_log_macro.h"
-#include "revolver/base_reactor_instance.h"
-#include "core/core_bandwidth_throttler.h"
+#include "core_packet.h"
+#include "core_udp_handler.h"
+#include "core_log_macro.h"
+#include "base_reactor_instance.h"
+#include "core_bandwidth_throttler.h"
 
 #define MAX_UDP_PACKET 1492
 

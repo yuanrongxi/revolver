@@ -1,10 +1,10 @@
 #ifndef __CORE_DAEMON_MSG_H
 #define __CORE_DAEMON_MSG_H
 
-#include "revolver/base_packet.h"
-#include "core/core_server_type.h"
-#include "core/core_message_map_decl.h"
-#include "revolver/base_inet_addr.h"
+#include "base_packet.h"
+#include "core_server_type.h"
+#include "core_message_map_decl.h"
+#include "base_inet_addr.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 

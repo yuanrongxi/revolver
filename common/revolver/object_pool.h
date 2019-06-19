@@ -9,9 +9,9 @@
 #ifndef __OBJECT_POOL_H
 #define __OBJECT_POOL_H
 
-#include "revolver/base_typedef.h"
-#include "revolver/base_namespace.h"
-#include "revolver/base_guard.h"
+#include "base_typedef.h"
+#include "base_namespace.h"
+#include "base_guard.h"
 
 #include <list>
 

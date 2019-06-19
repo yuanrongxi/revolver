@@ -1,7 +1,7 @@
 #ifndef __BASE_GUARD_H
 #define __BASE_GUARD_H
 
-#include "revolver/base_namespace.h"
+#include "base_namespace.h"
 
 BASE_NAMESPACE_BEGIN_DECL
 template<class BASE_MUTEX>
