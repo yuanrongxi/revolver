@@ -7,7 +7,7 @@ BASE_NAMESPACE_BEGIN_DECL
 
 #define UNINT32_MAX  4294967296
 
-#define SELECT_DELAY 5
+#define SELECT_DELAY 1
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
